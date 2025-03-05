@@ -74,7 +74,7 @@
             transition: background-color 0.3s ease;
             width: 100%;
             max-width: 200px;
-            margin-top: 10px;
+            align-self: flex-end; /* Alinha o botão com a base das caixas de seleção */
         }
 
         button:hover {
@@ -121,6 +121,8 @@
 
         .columns > div {
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Gerenciamento de Pergaminhos */
@@ -389,14 +391,14 @@
             get(ref(db, 'gc/')).then((snapshot) => {
                 if (snapshot.exists()) {
                     let tabela = document.getElementById("tabela-gc");
-                    tabela.innerHTML = 
+                    tabela.innerHTML = `
                         <tr>
                             <th>Personagem</th>
                             <th>Brinco</th>
                             <th>Piercing</th>
                             <th>Anel</th>
                             <th>Berkas</th>
-                        </tr>;
+                        </tr>`;
                     
                     snapshot.forEach((childSnapshot) => {
                         let dados = childSnapshot.val();
