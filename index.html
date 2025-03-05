@@ -91,6 +91,9 @@
             }).catch((error) => {
                 console.error("Erro ao salvar GC: ", error);
             });
+
+            // Salva os pergaminhos ao salvar o GC
+            salvarPergaminhos();
         }
 
         // Função para carregar GCs
