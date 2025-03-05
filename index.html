@@ -1,455 +1,241 @@
 <!DOCTYPE html>
-
 <html lang="pt">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Controle GC</title>
-
-    <style>
-
-        table, th, td {
-
-            border: 1px solid black;
-
-            border-collapse: collapse;
-
-            padding: 5px;
-
-            text-align: center;
-
-        }
-
-    </style>
-
-    <script type="module">
-
-        // Import Firebase SDK
-
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
-
-
-
-        // Firebase configuration
-
-        const firebaseConfig = {
-
-            apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
-
-            authDomain: "gc-controle.firebaseapp.com",
-
-            databaseURL: "https://gc-controle-default-rtdb.firebaseio.com", // URL do Realtime Database
-
-            projectId: "gc-controle",
-
-            storageBucket: "gc-controle.firebasestorage.app",
-
-            messagingSenderId: "3109203796",
-
-            appId: "1:3109203796:web:f8619117f915f67ceba2c1",
-
-            measurementId: "G-3NNXXD5V2T"
-
-        };
-
-
-
-        // Initialize Firebase
-
-        const app = initializeApp(firebaseConfig);
-
-        const db = getDatabase(app);
-
-
-
-        // Função para salvar pergaminhos
-
-        function salvarPergaminhos() {
-
-            const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
-
-            const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
-
-
-
-            // Salva os valores no Firebase
-
-            set(ref(db, 'pergaminhos/'), {
-
-                unico: pergaminhoUnico,
-
-                aleatorio: pergaminhoAleatorio
-
-            }).then(() => {
-
-                console.log("Pergaminhos salvos com sucesso!");
-
-            }).catch((error) => {
-
-                console.error("Erro ao salvar pergaminhos: ", error);
-
-            });
-
-        }
-
-
-
-        // Função para carregar pergaminhos
-
-        function carregarPergaminhos() {
-
-            get(ref(db, 'pergaminhos/')).then((snapshot) => {
-
-                if (snapshot.exists()) {
-
-                    // Preenche os campos com os valores salvos
-
-                    document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
-
-                    document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
-
-                } else {
-
-                    console.log("Nenhum valor de pergaminho salvo ainda.");
-
-                }
-
-            }).catch((error) => {
-
-                console.error("Erro ao carregar pergaminhos: ", error);
-
-            });
-
-        }
-
-
-
-        // Função para salvar GC
-
-        function salvarGC() {
-
-            let personagem = document.getElementById("personagem").value;
-
-            let brinco = document.getElementById("brinco").value;
-
-            let piercing = document.getElementById("piercing").value;
-
-            let anel = document.getElementById("anel").value;
-
-            let berkas = document.getElementById("berkas").value;
-
-
-
-            if (!personagem || !brinco || !piercing || !anel || !berkas) {
-
-                alert("Preencha todos os campos!");
-
-                return;
-
-            }
-
-
-
-            set(ref(db, 'gc/' + personagem), {
-
-                brinco: brinco,
-
-                piercing: piercing,
-
-                anel: anel,
-
-                berkas: berkas
-
-            }).then(() => {
-
-                alert("GC salvo com sucesso!");
-
-                carregarGCs(); // Atualiza a tabela após salvar
-
-            }).catch((error) => {
-
-                console.error("Erro ao salvar GC: ", error);
-
-            });
-
-        }
-
-
-
-        // Função para carregar GCs
-
-        function carregarGCs() {
-
-            get(ref(db, 'gc/')).then((snapshot) => {
-
-                if (snapshot.exists()) {
-
-                    let tabela = document.getElementById("tabela-gc");
-
-                    tabela.innerHTML = `
-
-                        <tr>
-
-                            <th>Personagem</th>
-
-                            <th>Brinco</th>
-
-                            <th>Piercing</th>
-
-                            <th>Anel</th>
-
-                            <th>Berkas</th>
-
-                        </tr>`;
-
-                    
-
-                    snapshot.forEach((childSnapshot) => {
-
-                        let dados = childSnapshot.val();
-
-                        let linha = tabela.insertRow();
-
-                        linha.insertCell(0).textContent = childSnapshot.key;
-
-                        linha.insertCell(1).textContent = dados.brinco;
-
-                        linha.insertCell(2).textContent = dados.piercing;
-
-                        linha.insertCell(3).textContent = dados.anel;
-
-                        linha.insertCell(4).textContent = dados.berkas;
-
-                    });
-
-                } else {
-
-                    console.log("Nenhum GC salvo ainda.");
-
-                }
-
-            }).catch((error) => {
-
-                console.error("Erro ao carregar GCs: ", error);
-
-            });
-
-        }
-
-
-
-        // Carrega os dados ao abrir a página
-
-        window.onload = function() {
-
-            carregarPergaminhos(); // Carrega os valores dos pergaminhos
-
-            carregarGCs(); // Carrega a lista de GCs
-
-        };
-
-
-
-        // Adiciona o evento de clique ao botão "Salvar GC"
-
-        document.getElementById("salvarGC").addEventListener("click", salvarGC);
-
-    </script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle GC</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
+            authDomain: "gc-controle.firebaseapp.com",
+            databaseURL: "https://gc-controle-default-rtdb.firebaseio.com", // URL do Realtime Database
+            projectId: "gc-controle",
+            storageBucket: "gc-controle.firebasestorage.app",
+            messagingSenderId: "3109203796",
+            appId: "1:3109203796:web:f8619117f915f67ceba2c1",
+            measurementId: "G-3NNXXD5V2T"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Função para salvar pergaminhos
+        function salvarPergaminhos() {
+            const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
+            const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
+
+            // Salva os valores no Firebase
+            set(ref(db, 'pergaminhos/'), {
+                unico: pergaminhoUnico,
+                aleatorio: pergaminhoAleatorio
+            }).then(() => {
+                console.log("Pergaminhos salvos com sucesso!");
+            }).catch((error) => {
+                console.error("Erro ao salvar pergaminhos: ", error);
+            });
+        }
+
+        // Função para carregar pergaminhos
+        function carregarPergaminhos() {
+            get(ref(db, 'pergaminhos/')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    // Preenche os campos com os valores salvos
+                    document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
+                    document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
+                } else {
+                    console.log("Nenhum valor de pergaminho salvo ainda.");
+                }
+            }).catch((error) => {
+                console.error("Erro ao carregar pergaminhos: ", error);
+            });
+        }
+
+        // Função para salvar GC
+        function salvarGC() {
+            let personagem = document.getElementById("personagem").value;
+            let brinco = document.getElementById("brinco").value;
+            let piercing = document.getElementById("piercing").value;
+            let anel = document.getElementById("anel").value;
+            let berkas = document.getElementById("berkas").value;
+
+            if (!personagem || !brinco || !piercing || !anel || !berkas) {
+                alert("Preencha todos os campos!");
+                return;
+             salvarPergaminhos();
+
+    set(ref(db, 'gc/' + personagem), {
+        brinco: brinco,
+        piercing: piercing,
+        anel: anel,
+        berkas: berkas
+    }).then(() => {
+        alert("GC salvo com sucesso!");
+        carregarGCs(); // Atualiza a tabela após salvar
+    }).catch((error) => {
+        console.error("Erro ao salvar GC: ", error);
+    });
+            }
+
+            set(ref(db, 'gc/' + personagem), {
+                brinco: brinco,
+                piercing: piercing,
+                anel: anel,
+                berkas: berkas
+            }).then(() => {
+                alert("GC salvo com sucesso!");
+                carregarGCs(); // Atualiza a tabela após salvar
+            }).catch((error) => {
+                console.error("Erro ao salvar GC: ", error);
+            });
+        }
+
+        // Função para carregar GCs
+        function carregarGCs() {
+            get(ref(db, 'gc/')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let tabela = document.getElementById("tabela-gc");
+                    tabela.innerHTML = `
+                        <tr>
+                            <th>Personagem</th>
+                            <th>Brinco</th>
+                            <th>Piercing</th>
+                            <th>Anel</th>
+                            <th>Berkas</th>
+                        </tr>`;
+                    
+                    snapshot.forEach((childSnapshot) => {
+                        let dados = childSnapshot.val();
+                        let linha = tabela.insertRow();
+                        linha.insertCell(0).textContent = childSnapshot.key;
+                        linha.insertCell(1).textContent = dados.brinco;
+                        linha.insertCell(2).textContent = dados.piercing;
+                        linha.insertCell(3).textContent = dados.anel;
+                        linha.insertCell(4).textContent = dados.berkas;
+                    });
+                } else {
+                    console.log("Nenhum GC salvo ainda.");
+                }
+            }).catch((error) => {
+                console.error("Erro ao carregar GCs: ", error);
+            });
+        }
+
+        // Carrega os dados ao abrir a página
+        window.onload = function() {
+            carregarPergaminhos(); // Carrega os valores dos pergaminhos
+            carregarGCs(); // Carrega a lista de GCs
+        };
+
+        // Adiciona o evento de clique ao botão "Salvar GC"
+        document.getElementById("salvarGC").addEventListener("click", salvarGC);
+    </script>
 </head>
-
 <body>
-
-    <h2>Gerenciamento de Pergaminhos</h2>
-
-    <label>Pergaminho Único:</label>
-
-    <input type="number" id="pergaminho_unico" oninput="salvarPergaminhos()">
-
-    <label>Pergaminho Aleatório:</label>
-
-    <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
-
-    
-
-    <h2>Selecione as opções</h2>
-
-    <label>Personagem:</label>
-
-    <select id="personagem">
-
-        <option>Elesis</option>
-
-        <option>Lire</option>
-
-        <option>Arme</option>
-
-        <option>Lass</option>
-
-        <option>Ryan</option>
-
-        <option>Ronan</option>
-
-        <option>Amy</option>
-
-        <option>Jin</option>
-
-        <option>Sieghart</option>
-
-        <option>Mari</option>
-
-        <option>Dio</option>
-
-        <option>Zero</option>
-
-        <option>Rey</option>
-
-        <option>Lupus</option>
-
-        <option>Lin</option>
-
-        <option>Azin</option>
-
-        <option>Holy</option>
-
-        <option>Edel Frost</option>
-
-        <option>Veigas</option>
-
-        <option>Uno</option>
-
-        <option>Decane</option>
-
-        <option>Ai</option>
-
-        <option>Kallia Eldepel</option>
-
-    </select>
-
-    
-
-    <label>Brinco:</label>
-
-    <select id="brinco">
-
-        <option>Harkyon</option>
-
-        <option>Normal</option>
-
-        <option>Épico</option>
-
-        <option>Lendário</option>
-
-    </select>
-
-    
-
-    <label>Piercing:</label>
-
-    <select id="piercing">
-
-        <option>Harkyon</option>
-
-        <option>Normal</option>
-
-        <option>Épico</option>
-
-        <option>Lendário</option>
-
-    </select>
-
-    
-
-    <label>Anel:</label>
-
-    <select id="anel">
-
-        <option>Harkyon</option>
-
-        <option>Nível 1.1</option>
-
-        <option>Nível 1.2</option>
-
-        <option>Nível 1.3</option>
-
-        <option>Nível 2.1</option>
-
-        <option>Nível 2.2</option>
-
-        <option>Nível 2.3</option>
-
-        <option>Nível 3.1</option>
-
-        <option>Nível 3.2</option>
-
-        <option>Nível 3.3</option>
-
-    </select>
-
-    
-
-    <label>Berkas:</label>
-
-    <select id="berkas">
-
-        <option>1</option>
-
-        <option>2</option>
-
-        <option>3</option>
-
-        <option>4</option>
-
-        <option>5</option>
-
-        <option>6</option>
-
-        <option>7</option>
-
-        <option>8</option>
-
-        <option>9</option>
-
-        <option>10</option>
-
-        <option>11</option>
-
-        <option>Full</option>
-
-    </select>
-
-    
-
-    <button id="salvarGC">Salvar GC</button>
-
-    
-
-    <h2>Lista de GCs Salvos</h2>
-
-    <table id="tabela-gc">
-
-        <tr>
-
-            <th>Personagem</th>
-
-            <th>Brinco</th>
-
-            <th>Piercing</th>
-
-            <th>Anel</th>
-
-            <th>Berkas</th>
-
-        </tr>
-
-    </table>
-
+    <h2>Gerenciamento de Pergaminhos</h2>
+    <label>Pergaminho Único:</label>
+    <input type="number" id="pergaminho_unico" oninput="salvarPergaminhos()">
+    <label>Pergaminho Aleatório:</label>
+    <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
+    
+    <h2>Selecione as opções</h2>
+    <label>Personagem:</label>
+    <select id="personagem">
+        <option>Elesis</option>
+        <option>Lire</option>
+        <option>Arme</option>
+        <option>Lass</option>
+        <option>Ryan</option>
+        <option>Ronan</option>
+        <option>Amy</option>
+        <option>Jin</option>
+        <option>Sieghart</option>
+        <option>Mari</option>
+        <option>Dio</option>
+        <option>Zero</option>
+        <option>Rey</option>
+        <option>Lupus</option>
+        <option>Lin</option>
+        <option>Azin</option>
+        <option>Holy</option>
+        <option>Edel Frost</option>
+        <option>Veigas</option>
+        <option>Uno</option>
+        <option>Decane</option>
+        <option>Ai</option>
+        <option>Kallia Eldepel</option>
+    </select>
+    
+    <label>Brinco:</label>
+    <select id="brinco">
+        <option>Harkyon</option>
+        <option>Normal</option>
+        <option>Épico</option>
+        <option>Lendário</option>
+    </select>
+    
+    <label>Piercing:</label>
+    <select id="piercing">
+        <option>Harkyon</option>
+        <option>Normal</option>
+        <option>Épico</option>
+        <option>Lendário</option>
+    </select>
+    
+    <label>Anel:</label>
+    <select id="anel">
+        <option>Harkyon</option>
+        <option>Nível 1.1</option>
+        <option>Nível 1.2</option>
+        <option>Nível 1.3</option>
+        <option>Nível 2.1</option>
+        <option>Nível 2.2</option>
+        <option>Nível 2.3</option>
+        <option>Nível 3.1</option>
+        <option>Nível 3.2</option>
+        <option>Nível 3.3</option>
+    </select>
+    
+    <label>Berkas:</label>
+    <select id="berkas">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+        <option>Full</option>
+    </select>
+    
+    <button id="salvarGC">Salvar GC</button>
+    
+    <h2>Lista de GCs Salvos</h2>
+    <table id="tabela-gc">
+        <tr>
+            <th>Personagem</th>
+            <th>Brinco</th>
+            <th>Piercing</th>
+            <th>Anel</th>
+            <th>Berkas</th>
+        </tr>
+    </table>
 </body>
-
 </html>
