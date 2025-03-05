@@ -74,7 +74,8 @@
             transition: background-color 0.3s ease;
             width: 100%;
             max-width: 200px;
-            align-self: flex-end; /* Alinha o botão com a base das caixas de seleção */
+            margin: 0 auto; /* Centraliza o botão */
+            display: block; /* Garante que o botão ocupe a linha inteira */
         }
 
         button:hover {
@@ -121,8 +122,6 @@
 
         .columns > div {
             flex: 1;
-            display: flex;
-            flex-direction: column;
         }
 
         /* Gerenciamento de Pergaminhos */
@@ -156,6 +155,13 @@
             button {
                 width: 100%;
                 max-width: 100%;
+            }
+
+            /* Barra de rolagem horizontal para a tabela em dispositivos móveis */
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
             }
         }
     </style>
@@ -256,10 +262,10 @@
                         <option>11</option>
                         <option>Full</option>
                     </select>
-                    
-                    <button id="salvarGC">Salvar GC</button>
                 </div>
             </div>
+            <!-- Botão "Salvar GC" em uma nova linha -->
+            <button id="salvarGC">Salvar GC</button>
         </div>
 
         <!-- Lista de GCs Salvos -->
