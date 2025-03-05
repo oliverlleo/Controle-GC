@@ -56,6 +56,7 @@
                     // Preenche os campos com os valores salvos
                     document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
                     document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
+                    console.log("Pergaminhos carregados com sucesso!");
                 } else {
                     console.log("Nenhum valor de pergaminho salvo ainda.");
                 }
