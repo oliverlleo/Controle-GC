@@ -94,155 +94,34 @@
         <option>Full</option>
     </select>
     
-    <button onclick="salvarDados()">Salvar</button>
+    <button onclick="salvarGC()">Salvar GC</button>
     
-    <h2>Dados Salvos</h2>
-    <table id="tabela">
+    <h2>Lista de GCs Salvos</h2>
+    <table id="tabela-gc">
         <tr>
-            <th>Personagem</th>
-            <th>Brinco</th>
-            <th>Piercing</th>
-            <th>Anel</th>
-            <th>Berkas</th>
+            <th>Nome do GC</th>
+            <th>Nível</th>
+            <th>Membros Ativos</th>
         </tr>
     </table>
-
-    <!-- Tela Controle GC -->
-    <div id="controle-gc" style="display: none;">
-        <h2>Controle GC</h2>
-        <label>Nome do GC:</label>
-        <input type="text" id="nome-gc" placeholder="Digite o nome do GC">
-        <br><br>
-        <label>Nível do GC:</label>
-        <input type="number" id="nivel-gc" placeholder="Digite o nível">
-        <br><br>
-        <label>Membros Ativos:</label>
-        <input type="number" id="membros-ativos" placeholder="Digite o número de membros">
-        <br><br>
-        <button onclick="salvarGC()">Salvar GC</button>
-        
-        <h3>Lista de GCs Salvos</h3>
-        <table id="tabela-gc">
-            <tr>
-                <th>Nome do GC</th>
-                <th>Nível</th>
-                <th>Membros Ativos</th>
-            </tr>
-        </table>
-    </div>
-
-    <!-- Firebase e Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js"></script>
+    
     <script>
-        // Configuração do Firebase (substitua pelos seus dados)
-        const firebaseConfig = {
-            apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
-            authDomain: "gc-controle.firebaseapp.com",
-            projectId: "gc-controle",
-            storageBucket: "gc-controle.firebasestorage.app",
-            messagingSenderId: "3109203796",
-            appId: "1:3109203796:web:f8619117f915f67ceba2c1",
-            measurementId: "G-3NNXXD5V2T"
-        };
-
-        // Inicialize o Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Funções para Gerenciamento de Pergaminhos
-        function salvarPergaminhos() {
-            localStorage.setItem("pergaminho_unico", document.getElementById("pergaminho_unico").value);
-            localStorage.setItem("pergaminho_aleatorio", document.getElementById("pergaminho_aleatorio").value);
-        }
-
-        function carregarPergaminhos() {
-            document.getElementById("pergaminho_unico").value = localStorage.getItem("pergaminho_unico") || "";
-            document.getElementById("pergaminho_aleatorio").value = localStorage.getItem("pergaminho_aleatorio") || "";
-        }
-
-        // Funções para Salvar e Carregar Dados dos Personagens
-        function salvarDados() {
-            let personagem = document.getElementById("personagem").value;
-            let brinco = document.getElementById("brinco").value;
-            let piercing = document.getElementById("piercing").value;
-            let anel = document.getElementById("anel").value;
-            let berkas = document.getElementById("berkas").value;
-            
-            let dados = JSON.parse(localStorage.getItem("dadosPersonagens")) || {};
-            dados[personagem] = { brinco, piercing, anel, berkas };
-            localStorage.setItem("dadosPersonagens", JSON.stringify(dados));
-            atualizarTabela();
-
-            // Salva os dados do GC no Firebase
-            salvarGC();
-        }
-
-        function atualizarTabela() {
-            let tabela = document.getElementById("tabela");
-            tabela.innerHTML = `<tr><th>Personagem</th><th>Brinco</th><th>Piercing</th><th>Anel</th><th>Berkas</th></tr>`;
-            let dados = JSON.parse(localStorage.getItem("dadosPersonagens")) || {};
-            
-            for (let personagem in dados) {
-                let linha = tabela.insertRow();
-                linha.insertCell(0).innerText = personagem;
-                linha.insertCell(1).innerText = dados[personagem].brinco;
-                linha.insertCell(2).innerText = dados[personagem].piercing;
-                linha.insertCell(3).innerText = dados[personagem].anel;
-                linha.insertCell(4).innerText = dados[personagem].berkas;
-            }
-        }
-
-        // Funções para Controle GC
         function salvarGC() {
-            let nomeGC = document.getElementById("nome-gc").value;
-            let nivelGC = document.getElementById("nivel-gc").value;
-            let membrosAtivos = document.getElementById("membros-ativos").value;
+            let nomeGC = document.getElementById("personagem").value.trim();
+            let nivelGC = document.getElementById("pergaminho_unico").value;
+            let membrosAtivos = document.getElementById("pergaminho_aleatorio").value;
 
-            if (!nomeGC || !nivelGC || !membrosAtivos) {
-                alert("Preencha todos os campos do GC!");
+            if (!nomeGC || nivelGC === "" || membrosAtivos === "") {
+                alert("Preencha todos os campos do GC corretamente!");
                 return;
             }
 
-            // Salva no Firebase
-            database.ref('gcs/' + nomeGC).set({
-                nivel: nivelGC,
-                membros: membrosAtivos
-            }).then(() => {
-                alert("GC salvo com sucesso!");
-                carregarGCs(); // Atualiza a tabela após salvar
-            }).catch((error) => {
-                console.error("Erro ao salvar GC: ", error);
-            });
-        }
-
-        function carregarGCs() {
-            database.ref('gcs').once('value').then((snapshot) => {
-                let dados = snapshot.val() || {};
-                atualizarTabelaGC(dados);
-            }).catch((error) => {
-                console.error("Erro ao carregar GCs: ", error);
-            });
-        }
-
-        function atualizarTabelaGC(dados) {
             let tabela = document.getElementById("tabela-gc");
-            tabela.innerHTML = `<tr><th>Nome do GC</th><th>Nível</th><th>Membros Ativos</th></tr>`;
-
-            for (let nomeGC in dados) {
-                let linha = tabela.insertRow();
-                linha.insertCell(0).innerText = nomeGC;
-                linha.insertCell(1).innerText = dados[nomeGC].nivel;
-                linha.insertCell(2).innerText = dados[nomeGC].membros;
-            }
+            let linha = tabela.insertRow();
+            linha.insertCell(0).innerText = nomeGC;
+            linha.insertCell(1).innerText = nivelGC;
+            linha.insertCell(2).innerText = membrosAtivos;
         }
-
-        // Carrega os dados ao abrir a página
-        window.onload = function() {
-            carregarPergaminhos();
-            atualizarTabela();
-            carregarGCs(); // Carrega os GCs ao abrir a página
-        };
     </script>
 </body>
 </html>
