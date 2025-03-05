@@ -67,6 +67,19 @@
             });
         }
 
+        // Função para verificar se o personagem já existe
+        function personagemJaExiste(personagem, callback) {
+            get(ref(db, 'gc/' + personagem)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    callback(true); // Personagem já existe
+                } else {
+                    callback(false); // Personagem não existe
+                }
+            }).catch((error) => {
+                console.error("Erro ao verificar personagem: ", error);
+            });
+        }
+
         // Função para salvar GC
         function salvarGC() {
             let personagem = document.getElementById("personagem").value;
@@ -80,20 +93,32 @@
                 return;
             }
 
-            set(ref(db, 'gc/' + personagem), {
-                brinco: brinco,
-                piercing: piercing,
-                anel: anel,
-                berkas: berkas
-            }).then(() => {
-                alert("GC salvo com sucesso!");
-                carregarGCs(); // Atualiza a tabela após salvar
-            }).catch((error) => {
-                console.error("Erro ao salvar GC: ", error);
-            });
+            // Verifica se o personagem já existe
+            personagemJaExiste(personagem, (existe) => {
+                if (existe) {
+                    // Se o personagem já existe, pede confirmação
+                    const confirmacao = confirm("Este personagem já foi salvo. Tem certeza que deseja alterar?");
+                    if (!confirmacao) {
+                        return; // Cancela a operação se o usuário escolher "Não"
+                    }
+                }
 
-            // Salva os pergaminhos ao salvar o GC
-            salvarPergaminhos();
+                // Salva o GC no Firebase
+                set(ref(db, 'gc/' + personagem), {
+                    brinco: brinco,
+                    piercing: piercing,
+                    anel: anel,
+                    berkas: berkas
+                }).then(() => {
+                    alert("GC salvo com sucesso!");
+                    carregarGCs(); // Atualiza a tabela após salvar
+                }).catch((error) => {
+                    console.error("Erro ao salvar GC: ", error);
+                });
+
+                // Salva os pergaminhos ao salvar o GC
+                salvarPergaminhos();
+            });
         }
 
         // Função para carregar GCs
