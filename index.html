@@ -13,9 +13,11 @@
         }
     </style>
     <script type="module">
+        // Import Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
             authDomain: "gc-controle.firebaseapp.com",
@@ -27,9 +29,11 @@
             measurementId: "G-3NNXXD5V2T"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Função para salvar GC e Pergaminhos juntos
         function salvarGC() {
             let personagem = document.getElementById("personagem").value;
             let brinco = document.getElementById("brinco").value;
@@ -44,6 +48,7 @@
                 return;
             }
 
+            // Salvar os pergaminhos
             set(ref(db, 'pergaminhos/'), {
                 unico: pergaminhoUnico,
                 aleatorio: pergaminhoAleatorio
@@ -53,6 +58,7 @@
                 console.error("Erro ao salvar pergaminhos: ", error);
             });
 
+            // Salvar GC
             set(ref(db, 'gc/' + personagem), {
                 brinco: brinco,
                 piercing: piercing,
@@ -66,6 +72,7 @@
             });
         }
 
+        // Função para carregar pergaminhos
         function carregarPergaminhos() {
             get(ref(db, 'pergaminhos/')).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -80,6 +87,7 @@
             });
         }
 
+        // Função para carregar GCs
         function carregarGCs() {
             get(ref(db, 'gc/')).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -117,78 +125,52 @@
     </script>
 </head>
 <body>
-    <h2>Selecione as opções</h2>
+    <h2>Gerenciamento de Pergaminhos</h2>
+    <label>Pergaminho Único:</label>
+    <input type="number" id="pergaminho_unico">
+    <label>Pergaminho Aleatório:</label>
+    <input type="number" id="pergaminho_aleatorio">
+    
+    <h2>Gerenciamento de GCs</h2>
     <label>Personagem:</label>
     <select id="personagem">
-        <option>Elesis</option>
-        <option>Lire</option>
-        <option>Arme</option>
-        <option>Lass</option>
-        <option>Ryan</option>
-        <option>Ronan</option>
-        <option>Amy</option>
-        <option>Jin</option>
-        <option>Sieghart</option>
-        <option>Mari</option>
-        <option>Dio</option>
-        <option>Zero</option>
-        <option>Rey</option>
-        <option>Lupus</option>
-        <option>Lin</option>
-        <option>Azin</option>
-        <option>Holy</option>
-        <option>Edel Frost</option>
-        <option>Veigas</option>
-        <option>Uno</option>
-        <option>Decane</option>
-        <option>Ai</option>
-        <option>Kallia Eldepel</option>
+        <option value="">Selecione</option>
+        <option value="Personagem1">Personagem 1</option>
+        <option value="Personagem2">Personagem 2</option>
     </select>
     
     <label>Brinco:</label>
     <select id="brinco">
-        <option>Harkyon</option>
-        <option>Normal</option>
-        <option>Épico</option>
-        <option>Lendário</option>
+        <option value="">Selecione</option>
+        <option value="Brinco1">Brinco 1</option>
+        <option value="Brinco2">Brinco 2</option>
     </select>
     
     <label>Piercing:</label>
     <select id="piercing">
-        <option>Harkyon</option>
-        <option>Normal</option>
-        <option>Épico</option>
-        <option>Lendário</option>
+        <option value="">Selecione</option>
+        <option value="Piercing1">Piercing 1</option>
+        <option value="Piercing2">Piercing 2</option>
     </select>
     
     <label>Anel:</label>
     <select id="anel">
-        <option>Harkyon</option>
-        <option>Nível 1.1</option>
-        <option>Nível 1.2</option>
-        <option>Nível 1.3</option>
-        <option>Nível 2.1</option>
-        <option>Nível 2.2</option>
-        <option>Nível 2.3</option>
-        <option>Nível 3.1</option>
-        <option>Nível 3.2</option>
-        <option>Nível 3.3</option>
+        <option value="">Selecione</option>
+        <option value="Anel1">Anel 1</option>
+        <option value="Anel2">Anel 2</option>
     </select>
     
-    <label>Berkas:</label>
-    <select id="berkas">
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
-        <option>6</option>
-        <option>7</option>
-        <option>8</option>
-        <option>9</option>
-        <option>10</option>
-        <option>11</option>
-        <option>Full</option>
-    </select>
+    <button id="salvarGC" onclick="salvarGC()">Salvar GC</button>
+    
+    <h2>Lista de GCs Salvos</h2>
+    <table id="tabela-gc">
+        <tr>
+            <th>Personagem</th>
+            <th>Brinco</th>
+            <th>Piercing</th>
+            <th>Anel</th>
+            <th>Berkas</th>
+        </tr>
+    </table>
 </body>
 </html>
