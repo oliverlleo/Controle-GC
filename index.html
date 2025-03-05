@@ -132,6 +132,7 @@ console.log("Database referência:", db);
 }).catch((error) => {
     console.error("❌ Erro ao gravar no Firebase: ", error);
 });
+        document.getElementById("salvarGC").addEventListener("click", salvarGC);
     </script>
 </head>
 <body>
@@ -215,7 +216,7 @@ console.log("Database referência:", db);
         <option>Full</option>
     </select>
     
-    <button onclick="salvarGC()">Salvar GC</button>
+    <button id="salvarGC">Salvar GC</button>
     
     <h2>Lista de GCs Salvos</h2>
     <table id="tabela-gc">
