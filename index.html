@@ -38,6 +38,8 @@
             const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
             const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
 
+            console.log("Salvando pergaminhos:", pergaminhoUnico, pergaminhoAleatorio); // Log para depuração
+
             // Salva os valores no Firebase
             set(ref(db, 'pergaminhos/'), {
                 unico: pergaminhoUnico,
