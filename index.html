@@ -125,39 +125,31 @@
             let anel = document.getElementById("anel").value;
             let berkas = document.getElementById("berkas").value;
             
+            let dados = JSON.parse(localStorage.getItem("dadosPersonagens")) || {};
+            dados[personagem] = { brinco, piercing, anel, berkas };
+            localStorage.setItem("dadosPersonagens", JSON.stringify(dados));
+            atualizarTabela();
+        }
+        
+        function atualizarTabela() {
             let tabela = document.getElementById("tabela");
-            let linhas = tabela.getElementsByTagName("tr");
-            let encontrado = false;
+            tabela.innerHTML = `<tr><th>Personagem</th><th>Brinco</th><th>Piercing</th><th>Anel</th><th>Berkas</th></tr>`;
+            let dados = JSON.parse(localStorage.getItem("dadosPersonagens")) || {};
             
-            for (let i = 1; i < linhas.length; i++) {
-                let celula = linhas[i].getElementsByTagName("td")[0];
-                if (celula.innerText === personagem) {
-                    linhas[i].getElementsByTagName("td")[1].innerText = brinco;
-                    linhas[i].getElementsByTagName("td")[2].innerText = piercing;
-                    linhas[i].getElementsByTagName("td")[3].innerText = anel;
-                    linhas[i].getElementsByTagName("td")[4].innerText = berkas;
-                    encontrado = true;
-                    break;
-                }
-            }
-            
-            if (!encontrado) {
-                let novaLinha = tabela.insertRow();
-                let cell1 = novaLinha.insertCell(0);
-                let cell2 = novaLinha.insertCell(1);
-                let cell3 = novaLinha.insertCell(2);
-                let cell4 = novaLinha.insertCell(3);
-                let cell5 = novaLinha.insertCell(4);
-                
-                cell1.innerText = personagem;
-                cell2.innerText = brinco;
-                cell3.innerText = piercing;
-                cell4.innerText = anel;
-                cell5.innerText = berkas;
+            for (let personagem in dados) {
+                let linha = tabela.insertRow();
+                linha.insertCell(0).innerText = personagem;
+                linha.insertCell(1).innerText = dados[personagem].brinco;
+                linha.insertCell(2).innerText = dados[personagem].piercing;
+                linha.insertCell(3).innerText = dados[personagem].anel;
+                linha.insertCell(4).innerText = dados[personagem].berkas;
             }
         }
-
-        window.onload = carregarPergaminhos;
+        
+        window.onload = function() {
+            carregarPergaminhos();
+            atualizarTabela();
+        };
     </script>
 </body>
 </html>
