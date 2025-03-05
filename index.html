@@ -16,9 +16,9 @@
 <body>
     <h2>Gerenciamento de Pergaminhos</h2>
     <label>Pergaminho Único:</label>
-    <input type="number" id="pergaminho_unico">
+    <input type="number" id="pergaminho_unico" oninput="salvarPergaminhos()">
     <label>Pergaminho Aleatório:</label>
-    <input type="number" id="pergaminho_aleatorio">
+    <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
     
     <h2>Selecione as opções</h2>
     <label>Personagem:</label>
@@ -99,29 +99,42 @@
     <h2>Lista de GCs Salvos</h2>
     <table id="tabela-gc">
         <tr>
-            <th>Nome do GC</th>
-            <th>Nível</th>
-            <th>Membros Ativos</th>
+            <th>Personagem</th>
+            <th>Brinco</th>
+            <th>Piercing</th>
+            <th>Anel</th>
+            <th>Berkas</th>
         </tr>
     </table>
     
     <script>
-        function salvarGC() {
-            let nomeGC = document.getElementById("personagem").value.trim();
-            let nivelGC = document.getElementById("pergaminho_unico").value;
-            let membrosAtivos = document.getElementById("pergaminho_aleatorio").value;
+        function salvarPergaminhos() {
+            localStorage.setItem("pergaminho_unico", document.getElementById("pergaminho_unico").value);
+            localStorage.setItem("pergaminho_aleatorio", document.getElementById("pergaminho_aleatorio").value);
+        }
 
-            if (!nomeGC || nivelGC === "" || membrosAtivos === "") {
-                alert("Preencha todos os campos do GC corretamente!");
-                return;
-            }
+        function carregarPergaminhos() {
+            document.getElementById("pergaminho_unico").value = localStorage.getItem("pergaminho_unico") || "0";
+            document.getElementById("pergaminho_aleatorio").value = localStorage.getItem("pergaminho_aleatorio") || "0";
+        }
+
+        function salvarGC() {
+            let personagem = document.getElementById("personagem").value;
+            let brinco = document.getElementById("brinco").value;
+            let piercing = document.getElementById("piercing").value;
+            let anel = document.getElementById("anel").value;
+            let berkas = document.getElementById("berkas").value;
 
             let tabela = document.getElementById("tabela-gc");
             let linha = tabela.insertRow();
-            linha.insertCell(0).innerText = nomeGC;
-            linha.insertCell(1).innerText = nivelGC;
-            linha.insertCell(2).innerText = membrosAtivos;
+            linha.insertCell(0).innerText = personagem;
+            linha.insertCell(1).innerText = brinco;
+            linha.insertCell(2).innerText = piercing;
+            linha.insertCell(3).innerText = anel;
+            linha.insertCell(4).innerText = berkas;
         }
+
+        window.onload = carregarPergaminhos;
     </script>
 </body>
 </html>
