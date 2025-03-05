@@ -66,14 +66,12 @@
             background-color: #2c3e50; /* Azul escuro minimalista */
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 10px 20px;
             border-radius: 4px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            width: 100%;
-            max-width: 200px;
         }
 
         button:hover {
@@ -116,6 +114,7 @@
 
         .search-bar input {
             flex: 1;
+            max-width: 200px; /* Tamanho menor para o campo de pesquisa */
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -305,6 +304,7 @@
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Pesquisar personagem...">
                 <button onclick="filtrarTabela()">Pesquisar</button>
+                <button onclick="limparFiltro()">Limpar Filtro</button>
             </div>
             <table id="tabela-gc">
                 <tr>
@@ -469,12 +469,24 @@
                 const td = tr[i].getElementsByTagName("td")[0]; // Filtra pela coluna "Personagem"
                 if (td) {
                     const txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    if (txtValue.toUpperCase().includes(filter)) {
                         tr[i].style.display = "";
                     } else {
                         tr[i].style.display = "none";
                     }
                 }
+            }
+        }
+
+        // Função para limpar o filtro
+        function limparFiltro() {
+            const input = document.getElementById("searchInput");
+            input.value = ""; // Limpa o campo de pesquisa
+            const table = document.getElementById("tabela-gc");
+            const tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) { // Começa em 1 para pular o cabeçalho
+                tr[i].style.display = ""; // Mostra todas as linhas
             }
         }
 
