@@ -75,6 +75,19 @@
             if (!personagem || !brinco || !piercing || !anel || !berkas) {
                 alert("Preencha todos os campos!");
                 return;
+             salvarPergaminhos();
+
+    set(ref(db, 'gc/' + personagem), {
+        brinco: brinco,
+        piercing: piercing,
+        anel: anel,
+        berkas: berkas
+    }).then(() => {
+        alert("GC salvo com sucesso!");
+        carregarGCs(); // Atualiza a tabela após salvar
+    }).catch((error) => {
+        console.error("Erro ao salvar GC: ", error);
+    });
             }
 
             set(ref(db, 'gc/' + personagem), {
