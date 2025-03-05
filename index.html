@@ -13,11 +13,9 @@
         }
     </style>
     <script type="module">
-        // Import Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
             authDomain: "gc-controle.firebaseapp.com",
@@ -29,11 +27,9 @@
             measurementId: "G-3NNXXD5V2T"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Função para salvar GC e Pergaminhos juntos
         function salvarGC() {
             let personagem = document.getElementById("personagem").value;
             let brinco = document.getElementById("brinco").value;
@@ -48,7 +44,6 @@
                 return;
             }
 
-            // Salvar os pergaminhos
             set(ref(db, 'pergaminhos/'), {
                 unico: pergaminhoUnico,
                 aleatorio: pergaminhoAleatorio
@@ -58,7 +53,6 @@
                 console.error("Erro ao salvar pergaminhos: ", error);
             });
 
-            // Salvar GC
             set(ref(db, 'gc/' + personagem), {
                 brinco: brinco,
                 piercing: piercing,
@@ -72,7 +66,6 @@
             });
         }
 
-        // Função para carregar pergaminhos
         function carregarPergaminhos() {
             get(ref(db, 'pergaminhos/')).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -87,7 +80,6 @@
             });
         }
 
-        // Função para carregar GCs
         function carregarGCs() {
             get(ref(db, 'gc/')).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -130,7 +122,7 @@
     <input type="number" id="pergaminho_unico">
     <label>Pergaminho Aleatório:</label>
     <input type="number" id="pergaminho_aleatorio">
-    
+
     <h2>Gerenciamento de GCs</h2>
     <label>Personagem:</label>
     <select id="personagem">
@@ -159,6 +151,9 @@
         <option value="Anel1">Anel 1</option>
         <option value="Anel2">Anel 2</option>
     </select>
+    
+    <label>Berkas:</label>
+    <input type="text" id="berkas">
     
     <button id="salvarGC" onclick="salvarGC()">Salvar GC</button>
     
