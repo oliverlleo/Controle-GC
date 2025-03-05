@@ -107,9 +107,6 @@
         </tr>
     </table>
 
-    <!-- Botão para acessar a tela "Controle GC" -->
-    <button onclick="mostrarControleGC()">Ir para Controle GC</button>
-
     <!-- Tela Controle GC -->
     <div id="controle-gc" style="display: none;">
         <h2>Controle GC</h2>
@@ -176,6 +173,9 @@
             dados[personagem] = { brinco, piercing, anel, berkas };
             localStorage.setItem("dadosPersonagens", JSON.stringify(dados));
             atualizarTabela();
+
+            // Salva os dados do GC no Firebase
+            salvarGC();
         }
 
         function atualizarTabela() {
@@ -194,18 +194,13 @@
         }
 
         // Funções para Controle GC
-        function mostrarControleGC() {
-            document.getElementById("controle-gc").style.display = "block";
-            carregarGCs(); // Carrega os GCs salvos ao abrir a tela
-        }
-
         function salvarGC() {
             let nomeGC = document.getElementById("nome-gc").value;
             let nivelGC = document.getElementById("nivel-gc").value;
             let membrosAtivos = document.getElementById("membros-ativos").value;
 
             if (!nomeGC || !nivelGC || !membrosAtivos) {
-                alert("Preencha todos os campos!");
+                alert("Preencha todos os campos do GC!");
                 return;
             }
 
@@ -246,6 +241,7 @@
         window.onload = function() {
             carregarPergaminhos();
             atualizarTabela();
+            carregarGCs(); // Carrega os GCs ao abrir a página
         };
     </script>
 </body>
