@@ -34,6 +34,8 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        console.log("Firebase inicializado:", app);
+console.log("Database referência:", db);
 
         // Função para salvar pergaminhos
         function salvarPergaminhos() {
@@ -123,6 +125,13 @@
             carregarPergaminhos();
             carregarGCs();
         };
+        set(ref(db, 'teste/'), {
+    mensagem: "Teste de conexão"
+}).then(() => {
+    console.log("🔥 Conexão com Firebase funcionando! Dados gravados com sucesso.");
+}).catch((error) => {
+    console.error("❌ Erro ao gravar no Firebase: ", error);
+});
     </script>
 </head>
 <body>
