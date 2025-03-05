@@ -12,6 +12,61 @@
             text-align: center;
         }
     </style>
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
+            authDomain: "gc-controle.firebaseapp.com",
+            projectId: "gc-controle",
+            storageBucket: "gc-controle.firebasestorage.app",
+            messagingSenderId: "3109203796",
+            appId: "1:3109203796:web:f8619117f915f67ceba2c1",
+            measurementId: "G-3NNXXD5V2T"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        function salvarPergaminhos() {
+            const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
+            const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
+            set(ref(db, 'pergaminhos/'), {
+                unico: pergaminhoUnico,
+                aleatorio: pergaminhoAleatorio
+            });
+        }
+
+        function carregarPergaminhos() {
+            get(child(ref(db), 'pergaminhos/')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
+                    document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
+                }
+            });
+        }
+
+        function salvarGC() {
+            let personagem = document.getElementById("personagem").value;
+            let brinco = document.getElementById("brinco").value;
+            let piercing = document.getElementById("piercing").value;
+            let anel = document.getElementById("anel").value;
+            let berkas = document.getElementById("berkas").value;
+
+            set(ref(db, 'gc/' + personagem), {
+                brinco: brinco,
+                piercing: piercing,
+                anel: anel,
+                berkas: berkas
+            });
+        }
+
+        window.onload = carregarPergaminhos;
+    </script>
 </head>
 <body>
     <h2>Gerenciamento de Pergaminhos</h2>
@@ -106,35 +161,5 @@
             <th>Berkas</th>
         </tr>
     </table>
-    
-    <script>
-        function salvarPergaminhos() {
-            localStorage.setItem("pergaminho_unico", document.getElementById("pergaminho_unico").value);
-            localStorage.setItem("pergaminho_aleatorio", document.getElementById("pergaminho_aleatorio").value);
-        }
-
-        function carregarPergaminhos() {
-            document.getElementById("pergaminho_unico").value = localStorage.getItem("pergaminho_unico") || "0";
-            document.getElementById("pergaminho_aleatorio").value = localStorage.getItem("pergaminho_aleatorio") || "0";
-        }
-
-        function salvarGC() {
-            let personagem = document.getElementById("personagem").value;
-            let brinco = document.getElementById("brinco").value;
-            let piercing = document.getElementById("piercing").value;
-            let anel = document.getElementById("anel").value;
-            let berkas = document.getElementById("berkas").value;
-
-            let tabela = document.getElementById("tabela-gc");
-            let linha = tabela.insertRow();
-            linha.insertCell(0).innerText = personagem;
-            linha.insertCell(1).innerText = brinco;
-            linha.insertCell(2).innerText = piercing;
-            linha.insertCell(3).innerText = anel;
-            linha.insertCell(4).innerText = berkas;
-        }
-
-        window.onload = carregarPergaminhos;
-    </script>
 </body>
 </html>
