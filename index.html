@@ -17,6 +17,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
+
         // Firebase configuration
       
         const firebaseConfig = {
@@ -88,7 +89,7 @@
 
         // Função para carregar GCs
         function carregarGCs() {
-            get(child(ref(db), 'gc/')).then((snapshot) => {
+            get(ref(db, 'gc/')).then((snapshot) => {
                 if (snapshot.exists()) {
                     let tabela = document.getElementById("tabela-gc");
                     tabela.innerHTML = `
