@@ -33,13 +33,22 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Função para salvar pergaminhos
-        function salvarPergaminhos() {
-            const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
-            const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
+        // Função para salvar GC e Pergaminhos juntos
+        function salvarGC() {
+            let personagem = document.getElementById("personagem").value;
+            let brinco = document.getElementById("brinco").value;
+            let piercing = document.getElementById("piercing").value;
+            let anel = document.getElementById("anel").value;
+            let berkas = document.getElementById("berkas").value;
+            let pergaminhoUnico = document.getElementById("pergaminho_unico").value;
+            let pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
 
-            console.log("Salvando pergaminhos:", pergaminhoUnico, pergaminhoAleatorio);
+            if (!personagem || !brinco || !piercing || !anel || !berkas) {
+                alert("Preencha todos os campos!");
+                return;
+            }
 
+            // Salvar os pergaminhos
             set(ref(db, 'pergaminhos/'), {
                 unico: pergaminhoUnico,
                 aleatorio: pergaminhoAleatorio
@@ -47,6 +56,19 @@
                 console.log("Pergaminhos salvos com sucesso!");
             }).catch((error) => {
                 console.error("Erro ao salvar pergaminhos: ", error);
+            });
+
+            // Salvar GC
+            set(ref(db, 'gc/' + personagem), {
+                brinco: brinco,
+                piercing: piercing,
+                anel: anel,
+                berkas: berkas
+            }).then(() => {
+                alert("GC e Pergaminhos salvos com sucesso!");
+                carregarGCs();
+            }).catch((error) => {
+                console.error("Erro ao salvar GC: ", error);
             });
         }
 
@@ -62,32 +84,6 @@
                 }
             }).catch((error) => {
                 console.error("Erro ao carregar pergaminhos: ", error);
-            });
-        }
-
-        // Função para salvar GC
-        function salvarGC() {
-            let personagem = document.getElementById("personagem").value;
-            let brinco = document.getElementById("brinco").value;
-            let piercing = document.getElementById("piercing").value;
-            let anel = document.getElementById("anel").value;
-            let berkas = document.getElementById("berkas").value;
-
-            if (!personagem || !brinco || !piercing || !anel || !berkas) {
-                alert("Preencha todos os campos!");
-                return;
-            }
-
-            set(ref(db, 'gc/' + personagem), {
-                brinco: brinco,
-                piercing: piercing,
-                anel: anel,
-                berkas: berkas
-            }).then(() => {
-                alert("GC salvo com sucesso!");
-                carregarGCs();
-            }).catch((error) => {
-                console.error("Erro ao salvar GC: ", error);
             });
         }
 
@@ -134,10 +130,9 @@
     <input type="number" id="pergaminho_unico">
     <label>Pergaminho Aleatório:</label>
     <input type="number" id="pergaminho_aleatorio">
-    <button onclick="salvarPergaminhos()">Salvar Pergaminhos</button>
     
     <h2>Gerenciamento de GCs</h2>
-    <button id="salvarGC">Salvar GC</button>
+    <button id="salvarGC" onclick="salvarGC()">Salvar GC</button>
     
     <h2>Lista de GCs Salvos</h2>
     <table id="tabela-gc">
