@@ -106,8 +106,54 @@
             <th>Berkas</th>
         </tr>
     </table>
-    
+
+    <!-- Botão para acessar a tela "Controle GC" -->
+    <button onclick="mostrarControleGC()">Ir para Controle GC</button>
+
+    <!-- Tela Controle GC -->
+    <div id="controle-gc" style="display: none;">
+        <h2>Controle GC</h2>
+        <label>Nome do GC:</label>
+        <input type="text" id="nome-gc" placeholder="Digite o nome do GC">
+        <br><br>
+        <label>Nível do GC:</label>
+        <input type="number" id="nivel-gc" placeholder="Digite o nível">
+        <br><br>
+        <label>Membros Ativos:</label>
+        <input type="number" id="membros-ativos" placeholder="Digite o número de membros">
+        <br><br>
+        <button onclick="salvarGC()">Salvar GC</button>
+        
+        <h3>Lista de GCs Salvos</h3>
+        <table id="tabela-gc">
+            <tr>
+                <th>Nome do GC</th>
+                <th>Nível</th>
+                <th>Membros Ativos</th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Firebase e Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js"></script>
     <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            databaseURL: "SUA_DATABASE_URL",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicialize o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Funções para Gerenciamento de Pergaminhos
         function salvarPergaminhos() {
             localStorage.setItem("pergaminho_unico", document.getElementById("pergaminho_unico").value);
             localStorage.setItem("pergaminho_aleatorio", document.getElementById("pergaminho_aleatorio").value);
@@ -117,7 +163,8 @@
             document.getElementById("pergaminho_unico").value = localStorage.getItem("pergaminho_unico") || "";
             document.getElementById("pergaminho_aleatorio").value = localStorage.getItem("pergaminho_aleatorio") || "";
         }
-        
+
+        // Funções para Salvar e Carregar Dados dos Personagens
         function salvarDados() {
             let personagem = document.getElementById("personagem").value;
             let brinco = document.getElementById("brinco").value;
@@ -130,7 +177,7 @@
             localStorage.setItem("dadosPersonagens", JSON.stringify(dados));
             atualizarTabela();
         }
-        
+
         function atualizarTabela() {
             let tabela = document.getElementById("tabela");
             tabela.innerHTML = `<tr><th>Personagem</th><th>Brinco</th><th>Piercing</th><th>Anel</th><th>Berkas</th></tr>`;
@@ -145,7 +192,58 @@
                 linha.insertCell(4).innerText = dados[personagem].berkas;
             }
         }
-        
+
+        // Funções para Controle GC
+        function mostrarControleGC() {
+            document.getElementById("controle-gc").style.display = "block";
+            document.getElementById("outra-tela").style.display = "none"; // Substitua "outra-tela" pelo ID da tela que você quer ocultar
+            carregarGCs(); // Carrega os GCs salvos ao abrir a tela
+        }
+
+        function salvarGC() {
+            let nomeGC = document.getElementById("nome-gc").value;
+            let nivelGC = document.getElementById("nivel-gc").value;
+            let membrosAtivos = document.getElementById("membros-ativos").value;
+
+            if (!nomeGC || !nivelGC || !membrosAtivos) {
+                alert("Preencha todos os campos!");
+                return;
+            }
+
+            // Salva no Firebase
+            database.ref('gcs/' + nomeGC).set({
+                nivel: nivelGC,
+                membros: membrosAtivos
+            }).then(() => {
+                alert("GC salvo com sucesso!");
+                carregarGCs(); // Atualiza a tabela após salvar
+            }).catch((error) => {
+                console.error("Erro ao salvar GC: ", error);
+            });
+        }
+
+        function carregarGCs() {
+            database.ref('gcs').once('value').then((snapshot) => {
+                let dados = snapshot.val() || {};
+                atualizarTabelaGC(dados);
+            }).catch((error) => {
+                console.error("Erro ao carregar GCs: ", error);
+            });
+        }
+
+        function atualizarTabelaGC(dados) {
+            let tabela = document.getElementById("tabela-gc");
+            tabela.innerHTML = `<tr><th>Nome do GC</th><th>Nível</th><th>Membros Ativos</th></tr>`;
+
+            for (let nomeGC in dados) {
+                let linha = tabela.insertRow();
+                linha.insertCell(0).innerText = nomeGC;
+                linha.insertCell(1).innerText = dados[nomeGC].nivel;
+                linha.insertCell(2).innerText = dados[nomeGC].membros;
+            }
+        }
+
+        // Carrega os dados ao abrir a página
         window.onload = function() {
             carregarPergaminhos();
             atualizarTabela();
