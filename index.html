@@ -114,11 +114,10 @@
         }
 
         /* Layout de colunas */
-     .columns {
-    display: flex;
-    gap: 20px; /* Espaçamento entre colunas */
-    align-items: flex-end; /* Alinha os itens à base do contêiner */
-}
+        .columns {
+            display: flex;
+            gap: 20px; /* Espaçamento entre colunas */
+        }
 
         .columns > div {
             flex: 1;
@@ -390,14 +389,14 @@
             get(ref(db, 'gc/')).then((snapshot) => {
                 if (snapshot.exists()) {
                     let tabela = document.getElementById("tabela-gc");
-                    tabela.innerHTML = `
+                    tabela.innerHTML = 
                         <tr>
                             <th>Personagem</th>
                             <th>Brinco</th>
                             <th>Piercing</th>
                             <th>Anel</th>
                             <th>Berkas</th>
-                        </tr>`;
+                        </tr>;
                     
                     snapshot.forEach((childSnapshot) => {
                         let dados = childSnapshot.val();
