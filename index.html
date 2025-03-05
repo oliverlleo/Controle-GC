@@ -32,24 +32,33 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Função para salvar pergaminhos
         function salvarPergaminhos() {
             const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
             const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
             set(ref(db, 'pergaminhos/'), {
                 unico: pergaminhoUnico,
                 aleatorio: pergaminhoAleatorio
+            }).then(() => {
+                console.log("Pergaminhos salvos com sucesso!");
+            }).catch((error) => {
+                console.error("Erro ao salvar pergaminhos: ", error);
             });
         }
 
+        // Função para carregar pergaminhos
         function carregarPergaminhos() {
             get(child(ref(db), 'pergaminhos/')).then((snapshot) => {
                 if (snapshot.exists()) {
                     document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
                     document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
                 }
+            }).catch((error) => {
+                console.error("Erro ao carregar pergaminhos: ", error);
             });
         }
 
+        // Função para salvar GC
         function salvarGC() {
             let personagem = document.getElementById("personagem").value;
             let brinco = document.getElementById("brinco").value;
@@ -57,16 +66,25 @@
             let anel = document.getElementById("anel").value;
             let berkas = document.getElementById("berkas").value;
 
+            if (!personagem || !brinco || !piercing || !anel || !berkas) {
+                alert("Preencha todos os campos!");
+                return;
+            }
+
             set(ref(db, 'gc/' + personagem), {
                 brinco: brinco,
                 piercing: piercing,
                 anel: anel,
                 berkas: berkas
             }).then(() => {
-                carregarGCs();
+                alert("GC salvo com sucesso!");
+                carregarGCs(); // Atualiza a tabela após salvar
+            }).catch((error) => {
+                console.error("Erro ao salvar GC: ", error);
             });
         }
 
+        // Função para carregar GCs
         function carregarGCs() {
             get(child(ref(db), 'gc/')).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -89,10 +107,15 @@
                         linha.insertCell(3).textContent = dados.anel;
                         linha.insertCell(4).textContent = dados.berkas;
                     });
+                } else {
+                    console.log("Nenhum GC salvo ainda.");
                 }
+            }).catch((error) => {
+                console.error("Erro ao carregar GCs: ", error);
             });
         }
 
+        // Carrega os dados ao abrir a página
         window.onload = function() {
             carregarPergaminhos();
             carregarGCs();
