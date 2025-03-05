@@ -34,21 +34,10 @@
         const db = getDatabase(app);
 
         // Função para salvar pergaminhos
-    function salvarPergaminhos() {
-    const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
-    const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
+        function salvarPergaminhos() {
+            const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
+            const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
 
-    console.log("Salvando pergaminhos:", pergaminhoUnico, pergaminhoAleatorio); // Adicione esta linha
-
-    set(ref(db, 'pergaminhos/'), {
-        unico: pergaminhoUnico,
-        aleatorio: pergaminhoAleatorio
-    }).then(() => {
-        console.log("Pergaminhos salvos com sucesso!");
-    }).catch((error) => {
-        console.error("Erro ao salvar pergaminhos: ", error);
-    });
-}
             // Salva os valores no Firebase
             set(ref(db, 'pergaminhos/'), {
                 unico: pergaminhoUnico,
