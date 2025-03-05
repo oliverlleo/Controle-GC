@@ -107,6 +107,28 @@
             background-color: #f1f1f1;
         }
 
+        /* Barra de pesquisa */
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            border-color: #2c3e50; /* Azul escuro minimalista */
+            outline: none;
+        }
+
         /* Margens e espaçamentos */
         .section {
             margin-bottom: 30px;
@@ -215,7 +237,7 @@
                     
                     <label>Brinco:</label>
                     <select id="brinco">
-                        <option>Nenhum</option> <!-- Opção "Nenhum" adicionada -->
+                        <option>Nenhum</option>
                         <option>Harkyon</option>
                         <option>Normal</option>
                         <option>Épico</option>
@@ -225,7 +247,7 @@
                 <div>
                     <label>Piercing:</label>
                     <select id="piercing">
-                        <option>Nenhum</option> <!-- Opção "Nenhum" adicionada -->
+                        <option>Nenhum</option>
                         <option>Harkyon</option>
                         <option>Normal</option>
                         <option>Épico</option>
@@ -234,7 +256,7 @@
                     
                     <label>Anel:</label>
                     <select id="anel">
-                        <option>Nenhum</option> <!-- Opção "Nenhum" adicionada -->
+                        <option>Nenhum</option>
                         <option>Harkyon</option>
                         <option>Nível 1.1</option>
                         <option>Nível 1.2</option>
@@ -250,7 +272,7 @@
                 <div>
                     <label>Berkas:</label>
                     <select id="berkas">
-                        <option>Nenhum</option> <!-- Opção "Nenhum" adicionada -->
+                        <option>Nenhum</option>
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
@@ -273,6 +295,10 @@
         <!-- Lista de GCs Salvos -->
         <div class="section">
             <h2>Controle Personagens</h2>
+            <!-- Barra de pesquisa -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Pesquisar personagem..." oninput="filtrarTabela()">
+            </div>
             <table id="tabela-gc">
                 <tr>
                     <th>Personagem</th>
@@ -423,6 +449,26 @@
             }).catch((error) => {
                 console.error("Erro ao carregar GCs: ", error);
             });
+        }
+
+        // Função para filtrar a tabela
+        function filtrarTabela() {
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById("tabela-gc");
+            const tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) { // Começa em 1 para pular o cabeçalho
+                const td = tr[i].getElementsByTagName("td")[0]; // Filtra pela coluna "Personagem"
+                if (td) {
+                    const txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
         }
 
         // Carrega os dados ao abrir a página
