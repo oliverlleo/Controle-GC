@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seleção de Personagem</title>
+    <title>Controle GC</title>
     <style>
         table, th, td {
             border: 1px solid black;
@@ -23,29 +23,29 @@
     <h2>Selecione as opções</h2>
     <label>Personagem:</label>
     <select id="personagem">
-        <option> Elesis </option>
-        <option> Lire </option>
-        <option> Arme </option>
-        <option> Lass </option>
-        <option> Ryan </option>
-        <option> Ronan </option>
-        <option> Amy </option>
-        <option> Jin </option>
-        <option> Sieghart </option>
-        <option> Mari </option>
-        <option> Dio </option>
-        <option> Zero </option>
-        <option> Rey </option>
-        <option> Lupus </option>
-        <option> Lin </option>
-        <option> Azin </option>
-        <option> Holy </option>
-        <option> Edel Frost </option>
-        <option> Veigas </option>
-        <option> Uno </option>
-        <option> Decane </option>
-        <option> Ai </option>
-        <option> Kallia Eldepel </option>
+        <option>Elesis</option>
+        <option>Lire</option>
+        <option>Arme</option>
+        <option>Lass</option>
+        <option>Ryan</option>
+        <option>Ronan</option>
+        <option>Amy</option>
+        <option>Jin</option>
+        <option>Sieghart</option>
+        <option>Mari</option>
+        <option>Dio</option>
+        <option>Zero</option>
+        <option>Rey</option>
+        <option>Lupus</option>
+        <option>Lin</option>
+        <option>Azin</option>
+        <option>Holy</option>
+        <option>Edel Frost</option>
+        <option>Veigas</option>
+        <option>Uno</option>
+        <option>Decane</option>
+        <option>Ai</option>
+        <option>Kallia Eldepel</option>
     </select>
     
     <label>Brinco:</label>
@@ -138,15 +138,15 @@
     <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js"></script>
     <script>
-        // Configuração do Firebase
+        // Configuração do Firebase (substitua pelos seus dados)
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            databaseURL: "SUA_DATABASE_URL",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
+            authDomain: "gc-controle.firebaseapp.com",
+            projectId: "gc-controle",
+            storageBucket: "gc-controle.firebasestorage.app",
+            messagingSenderId: "3109203796",
+            appId: "1:3109203796:web:f8619117f915f67ceba2c1",
+            measurementId: "G-3NNXXD5V2T"
         };
 
         // Inicialize o Firebase
@@ -195,8 +195,7 @@
 
         // Funções para Controle GC
         function mostrarControleGC() {
-            document.getElementById("gc-controle").style.display = "block";
-            document.getElementById("outra-tela").style.display = "none"; // Substitua "outra-tela" pelo ID da tela que você quer ocultar
+            document.getElementById("controle-gc").style.display = "block";
             carregarGCs(); // Carrega os GCs salvos ao abrir a tela
         }
 
@@ -249,28 +248,5 @@
             atualizarTabela();
         };
     </script>
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
-    authDomain: "gc-controle.firebaseapp.com",
-    projectId: "gc-controle",
-    storageBucket: "gc-controle.firebasestorage.app",
-    messagingSenderId: "3109203796",
-    appId: "1:3109203796:web:f8619117f915f67ceba2c1",
-    measurementId: "G-3NNXXD5V2T"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
 </body>
 </html>
