@@ -68,28 +68,17 @@
         }
 
         // Função para salvar GC
-       function salvarGC() {
+        function salvarGC() {
             let personagem = document.getElementById("personagem").value;
             let brinco = document.getElementById("brinco").value;
             let piercing = document.getElementById("piercing").value;
             let anel = document.getElementById("anel").value;
             let berkas = document.getElementById("berkas").value;
-            let pergaminhoUnico = document.getElementById("pergaminho_unico").value;
-            let pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
 
             if (!personagem || !brinco || !piercing || !anel || !berkas) {
                 alert("Preencha todos os campos!");
                 return;
             }
-
-            set(ref(db, 'pergaminhos/'), {
-                unico: pergaminhoUnico,
-                aleatorio: pergaminhoAleatorio
-            }).then(() => {
-                console.log("Pergaminhos salvos com sucesso!");
-            }).catch((error) => {
-                console.error("Erro ao salvar pergaminhos: ", error);
-            });
 
             set(ref(db, 'gc/' + personagem), {
                 brinco: brinco,
@@ -97,27 +86,14 @@
                 anel: anel,
                 berkas: berkas
             }).then(() => {
-                alert("GC e Pergaminhos salvos com sucesso!");
-                carregarGCs();
+                alert("GC salvo com sucesso!");
+                carregarGCs(); // Atualiza a tabela após salvar
             }).catch((error) => {
                 console.error("Erro ao salvar GC: ", error);
             });
         }
 
-        function carregarPergaminhos() {
-            get(ref(db, 'pergaminhos/')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
-                    document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
-                    console.log("Pergaminhos carregados com sucesso!");
-                } else {
-                    console.log("Nenhum valor de pergaminho salvo ainda.");
-                }
-            }).catch((error) => {
-                console.error("Erro ao carregar pergaminhos: ", error);
-            });
-        }
-
+        // Função para carregar GCs
         function carregarGCs() {
             get(ref(db, 'gc/')).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -148,10 +124,12 @@
             });
         }
 
+        // Carrega os dados ao abrir a página
         window.onload = function() {
-            carregarPergaminhos();
-            carregarGCs();
+            carregarPergaminhos(); // Carrega os valores dos pergaminhos
+            carregarGCs(); // Carrega a lista de GCs
         };
+
         // Adiciona o evento de clique ao botão "Salvar GC"
         document.getElementById("salvarGC").addEventListener("click", salvarGC);
     </script>
