@@ -14,11 +14,10 @@
       padding: 20px;
       color: #333;
     }
-    /* Adicionamos margem superior para não ficar atrás do seletor fixo */
     .container {
       position: relative;
       max-width: 800px;
-      margin: 70px auto 0 auto; /* margem-top de 70px para dar espaço ao seletor */
+      margin: 0 auto;
       padding: 20px;
       background-color: #ffffff;
       border-radius: 8px;
@@ -214,29 +213,14 @@
         white-space: nowrap;
       }
     }
-    /* Seletor de linguagem fixo no canto superior esquerdo */
+    /* Estilo do seletor de idioma dentro do bloco "Gerenciamento de Quantidade" */
     #languageSelectorContainer {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 9999;
-      background: #fff;
-      padding: 5px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      margin-bottom: 20px;
+      /* Sem posição fixa, ficará dentro do fluxo do documento */
     }
   </style>
 </head>
 <body>
-  <!-- Seletor de Linguagem -->
-  <div id="languageSelectorContainer">
-    <select id="languageSelector">
-      <option value="pt">Português</option>
-      <option value="en">English</option>
-      <option value="ko">한국어</option>
-    </select>
-  </div>
-
   <!-- Tela de Login/Cadastro -->
   <div class="container" id="telaLogin">
     <h2 data-i18n="loginTitle">Login / Cadastro</h2>
@@ -255,8 +239,17 @@
   <div class="container hidden" id="telaPrincipal">
     <!-- Botão de Sair -->
     <button id="botaoSair">X</button>
-    <!-- Gerenciamento de Quantidade -->
+
+    <!-- Bloco de Gerenciamento de Quantidade com Seletor de Idioma -->
     <div class="section">
+      <!-- Seletor de Idioma posicionado dentro do bloco -->
+      <div id="languageSelectorContainer">
+        <select id="languageSelector">
+          <option value="pt">Português</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+        </select>
+      </div>
       <h2 data-i18n="quantityManagement">Gerenciamento de Quantidade</h2>
       <div class="pergaminhos">
         <div>
@@ -270,7 +263,7 @@
       </div>
     </div>
 
-    <!-- Controle -->
+    <!-- Bloco de Controle -->
     <div class="section">
       <h2 data-i18n="controlTitle">Controle</h2>
       <div class="columns">
@@ -358,7 +351,7 @@
       <button id="botaoSalvar" data-i18n="saveButton">Salvar</button>
     </div>
 
-    <!-- Controle (Tabela) -->
+    <!-- Bloco de Controle (Tabela) -->
     <div class="section">
       <h2 data-i18n="controlTitle">Controle</h2>
       <div class="search-bar">
