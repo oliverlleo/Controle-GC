@@ -14,17 +14,6 @@
       padding: 20px;
       color: #333;
     }
-    .language-selector {
-  font-size: 16px; /* Ajusta o tamanho do texto */
-  padding: 5px 10px; /* Ajusta o espaçamento interno */
-  width: 40px; /* Define a largura do seletor */
-}
-    @media (max-width: 768px) {
-  .language-selector {
-    font-size: 14px;
-    width: 40px;
-  }
-}
     .container {
       position: relative;
       max-width: 800px;
@@ -224,10 +213,25 @@
         white-space: nowrap;
       }
     }
-    /* Estilo do seletor de idioma dentro do bloco "Gerenciamento de Quantidade" */
+    /* Estilo do seletor de idioma minimalista */
     #languageSelectorContainer {
       margin-bottom: 6px;
-      /* Sem posição fixa, ficará dentro do fluxo do documento */
+      display: flex;
+      justify-content: flex-end;
+    }
+    #languageSelector {
+      width: auto;
+      padding: 5px 8px;
+      font-size: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      color: #333;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+    #languageSelector:hover {
+      border-color: #2c3e50;
     }
   </style>
 </head>
@@ -253,7 +257,7 @@
 
     <!-- Bloco de Gerenciamento de Quantidade com Seletor de Idioma -->
     <div class="section">
-      <!-- Seletor de Idioma posicionado dentro do bloco -->
+      <!-- Seletor de Idioma minimalista -->
       <div id="languageSelectorContainer">
         <select id="languageSelector">
           <option value="pt">Português</option>
