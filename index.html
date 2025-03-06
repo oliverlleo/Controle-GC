@@ -14,10 +14,11 @@
       padding: 20px;
       color: #333;
     }
+    /* Adicionamos margem superior para não ficar atrás do seletor fixo */
     .container {
       position: relative;
       max-width: 800px;
-      margin: 0 auto;
+      margin: 70px auto 0 auto; /* margem-top de 70px para dar espaço ao seletor */
       padding: 20px;
       background-color: #ffffff;
       border-radius: 8px;
@@ -218,7 +219,7 @@
       position: fixed;
       top: 10px;
       left: 10px;
-      z-index: 9999; /* Valor maior para garantir que fique sempre na frente */
+      z-index: 9999;
       background: #fff;
       padding: 5px;
       border: 1px solid #ddd;
