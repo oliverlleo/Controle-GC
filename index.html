@@ -152,20 +152,49 @@
     tr:hover {
       background-color: #f1f1f1;
     }
+
+    /* Ajustes para mobile */
     @media (max-width: 600px) {
       h2 {
         font-size: 20px;
       }
+
+      /* Ajustes para a tela de login */
+      .login-container input {
+        width: calc(100% - 20px); /* Reduz a largura dos campos de entrada */
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      .login-container button {
+        width: calc(100% - 20px); /* Reduz a largura dos botões */
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      /* Ajustes para o gerenciamento de quantidade */
+      .pergaminhos input {
+        width: calc(100% - 20px); /* Reduz a largura dos campos de entrada */
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      /* Ajustes para a barra de pesquisa */
       .search-bar {
-        flex-direction: column;
+        flex-direction: row; /* Mantém os botões lado a lado */
+        flex-wrap: wrap; /* Permite que os botões quebrem para a próxima linha se necessário */
+        gap: 10px;
+        padding: 0 10px; /* Adiciona padding nas laterais */
       }
+
+      .search-bar input {
+        flex: 1 1 100%; /* Faz o campo de pesquisa ocupar a linha inteira */
+        max-width: 100%; /* Remove a limitação de largura */
+      }
+
       .search-bar button {
-        width: 100%;
-      }
-      table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+        flex: 1 1 calc(50% - 10px); /* Faz os botões ocuparem metade da largura, menos o gap */
+        max-width: calc(50% - 10px); /* Limita a largura dos botões */
       }
     }
   </style>
