@@ -213,20 +213,40 @@
         white-space: nowrap;
       }
     }
+    /* Seletor de linguagem fixo no canto superior esquerdo */
+    #languageSelectorContainer {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      background: #fff;
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
+  <!-- Seletor de Linguagem -->
+  <div id="languageSelectorContainer">
+    <select id="languageSelector">
+      <option value="pt">Português</option>
+      <option value="en">English</option>
+      <option value="ko">한국어</option>
+    </select>
+  </div>
+
   <!-- Tela de Login/Cadastro -->
   <div class="container" id="telaLogin">
-    <h2>Login / Cadastro</h2>
+    <h2 data-i18n="loginTitle">Login / Cadastro</h2>
     <div class="login-container">
-      <label for="email">E-mail:</label>
+      <label for="email" data-i18n="emailLabel">E-mail:</label>
       <input type="email" id="email" placeholder="Digite seu e-mail">
-      <label for="senha">Senha:</label>
+      <label for="senha" data-i18n="passwordLabel">Senha:</label>
       <input type="password" id="senha" placeholder="Digite sua senha">
-      <button id="botaoLogin">Login</button>
-      <button id="botaoCadastro">Cadastrar</button>
-      <button id="botaoRecuperar">Recuperar Senha</button>
+      <button id="botaoLogin" data-i18n="loginButton">Login</button>
+      <button id="botaoCadastro" data-i18n="registerButton">Cadastrar</button>
+      <button id="botaoRecuperar" data-i18n="recoverButton">Recuperar Senha</button>
     </div>
   </div>
 
@@ -236,14 +256,14 @@
     <button id="botaoSair">X</button>
     <!-- Gerenciamento de Quantidade -->
     <div class="section">
-      <h2>Gerenciamento de Quantidade</h2>
+      <h2 data-i18n="quantityManagement">Gerenciamento de Quantidade</h2>
       <div class="pergaminhos">
         <div>
-          <label>Quantidade Única:</label>
+          <label data-i18n="uniqueQuantity">Quantidade Única:</label>
           <input type="number" id="quantidade_unica" oninput="atualizarQuantidades()">
         </div>
         <div>
-          <label>Quantidade Aleatória:</label>
+          <label data-i18n="randomQuantity">Quantidade Aleatória:</label>
           <input type="number" id="quantidade_aleatoria" oninput="atualizarQuantidades()">
         </div>
       </div>
@@ -251,10 +271,10 @@
 
     <!-- Controle -->
     <div class="section">
-      <h2>Controle</h2>
+      <h2 data-i18n="controlTitle">Controle</h2>
       <div class="columns">
         <div>
-          <label>Usuário:</label>
+          <label data-i18n="userLabel">Usuário:</label>
           <select id="usuario">
             <option>Usuário 1</option>
             <option>Usuário 2</option>
@@ -281,7 +301,7 @@
             <option>Usuário 23</option>
           </select>
           
-          <label>Cadastro 1:</label>
+          <label data-i18n="registration1">Cadastro 1:</label>
           <select id="cadastro1">
             <option>Opção 1</option>
             <option>Opção 2</option>
@@ -291,7 +311,7 @@
           </select>
         </div>
         <div>
-          <label>Cadastro 2:</label>
+          <label data-i18n="registration2">Cadastro 2:</label>
           <select id="cadastro2">
             <option>Opção 1</option>
             <option>Opção 2</option>
@@ -300,7 +320,7 @@
             <option>Opção 5</option>
           </select>
           
-          <label>Cadastro 3:</label>
+          <label data-i18n="registration3">Cadastro 3:</label>
           <select id="cadastro3">
             <option>Opção 1</option>
             <option>Opção 2</option>
@@ -316,7 +336,7 @@
           </select>
         </div>
         <div>
-          <label>Cadastro 4:</label>
+          <label data-i18n="registration4">Cadastro 4:</label>
           <select id="cadastro4">
             <option>Opção 1</option>
             <option>Opção 2</option>
@@ -334,27 +354,25 @@
           </select>
         </div>
       </div>
-      <!-- Botão "Salvar" -->
-      <button id="botaoSalvar">Salvar</button>
+      <button id="botaoSalvar" data-i18n="saveButton">Salvar</button>
     </div>
 
     <!-- Controle (Tabela) -->
     <div class="section">
-      <h2>Controle</h2>
-      <!-- Barra de pesquisa -->
+      <h2 data-i18n="controlTitle">Controle</h2>
       <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Pesquisar usuário...">
-        <button id="btnPesquisar">Pesquisar</button>
-        <button id="btnLimparFiltro">Limpar Filtro</button>
+        <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Pesquisar usuário...">
+        <button id="btnPesquisar" data-i18n="searchButton">Pesquisar</button>
+        <button id="btnLimparFiltro" data-i18n="clearFilterButton">Limpar Filtro</button>
       </div>
       <table id="tabela_controle">
         <tr>
-          <th>Usuário</th>
-          <th>Cadastro 1</th>
-          <th>Cadastro 2</th>
-          <th>Cadastro 3</th>
-          <th>Cadastro 4</th>
-          <th>Ação</th>
+          <th data-i18n="controlTable.user">Usuário</th>
+          <th data-i18n="controlTable.reg1">Cadastro 1</th>
+          <th data-i18n="controlTable.reg2">Cadastro 2</th>
+          <th data-i18n="controlTable.reg3">Cadastro 3</th>
+          <th data-i18n="controlTable.reg4">Cadastro 4</th>
+          <th data-i18n="controlTable.action">Ação</th>
         </tr>
       </table>
     </div>
@@ -407,6 +425,163 @@
     const cadastro2 = document.getElementById("cadastro2");
     const cadastro3 = document.getElementById("cadastro3");
     const cadastro4 = document.getElementById("cadastro4");
+
+    // Seletor de linguagem
+    const languageSelector = document.getElementById("languageSelector");
+    let currentLang = languageSelector.value; // 'pt', 'en' ou 'ko'
+
+    // Objeto de traduções
+    const translations = {
+      loginTitle: {
+        pt: "Login / Cadastro",
+        en: "Login / Register",
+        ko: "로그인 / 회원가입"
+      },
+      emailLabel: {
+        pt: "E-mail:",
+        en: "Email:",
+        ko: "이메일:"
+      },
+      passwordLabel: {
+        pt: "Senha:",
+        en: "Password:",
+        ko: "비밀번호:"
+      },
+      loginButton: {
+        pt: "Login",
+        en: "Login",
+        ko: "로그인"
+      },
+      registerButton: {
+        pt: "Cadastrar",
+        en: "Register",
+        ko: "회원가입"
+      },
+      recoverButton: {
+        pt: "Recuperar Senha",
+        en: "Recover Password",
+        ko: "비밀번호 복구"
+      },
+      quantityManagement: {
+        pt: "Gerenciamento de Quantidade",
+        en: "Quantity Management",
+        ko: "수량 관리"
+      },
+      uniqueQuantity: {
+        pt: "Quantidade Única:",
+        en: "Unique Quantity:",
+        ko: "고유 수량:"
+      },
+      randomQuantity: {
+        pt: "Quantidade Aleatória:",
+        en: "Random Quantity:",
+        ko: "랜덤 수량:"
+      },
+      controlTitle: {
+        pt: "Controle",
+        en: "Control",
+        ko: "제어"
+      },
+      userLabel: {
+        pt: "Usuário:",
+        en: "User:",
+        ko: "사용자:"
+      },
+      registration1: {
+        pt: "Cadastro 1:",
+        en: "Registration 1:",
+        ko: "등록 1:"
+      },
+      registration2: {
+        pt: "Cadastro 2:",
+        en: "Registration 2:",
+        ko: "등록 2:"
+      },
+      registration3: {
+        pt: "Cadastro 3:",
+        en: "Registration 3:",
+        ko: "등록 3:"
+      },
+      registration4: {
+        pt: "Cadastro 4:",
+        en: "Registration 4:",
+        ko: "등록 4:"
+      },
+      saveButton: {
+        pt: "Salvar",
+        en: "Save",
+        ko: "저장"
+      },
+      controlTable: {
+        user: {
+          pt: "Usuário",
+          en: "User",
+          ko: "사용자"
+        },
+        reg1: {
+          pt: "Cadastro 1",
+          en: "Registration 1",
+          ko: "등록 1"
+        },
+        reg2: {
+          pt: "Cadastro 2",
+          en: "Registration 2",
+          ko: "등록 2"
+        },
+        reg3: {
+          pt: "Cadastro 3",
+          en: "Registration 3",
+          ko: "등록 3"
+        },
+        reg4: {
+          pt: "Cadastro 4",
+          en: "Registration 4",
+          ko: "등록 4"
+        },
+        action: {
+          pt: "Ação",
+          en: "Action",
+          ko: "작업"
+        }
+      },
+      searchPlaceholder: {
+        pt: "Pesquisar usuário...",
+        en: "Search user...",
+        ko: "사용자 검색..."
+      },
+      searchButton: {
+        pt: "Pesquisar",
+        en: "Search",
+        ko: "검색"
+      },
+      clearFilterButton: {
+        pt: "Limpar Filtro",
+        en: "Clear Filter",
+        ko: "필터 초기화"
+      }
+    };
+
+    // Função para atualizar os textos conforme o idioma selecionado
+    function updateLanguage() {
+      currentLang = languageSelector.value;
+      // Atualiza elementos com data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if(translations[key]) {
+          el.innerText = translations[key][currentLang];
+        }
+      });
+      // Atualiza placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if(translations[key]) {
+          el.placeholder = translations[key][currentLang];
+        }
+      });
+    }
+
+    languageSelector.addEventListener("change", updateLanguage);
+    updateLanguage();
 
     // Alterna as telas
     const mostrarTelaLogin = () => {
@@ -553,15 +728,14 @@
       if (!usuarioAtual) return;
       try {
         const snapshot = await get(ref(database, `users/${usuarioAtual.uid}/controle`));
-        // Recria o cabeçalho da tabela
         tabelaControle.innerHTML = `
           <tr>
-            <th>Usuário</th>
-            <th>Cadastro 1</th>
-            <th>Cadastro 2</th>
-            <th>Cadastro 3</th>
-            <th>Cadastro 4</th>
-            <th>Ação</th>
+            <th data-i18n="controlTable.user">Usuário</th>
+            <th data-i18n="controlTable.reg1">Cadastro 1</th>
+            <th data-i18n="controlTable.reg2">Cadastro 2</th>
+            <th data-i18n="controlTable.reg3">Cadastro 3</th>
+            <th data-i18n="controlTable.reg4">Cadastro 4</th>
+            <th data-i18n="controlTable.action">Ação</th>
           </tr>
         `;
         if (snapshot.exists()) {
@@ -624,7 +798,7 @@
     btnPesquisar.addEventListener("click", filtrarControle);
     btnLimparFiltro.addEventListener("click", limparFiltro);
 
-    // Torna funções globais para uso inline (por exemplo, no botão de exclusão)
+    // Torna funções globais para uso inline (ex.: botão de exclusão)
     window.excluirControle = excluirControle;
     window.atualizarQuantidades = atualizarQuantidades;
   </script>
