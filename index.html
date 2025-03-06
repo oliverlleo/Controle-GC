@@ -65,42 +65,22 @@
     .hidden {
       display: none;
     }
-    /* Botões personalizados */
+    /* Tela de login */
+    .login-container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .login-container button {
+      margin-bottom: 10px;
+    }
+    /* Botão de recuperação de senha */
     #botaoRecuperar {
       background-color: #e74c3c;
     }
     #botaoRecuperar:hover {
       background-color: #c0392b;
     }
-    #botaoSair {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      padding: 0;
-      font-size: 16px;
-      line-height: 30px;
-      text-align: center;
-      background-color: #2c3e50;
-      transition: transform 0.2s ease;
-    }
-    #botaoSair:hover {
-      transform: scale(1.2);
-    }
-    .delete-button {
-      background: transparent;
-      border: none;
-      color: #e74c3c;
-      cursor: pointer;
-      font-size: 18px;
-      transition: color 0.3s;
-    }
-    .delete-button:hover {
-      color: #c0392b;
-    }
-    /* Barra de pesquisa e tabela */
+    /* Barra de pesquisa e botões da tela principal */
     .search-bar {
       margin-bottom: 20px;
       display: flex;
@@ -160,6 +140,24 @@
         white-space: nowrap;
       }
     }
+    /* Botão de Logout (X) */
+    #botaoSair {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 16px;
+      line-height: 30px;
+      text-align: center;
+      background-color: #2c3e50;
+      transition: transform 0.2s ease;
+    }
+    #botaoSair:hover {
+      transform: scale(1.2);
+    }
   </style>
 </head>
 <body>
@@ -179,7 +177,7 @@
 
   <!-- Tela principal -->
   <div class="container hidden" id="telaPrincipal">
-    <!-- Botão de Sair -->
+    <!-- Botão de Sair em forma de "X" -->
     <button id="botaoSair">X</button>
     <!-- Gerenciamento de Quantidade -->
     <div class="section">
@@ -285,10 +283,10 @@
       <button id="botaoSalvar">Salvar</button>
     </div>
 
-    <!-- Controle (Tabela) -->
+    <!-- Controle -->
     <div class="section">
       <h2>Controle</h2>
-      <!-- Barra de pesquisa -->
+      <!-- Barra de pesquisa com botões -->
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Pesquisar usuário...">
         <button onclick="filtrarControle()">Pesquisar</button>
@@ -301,7 +299,6 @@
           <th>Cadastro 2</th>
           <th>Cadastro 3</th>
           <th>Cadastro 4</th>
-          <th>Ação</th>
         </tr>
       </table>
     </div>
@@ -310,10 +307,10 @@
   <script type="module">
     // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-    import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-    // Configuração do Firebase
+    // Configuração do Firebase (não alterada para preservar a funcionalidade)
     const config = {
       apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
       authDomain: "gc-controle.firebaseapp.com",
@@ -460,7 +457,7 @@
         });
     }
 
-    // Função para salvar controle
+    // Função para salvar controle com logs de debug
     function salvarControle() {
       console.log("salvarControle acionado", usuarioAtual);
       let usuarioSelecionado = document.getElementById("usuario").value;
@@ -499,7 +496,7 @@
       });
     }
 
-    // Função para carregar os controles do usuário e incluir botão de exclusão no final da linha
+    // Função para carregar os controles do usuário
     function carregarControles() {
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/controle/')).then((snapshot) => {
@@ -512,25 +509,16 @@
               <th>Cadastro 2</th>
               <th>Cadastro 3</th>
               <th>Cadastro 4</th>
-              <th>Ação</th>
             </tr>`;
           
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
             let linha = tabela.insertRow();
-            let cellUsuario = linha.insertCell();
-            cellUsuario.textContent = childSnapshot.key;
-            let cellCadastro1 = linha.insertCell();
-            cellCadastro1.textContent = dados.cadastro1;
-            let cellCadastro2 = linha.insertCell();
-            cellCadastro2.textContent = dados.cadastro2;
-            let cellCadastro3 = linha.insertCell();
-            cellCadastro3.textContent = dados.cadastro3;
-            let cellCadastro4 = linha.insertCell();
-            cellCadastro4.textContent = dados.cadastro4;
-            // Botão de exclusão na última coluna
-            let cellExcluir = linha.insertCell();
-            cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirControle('${childSnapshot.key}')">&#128465;</button>`;
+            linha.insertCell(0).textContent = childSnapshot.key;
+            linha.insertCell(1).textContent = dados.cadastro1;
+            linha.insertCell(2).textContent = dados.cadastro2;
+            linha.insertCell(3).textContent = dados.cadastro3;
+            linha.insertCell(4).textContent = dados.cadastro4;
           });
         } else {
           console.log("Nenhum controle salvo ainda.");
@@ -540,24 +528,6 @@
       });
     }
 
-    // Função para excluir controle com confirmação
-    function excluirControle(usuario) {
-      if (!usuarioAtual) return;
-      if (confirm("Você tem certeza que deseja excluir o usuário?")) {
-        remove(ref(database, 'users/' + usuarioAtual.uid + '/controle/' + usuario))
-          .then(() => {
-            alert("Usuário excluído com sucesso!");
-            carregarControles();
-          })
-          .catch((error) => {
-            console.error("Erro ao excluir usuário: ", error);
-          });
-      }
-    }
-
-    // Expondo a função para o escopo global para funcionar com onclick inline
-    window.excluirControle = excluirControle;
-
     // Função para filtrar a tabela somente quando o botão "Pesquisar" é clicado
     function filtrarControle() {
       const input = document.getElementById("searchInput");
@@ -566,7 +536,7 @@
       const tr = table.getElementsByTagName("tr");
 
       for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName("td")[0]; // coluna "Usuário"
+        const td = tr[i].getElementsByTagName("td")[0];
         if (td) {
           const txtValue = td.textContent || td.innerText;
           tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
