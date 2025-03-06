@@ -300,13 +300,14 @@
     const auth = getAuth(app);
     let currentUser = null;
 
-    // Funções para login/cadastro
+    // Elementos de tela
     const loginScreen = document.getElementById("loginScreen");
     const mainScreen = document.getElementById("mainScreen");
     const loginBtn = document.getElementById("loginBtn");
     const registerBtn = document.getElementById("registerBtn");
     const logoutBtn = document.getElementById("logoutBtn");
 
+    // Login
     loginBtn.addEventListener("click", () => {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
@@ -320,6 +321,7 @@
         });
     });
 
+    // Cadastro
     registerBtn.addEventListener("click", () => {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
@@ -333,6 +335,7 @@
         });
     });
 
+    // Logout
     if(logoutBtn){
       logoutBtn.addEventListener("click", () => {
         signOut(auth)
@@ -346,7 +349,7 @@
       });
     }
 
-    // Observa o estado de autenticação
+    // Observa mudanças de autenticação
     onAuthStateChanged(auth, (user) => {
       if(user){
         currentUser = user;
@@ -372,7 +375,6 @@
     function salvarPergaminhos() {
       const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
-
       if(!currentUser) return;
       set(ref(db, 'users/' + currentUser.uid + '/pergaminhos/'), {
         unico: pergaminhoUnico,
@@ -410,12 +412,9 @@
       });
     }
 
-    // Salva GC na base do usuário
+    // Função para salvar GC com logs de debug
     function salvarGC() {
-      if(!currentUser) {
-        alert("Você precisa estar logado!");
-        return;
-      }
+      console.log("salvarGC acionado", currentUser);
       let personagem = document.getElementById("personagem").value;
       let brinco = document.getElementById("brinco").value;
       let piercing = document.getElementById("piercing").value;
@@ -424,6 +423,11 @@
 
       if (!personagem || !brinco || !piercing || !anel || !berkas) {
         alert("Preencha todos os campos!");
+        return;
+      }
+
+      if(!currentUser) {
+        alert("Você precisa estar logado!");
         return;
       }
 
@@ -447,7 +451,7 @@
       });
     }
 
-    // Carrega os GCs do usuário
+    // Função para carregar os GCs do usuário
     function carregarGCs() {
       if(!currentUser) return;
       get(ref(db, 'users/' + currentUser.uid + '/gc/')).then((snapshot) => {
@@ -502,17 +506,10 @@
       filtrarTabela();
     }
 
-    // Carrega os dados ao abrir a tela principal
-    window.onload = function() {
-      // Se o usuário já estiver autenticado, a tela de main será exibida automaticamente
-      // Caso contrário, permanecerá na tela de login.
-      // onAuthStateChanged já cuida disso.
-    };
-
     // Evento do botão "Salvar GC"
     document.getElementById("salvarGC").addEventListener("click", salvarGC);
 
-    // Torna funções globais para uso inline
+    // Torna as funções globais para uso inline
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
     window.salvarPergaminhos = salvarPergaminhos;
