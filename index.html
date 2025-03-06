@@ -15,6 +15,7 @@
       color: #333;
     }
     .container {
+      position: relative;
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
@@ -68,6 +69,16 @@
     .login-container {
       max-width: 400px;
       margin: 0 auto;
+    }
+    .login-container button {
+      margin-bottom: 10px;
+    }
+    /* Botão de recuperação de senha */
+    #resetPasswordBtn {
+      background-color: #e74c3c;
+    }
+    #resetPasswordBtn:hover {
+      background-color: #c0392b;
     }
     /* Barra de pesquisa e botões da tela principal */
     .search-bar {
@@ -129,6 +140,24 @@
         white-space: nowrap;
       }
     }
+    /* Botão de Logout (X) */
+    #logoutBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 16px;
+      line-height: 30px;
+      text-align: center;
+      background-color: #2c3e50;
+      transition: transform 0.2s ease;
+    }
+    #logoutBtn:hover {
+      transform: scale(1.2);
+    }
   </style>
 </head>
 <body>
@@ -142,15 +171,14 @@
       <input type="password" id="password" placeholder="Digite sua senha">
       <button id="loginBtn">Login</button>
       <button id="registerBtn">Cadastrar</button>
+      <button id="resetPasswordBtn">Recuperar Senha</button>
     </div>
   </div>
 
   <!-- Tela principal -->
   <div class="container hidden" id="mainScreen">
-    <!-- Seção de Sair -->
-    <div style="text-align: right;">
-      <button id="logoutBtn">Sair</button>
-    </div>
+    <!-- Botão de Sair em forma de "X" -->
+    <button id="logoutBtn">X</button>
     <!-- Gerenciamento de Pergaminhos -->
     <div class="section">
       <h2>Gerenciamento de Pergaminhos</h2>
@@ -280,7 +308,7 @@
     // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
     // Configuração do Firebase
     const firebaseConfig = {
@@ -305,6 +333,7 @@
     const mainScreen = document.getElementById("mainScreen");
     const loginBtn = document.getElementById("loginBtn");
     const registerBtn = document.getElementById("registerBtn");
+    const resetPasswordBtn = document.getElementById("resetPasswordBtn");
     const logoutBtn = document.getElementById("logoutBtn");
 
     // Login
@@ -335,19 +364,33 @@
         });
     });
 
+    // Recuperar Senha
+    resetPasswordBtn.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      if(!email){
+        alert("Por favor, informe seu e-mail para recuperar a senha.");
+        return;
+      }
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          alert("E-mail de recuperação de senha enviado.");
+        })
+        .catch((error) => {
+          alert("Erro ao enviar e-mail: " + error.message);
+        });
+    });
+
     // Logout
-    if(logoutBtn){
-      logoutBtn.addEventListener("click", () => {
-        signOut(auth)
-          .then(() => {
-            currentUser = null;
-            mostrarLoginScreen();
-          })
-          .catch((error) => {
-            console.error("Erro ao sair:", error);
-          });
-      });
-    }
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth)
+        .then(() => {
+          currentUser = null;
+          mostrarLoginScreen();
+        })
+        .catch((error) => {
+          console.error("Erro ao sair:", error);
+        });
+    });
 
     // Observa mudanças de autenticação
     onAuthStateChanged(auth, (user) => {
