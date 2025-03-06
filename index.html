@@ -459,24 +459,24 @@
         }
 
         // Função para filtrar a tabela
-        function filtrarTabela() {
-            const input = document.getElementById("searchInput");
-            const filter = input.value.toUpperCase();
-            const table = document.getElementById("tabela-gc");
-            const tr = table.getElementsByTagName("tr");
+       function filtrarTabela() {
+    const input = document.getElementById("searchInput");
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById("tabela-gc");
+    const tr = table.getElementsByTagName("tr");
 
-            for (let i = 1; i < tr.length; i++) { // Começa em 1 para pular o cabeçalho
-                const td = tr[i].getElementsByTagName("td")[0]; // Filtra pela coluna "Personagem"
-                if (td) {
-                    const txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().includes(filter)) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
+    for (let i = 1; i < tr.length; i++) { // Começa em 1 para pular o cabeçalho
+        const td = tr[i].getElementsByTagName("td")[0]; // Filtra pela coluna "Personagem"
+        if (td) {
+            const txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().includes(filter)) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
             }
         }
+    }
+}
 
         // Função para limpar o filtro
         function limparFiltro() {
