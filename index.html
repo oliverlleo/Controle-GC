@@ -74,10 +74,10 @@
       margin-bottom: 10px;
     }
     /* Botão de recuperação de senha */
-    #resetPasswordBtn {
+    #botaoRecuperar {
       background-color: #e74c3c;
     }
-    #resetPasswordBtn:hover {
+    #botaoRecuperar:hover {
       background-color: #c0392b;
     }
     /* Barra de pesquisa e botões da tela principal */
@@ -141,7 +141,7 @@
       }
     }
     /* Botão de Logout (X) */
-    #logoutBtn {
+    #botaoSair {
       position: absolute;
       top: 10px;
       right: 10px;
@@ -155,41 +155,41 @@
       background-color: #2c3e50;
       transition: transform 0.2s ease;
     }
-    #logoutBtn:hover {
+    #botaoSair:hover {
       transform: scale(1.2);
     }
   </style>
 </head>
 <body>
   <!-- Tela de Login/Cadastro -->
-  <div class="container" id="loginScreen">
+  <div class="container" id="telaLogin">
     <h2>Login / Cadastro</h2>
     <div class="login-container">
       <label for="email">E-mail:</label>
       <input type="email" id="email" placeholder="Digite seu e-mail">
-      <label for="password">Senha:</label>
-      <input type="password" id="password" placeholder="Digite sua senha">
-      <button id="loginBtn">Login</button>
-      <button id="registerBtn">Cadastrar</button>
-      <button id="resetPasswordBtn">Recuperar Senha</button>
+      <label for="senha">Senha:</label>
+      <input type="password" id="senha" placeholder="Digite sua senha">
+      <button id="botaoLogin">Login</button>
+      <button id="botaoCadastro">Cadastrar</button>
+      <button id="botaoRecuperar">Recuperar Senha</button>
     </div>
   </div>
 
   <!-- Tela principal -->
-  <div class="container hidden" id="mainScreen">
+  <div class="container hidden" id="telaPrincipal">
     <!-- Botão de Sair em forma de "X" -->
-    <button id="logoutBtn">X</button>
+    <button id="botaoSair">X</button>
     <!-- Gerenciamento de Quantidade -->
     <div class="section">
       <h2>Gerenciamento de Quantidade</h2>
       <div class="pergaminhos">
         <div>
           <label>Quantidade Única:</label>
-          <input type="number" id="pergaminho_unico" oninput="salvarPergaminhos()">
+          <input type="number" id="quantidade_unica" oninput="salvarQuantidades()">
         </div>
         <div>
           <label>Quantidade Aleatória:</label>
-          <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
+          <input type="number" id="quantidade_aleatoria" oninput="salvarQuantidades()">
         </div>
       </div>
     </div>
@@ -200,7 +200,7 @@
       <div class="columns">
         <div>
           <label>Usuário:</label>
-          <select id="personagem">
+          <select id="usuario">
             <option>Usuário 1</option>
             <option>Usuário 2</option>
             <option>Usuário 3</option>
@@ -227,7 +227,7 @@
           </select>
           
           <label>Cadastro 1:</label>
-          <select id="brinco">
+          <select id="cadastro1">
             <option>Opção 1</option>
             <option>Opção 2</option>
             <option>Opção 3</option>
@@ -237,7 +237,7 @@
         </div>
         <div>
           <label>Cadastro 2:</label>
-          <select id="piercing">
+          <select id="cadastro2">
             <option>Opção 1</option>
             <option>Opção 2</option>
             <option>Opção 3</option>
@@ -246,7 +246,7 @@
           </select>
           
           <label>Cadastro 3:</label>
-          <select id="anel">
+          <select id="cadastro3">
             <option>Opção 1</option>
             <option>Opção 2</option>
             <option>Opção 3</option>
@@ -262,7 +262,7 @@
         </div>
         <div>
           <label>Cadastro 4:</label>
-          <select id="berkas">
+          <select id="cadastro4">
             <option>Opção 1</option>
             <option>Opção 2</option>
             <option>Opção 3</option>
@@ -280,7 +280,7 @@
         </div>
       </div>
       <!-- Botão "Salvar" -->
-      <button id="salvarGC">Salvar</button>
+      <button id="botaoSalvar">Salvar</button>
     </div>
 
     <!-- Controle -->
@@ -289,10 +289,10 @@
       <!-- Barra de pesquisa com botões -->
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Pesquisar usuário...">
-        <button onclick="filtrarTabela()">Pesquisar</button>
+        <button onclick="filtrarControle()">Pesquisar</button>
         <button onclick="limparFiltro()">Limpar Filtro</button>
       </div>
-      <table id="tabela-gc">
+      <table id="tabela_controle">
         <tr>
           <th>Usuário</th>
           <th>Cadastro 1</th>
@@ -310,8 +310,8 @@
     import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-    // Configuração do Firebase
-    const firebaseConfig = {
+    // Configuração do Firebase (não alterada para preservar a funcionalidade)
+    const config = {
       apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
       authDomain: "gc-controle.firebaseapp.com",
       databaseURL: "https://gc-controle-default-rtdb.firebaseio.com",
@@ -323,27 +323,27 @@
     };
 
     // Inicializa o Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const auth = getAuth(app);
-    let currentUser = null;
+    const appFirebase = initializeApp(config);
+    const database = getDatabase(appFirebase);
+    const auth = getAuth(appFirebase);
+    let usuarioAtual = null;
 
     // Elementos de tela
-    const loginScreen = document.getElementById("loginScreen");
-    const mainScreen = document.getElementById("mainScreen");
-    const loginBtn = document.getElementById("loginBtn");
-    const registerBtn = document.getElementById("registerBtn");
-    const resetPasswordBtn = document.getElementById("resetPasswordBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
+    const telaLogin = document.getElementById("telaLogin");
+    const telaPrincipal = document.getElementById("telaPrincipal");
+    const botaoLogin = document.getElementById("botaoLogin");
+    const botaoCadastro = document.getElementById("botaoCadastro");
+    const botaoRecuperar = document.getElementById("botaoRecuperar");
+    const botaoSair = document.getElementById("botaoSair");
 
     // Login
-    loginBtn.addEventListener("click", () => {
+    botaoLogin.addEventListener("click", () => {
       const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      signInWithEmailAndPassword(auth, email, password)
+      const senha = document.getElementById("senha").value;
+      signInWithEmailAndPassword(auth, email, senha)
         .then((userCredential) => {
-          currentUser = userCredential.user;
-          mostrarMainScreen();
+          usuarioAtual = userCredential.user;
+          mostrarTelaPrincipal();
         })
         .catch((error) => {
           alert("Erro no login: " + error.message);
@@ -351,13 +351,13 @@
     });
 
     // Cadastro
-    registerBtn.addEventListener("click", () => {
+    botaoCadastro.addEventListener("click", () => {
       const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      createUserWithEmailAndPassword(auth, email, password)
+      const senha = document.getElementById("senha").value;
+      createUserWithEmailAndPassword(auth, email, senha)
         .then((userCredential) => {
-          currentUser = userCredential.user;
-          mostrarMainScreen();
+          usuarioAtual = userCredential.user;
+          mostrarTelaPrincipal();
         })
         .catch((error) => {
           alert("Erro no cadastro: " + error.message);
@@ -365,9 +365,9 @@
     });
 
     // Recuperar Senha
-    resetPasswordBtn.addEventListener("click", () => {
+    botaoRecuperar.addEventListener("click", () => {
       const email = document.getElementById("email").value;
-      if(!email){
+      if (!email) {
         alert("Por favor, informe seu e-mail para recuperar a senha.");
         return;
       }
@@ -381,11 +381,11 @@
     });
 
     // Logout
-    logoutBtn.addEventListener("click", () => {
+    botaoSair.addEventListener("click", () => {
       signOut(auth)
         .then(() => {
-          currentUser = null;
-          mostrarLoginScreen();
+          usuarioAtual = null;
+          mostrarTelaLogin();
         })
         .catch((error) => {
           console.error("Erro ao sair:", error);
@@ -394,34 +394,34 @@
 
     // Observa mudanças de autenticação
     onAuthStateChanged(auth, (user) => {
-      if(user){
-        currentUser = user;
-        mostrarMainScreen();
+      if (user) {
+        usuarioAtual = user;
+        mostrarTelaPrincipal();
       } else {
-        mostrarLoginScreen();
+        mostrarTelaLogin();
       }
     });
 
-    function mostrarMainScreen() {
-      loginScreen.classList.add("hidden");
-      mainScreen.classList.remove("hidden");
-      carregarPergaminhos();
-      carregarGCs();
+    function mostrarTelaPrincipal() {
+      telaLogin.classList.add("hidden");
+      telaPrincipal.classList.remove("hidden");
+      carregarQuantidades();
+      carregarControles();
     }
 
-    function mostrarLoginScreen() {
-      loginScreen.classList.remove("hidden");
-      mainScreen.classList.add("hidden");
+    function mostrarTelaLogin() {
+      telaLogin.classList.remove("hidden");
+      telaPrincipal.classList.add("hidden");
     }
 
     // Função para salvar quantidades na base do usuário
-    function salvarPergaminhos() {
-      const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
-      const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
-      if(!currentUser) return;
-      set(ref(db, 'users/' + currentUser.uid + '/pergaminhos/'), {
-        unico: pergaminhoUnico,
-        aleatorio: pergaminhoAleatorio
+    function salvarQuantidades() {
+      const quantidadeUnica = document.getElementById("quantidade_unica").value;
+      const quantidadeAleatoria = document.getElementById("quantidade_aleatoria").value;
+      if (!usuarioAtual) return;
+      set(ref(database, 'users/' + usuarioAtual.uid + '/quantidades/'), {
+        unica: quantidadeUnica,
+        aleatoria: quantidadeAleatoria
       }).then(() => {
         console.log("Quantidades salvas com sucesso!");
       }).catch((error) => {
@@ -430,12 +430,12 @@
     }
 
     // Função para carregar quantidades do usuário
-    function carregarPergaminhos() {
-      if(!currentUser) return;
-      get(ref(db, 'users/' + currentUser.uid + '/pergaminhos/')).then((snapshot) => {
+    function carregarQuantidades() {
+      if (!usuarioAtual) return;
+      get(ref(database, 'users/' + usuarioAtual.uid + '/quantidades/')).then((snapshot) => {
         if (snapshot.exists()) {
-          document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
-          document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
+          document.getElementById("quantidade_unica").value = snapshot.val().unica || "0";
+          document.getElementById("quantidade_aleatoria").value = snapshot.val().aleatoria || "0";
           console.log("Quantidades carregadas com sucesso!");
         } else {
           console.log("Nenhuma quantidade salva ainda.");
@@ -445,61 +445,63 @@
       });
     }
 
-    // Verifica se o usuário já existe na base do usuário
-    function personagemJaExiste(personagem, callback) {
-      if(!currentUser) return;
-      get(ref(db, 'users/' + currentUser.uid + '/gc/' + personagem)).then((snapshot) => {
-        callback(snapshot.exists());
-      }).catch((error) => {
-        console.error("Erro ao verificar usuário: ", error);
-      });
+    // Verifica se o usuário já existe na base de controle
+    function usuarioJaExiste(usuario, callback) {
+      if (!usuarioAtual) return;
+      get(ref(database, 'users/' + usuarioAtual.uid + '/controle/' + usuario))
+        .then((snapshot) => {
+          callback(snapshot.exists());
+        })
+        .catch((error) => {
+          console.error("Erro ao verificar usuário: ", error);
+        });
     }
 
     // Função para salvar controle com logs de debug
-    function salvarGC() {
-      console.log("salvarGC acionado", currentUser);
-      let personagem = document.getElementById("personagem").value;
-      let brinco = document.getElementById("brinco").value;
-      let piercing = document.getElementById("piercing").value;
-      let anel = document.getElementById("anel").value;
-      let berkas = document.getElementById("berkas").value;
+    function salvarControle() {
+      console.log("salvarControle acionado", usuarioAtual);
+      let usuarioSelecionado = document.getElementById("usuario").value;
+      let cadastro1 = document.getElementById("cadastro1").value;
+      let cadastro2 = document.getElementById("cadastro2").value;
+      let cadastro3 = document.getElementById("cadastro3").value;
+      let cadastro4 = document.getElementById("cadastro4").value;
 
-      if (!personagem || !brinco || !piercing || !anel || !berkas) {
+      if (!usuarioSelecionado || !cadastro1 || !cadastro2 || !cadastro3 || !cadastro4) {
         alert("Preencha todos os campos!");
         return;
       }
 
-      if(!currentUser) {
+      if (!usuarioAtual) {
         alert("Você precisa estar logado!");
         return;
       }
 
-      personagemJaExiste(personagem, (existe) => {
+      usuarioJaExiste(usuarioSelecionado, (existe) => {
         if (existe) {
           const confirmacao = confirm("Este usuário já foi salvo. Tem certeza que deseja alterar?");
           if (!confirmacao) return;
         }
-        set(ref(db, 'users/' + currentUser.uid + '/gc/' + personagem), {
-          brinco: brinco,
-          piercing: piercing,
-          anel: anel,
-          berkas: berkas
+        set(ref(database, 'users/' + usuarioAtual.uid + '/controle/' + usuarioSelecionado), {
+          cadastro1: cadastro1,
+          cadastro2: cadastro2,
+          cadastro3: cadastro3,
+          cadastro4: cadastro4
         }).then(() => {
           alert("Controle salvo com sucesso!");
-          carregarGCs();
+          carregarControles();
         }).catch((error) => {
           console.error("Erro ao salvar controle: ", error);
         });
-        salvarPergaminhos();
+        salvarQuantidades();
       });
     }
 
     // Função para carregar os controles do usuário
-    function carregarGCs() {
-      if(!currentUser) return;
-      get(ref(db, 'users/' + currentUser.uid + '/gc/')).then((snapshot) => {
+    function carregarControles() {
+      if (!usuarioAtual) return;
+      get(ref(database, 'users/' + usuarioAtual.uid + '/controle/')).then((snapshot) => {
         if (snapshot.exists()) {
-          let tabela = document.getElementById("tabela-gc");
+          let tabela = document.getElementById("tabela_controle");
           tabela.innerHTML = `
             <tr>
               <th>Usuário</th>
@@ -513,10 +515,10 @@
             let dados = childSnapshot.val();
             let linha = tabela.insertRow();
             linha.insertCell(0).textContent = childSnapshot.key;
-            linha.insertCell(1).textContent = dados.brinco;
-            linha.insertCell(2).textContent = dados.piercing;
-            linha.insertCell(3).textContent = dados.anel;
-            linha.insertCell(4).textContent = dados.berkas;
+            linha.insertCell(1).textContent = dados.cadastro1;
+            linha.insertCell(2).textContent = dados.cadastro2;
+            linha.insertCell(3).textContent = dados.cadastro3;
+            linha.insertCell(4).textContent = dados.cadastro4;
           });
         } else {
           console.log("Nenhum controle salvo ainda.");
@@ -527,10 +529,10 @@
     }
 
     // Função para filtrar a tabela somente quando o botão "Pesquisar" é clicado
-    function filtrarTabela() {
+    function filtrarControle() {
       const input = document.getElementById("searchInput");
       const filter = input.value.toUpperCase();
-      const table = document.getElementById("tabela-gc");
+      const table = document.getElementById("tabela_controle");
       const tr = table.getElementsByTagName("tr");
 
       for (let i = 1; i < tr.length; i++) {
@@ -546,16 +548,16 @@
     function limparFiltro() {
       const input = document.getElementById("searchInput");
       input.value = "";
-      filtrarTabela();
+      filtrarControle();
     }
 
     // Evento do botão "Salvar"
-    document.getElementById("salvarGC").addEventListener("click", salvarGC);
+    document.getElementById("botaoSalvar").addEventListener("click", salvarControle);
 
     // Torna as funções globais para uso inline
-    window.filtrarTabela = filtrarTabela;
+    window.filtrarControle = filtrarControle;
     window.limparFiltro = limparFiltro;
-    window.salvarPergaminhos = salvarPergaminhos;
+    window.salvarQuantidades = salvarQuantidades;
   </script>
 </body>
 </html>
