@@ -265,8 +265,8 @@
             <!-- Barra de pesquisa com botão -->
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Pesquisar personagem...">
-                <button onclick="filtrarTabela()">Pesquisar</button>
-                <button onclick="limparFiltro()">Limpar Filtro</button>
+                <button id="btnPesquisar">Pesquisar</button>
+                <button id="btnLimparFiltro">Limpar Filtro</button>
             </div>
             <table id="tabela-gc">
                 <tr>
@@ -280,11 +280,7 @@
         </div>
     </div>
 
-    <script type="module">
-        // Import Firebase SDK
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
-
+    <script>
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
@@ -298,8 +294,8 @@
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
         // Função para salvar pergaminhos
         function salvarPergaminhos() {
@@ -309,7 +305,7 @@
             console.log("Salvando pergaminhos:", pergaminhoUnico, pergaminhoAleatorio);
 
             // Salva os valores no Firebase
-            set(ref(db, 'pergaminhos/'), {
+            firebase.database().ref('pergaminhos/').set({
                 unico: pergaminhoUnico,
                 aleatorio: pergaminhoAleatorio
             }).then(() => {
@@ -321,7 +317,7 @@
 
         // Função para carregar pergaminhos
         function carregarPergaminhos() {
-            get(ref(db, 'pergaminhos/')).then((snapshot) => {
+            firebase.database().ref('pergaminhos/').once('value').then((snapshot) => {
                 if (snapshot.exists()) {
                     // Preenche os campos com os valores salvos
                     document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
@@ -337,7 +333,7 @@
 
         // Função para verificar se o personagem já existe
         function personagemJaExiste(personagem, callback) {
-            get(ref(db, 'gc/' + personagem)).then((snapshot) => {
+            firebase.database().ref('gc/' + personagem).once('value').then((snapshot) => {
                 if (snapshot.exists()) {
                     callback(true); // Personagem já existe
                 } else {
@@ -372,7 +368,7 @@
                 }
 
                 // Salva o GC no Firebase
-                set(ref(db, 'gc/' + personagem), {
+                firebase.database().ref('gc/' + personagem).set({
                     brinco: brinco,
                     piercing: piercing,
                     anel: anel,
@@ -391,7 +387,7 @@
 
         // Função para carregar GCs
         function carregarGCs() {
-            get(ref(db, 'gc/')).then((snapshot) => {
+            firebase.database().ref('gc/').once('value').then((snapshot) => {
                 if (snapshot.exists()) {
                     let tabela = document.getElementById("tabela-gc");
                     tabela.innerHTML = `
@@ -422,24 +418,24 @@
 
         // Função para filtrar a tabela
         function filtrarTabela() {
-    console.log("Função filtrarTabela() chamada!"); // Depuração
-    const input = document.getElementById("searchInput");
-    const filter = input.value.toUpperCase();
-    const table = document.getElementById("tabela-gc");
-    const tr = table.getElementsByTagName("tr");
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById("tabela-gc");
+            const tr = table.getElementsByTagName("tr");
 
-    for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName("td")[0];
-        if (td) {
-            const txtValue = td.textContent || td.innerText;
-            if (filter === "" || txtValue.toUpperCase().includes(filter)) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
+            for (let i = 1; i < tr.length; i++) { // Começa em 1 para pular o cabeçalho
+                const td = tr[i].getElementsByTagName("td")[0]; // Filtra pela coluna "Personagem"
+                if (td) {
+                    const txtValue = td.textContent || td.innerText;
+                    if (filter === "" || txtValue.toUpperCase().includes(filter)) {
+                        tr[i].style.display = ""; // Mostra a linha
+                    } else {
+                        tr[i].style.display = "none"; // Esconde a linha
+                    }
+                }
             }
         }
-    }
-}
+
         // Função para limpar o filtro
         function limparFiltro() {
             const input = document.getElementById("searchInput");
@@ -455,6 +451,10 @@
 
         // Adiciona o evento de clique ao botão "Salvar GC"
         document.getElementById("salvarGC").addEventListener("click", salvarGC);
+
+        // Adiciona os eventos aos botões de pesquisa e limpar filtro
+        document.getElementById("btnPesquisar").addEventListener("click", filtrarTabela);
+        document.getElementById("btnLimparFiltro").addEventListener("click", limparFiltro);
     </script>
 </body>
 </html>
