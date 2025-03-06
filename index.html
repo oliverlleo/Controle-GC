@@ -167,23 +167,27 @@
       transition: border-color 0.3s ease;
     }
 
+    /* Ajustes para a tela de login */
+    .login-container {
+      padding: 0 10px; /* Adiciona padding nas laterais */
+    }
+
+    .login-container input {
+      width: calc(100% - 20px); /* Reduz a largura dos campos de entrada */
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    .login-container button {
+      width: calc(100% - 20px); /* Reduz a largura dos botões */
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
     /* Ajustes para mobile */
     @media (max-width: 600px) {
       h2 {
         font-size: 20px;
-      }
-
-      /* Ajustes para a tela de login */
-      .login-container input {
-        width: calc(100% - 20px); /* Reduz a largura dos campos de entrada */
-        margin-left: 10px;
-        margin-right: 10px;
-      }
-
-      .login-container button {
-        width: calc(100% - 20px); /* Reduz a largura dos botões */
-        margin-left: 10px;
-        margin-right: 10px;
       }
 
       /* Ajustes para o gerenciamento de quantidade */
