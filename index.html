@@ -94,7 +94,8 @@
       border: none;
       color: #e74c3c;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 18px;
+      transition: color 0.3s;
     }
     .delete-button:hover {
       color: #c0392b;
@@ -295,12 +296,12 @@
       </div>
       <table id="tabela_controle">
         <tr>
-          <th>Ação</th>
           <th>Usuário</th>
           <th>Cadastro 1</th>
           <th>Cadastro 2</th>
           <th>Cadastro 3</th>
           <th>Cadastro 4</th>
+          <th>Ação</th>
         </tr>
       </table>
     </div>
@@ -498,7 +499,7 @@
       });
     }
 
-    // Função para carregar os controles do usuário e incluir botão de exclusão
+    // Função para carregar os controles do usuário e incluir botão de exclusão no final da linha
     function carregarControles() {
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/controle/')).then((snapshot) => {
@@ -506,21 +507,17 @@
           let tabela = document.getElementById("tabela_controle");
           tabela.innerHTML = `
             <tr>
-              <th>Ação</th>
               <th>Usuário</th>
               <th>Cadastro 1</th>
               <th>Cadastro 2</th>
               <th>Cadastro 3</th>
               <th>Cadastro 4</th>
+              <th>Ação</th>
             </tr>`;
           
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
             let linha = tabela.insertRow();
-            // Botão de exclusão
-            let cellExcluir = linha.insertCell();
-            cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirControle('${childSnapshot.key}')">&#128465;</button>`;
-            // Dados do cadastro
             let cellUsuario = linha.insertCell();
             cellUsuario.textContent = childSnapshot.key;
             let cellCadastro1 = linha.insertCell();
@@ -531,6 +528,9 @@
             cellCadastro3.textContent = dados.cadastro3;
             let cellCadastro4 = linha.insertCell();
             cellCadastro4.textContent = dados.cadastro4;
+            // Botão de exclusão na última coluna
+            let cellExcluir = linha.insertCell();
+            cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirControle('${childSnapshot.key}')">&#128465;</button>`;
           });
         } else {
           console.log("Nenhum controle salvo ainda.");
@@ -555,6 +555,9 @@
       }
     }
 
+    // Expondo a função para o escopo global para funcionar com onclick inline
+    window.excluirControle = excluirControle;
+
     // Função para filtrar a tabela somente quando o botão "Pesquisar" é clicado
     function filtrarControle() {
       const input = document.getElementById("searchInput");
@@ -563,7 +566,7 @@
       const tr = table.getElementsByTagName("tr");
 
       for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName("td")[1]; // coluna "Usuário"
+        const td = tr[i].getElementsByTagName("td")[0]; // coluna "Usuário"
         if (td) {
           const txtValue = td.textContent || td.innerText;
           tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
