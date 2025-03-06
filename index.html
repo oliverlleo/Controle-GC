@@ -153,11 +153,25 @@
       background-color: #f1f1f1;
     }
 
+    /* Ajustes para os campos de quantidade */
+    .pergaminhos input[type="number"] {
+      max-width: 120px; /* Ajuste o valor conforme necessário */
+      width: 100%; /* Garante que o campo ocupe 100% da largura disponível */
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #333;
+      background-color: #f9f9f9;
+      transition: border-color 0.3s ease;
+    }
+
     /* Ajustes para mobile */
     @media (max-width: 600px) {
-  .pergaminhos input[type="number"] {
-    max-width: 100%; /* Faz o campo ocupar a largura total em dispositivos móveis */
-  }
+      h2 {
+        font-size: 20px;
+      }
 
       /* Ajustes para a tela de login */
       .login-container input {
@@ -173,18 +187,10 @@
       }
 
       /* Ajustes para o gerenciamento de quantidade */
- .pergaminhos input[type="number"] {
-  max-width: 120px; /* Ajuste o valor conforme necessário */
-  width: 100%; /* Garante que o campo ocupe 100% da largura disponível */
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-  background-color: #f9f9f9;
-  transition: border-color 0.3s ease;
-}
+      .pergaminhos input[type="number"] {
+        max-width: 100%; /* Faz o campo ocupar a largura total em dispositivos móveis */
+      }
+
       /* Ajustes para a barra de pesquisa */
       .search-bar {
         flex-direction: row; /* Mantém os botões lado a lado */
