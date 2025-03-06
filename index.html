@@ -152,11 +152,10 @@
     tr:hover {
       background-color: #f1f1f1;
     }
-
     /* Ajustes para os campos de quantidade */
     .pergaminhos input[type="number"] {
-      max-width: 120px; /* Ajuste o valor conforme necessário */
-      width: 100%; /* Garante que o campo ocupe 100% da largura disponível */
+      max-width: 120px;
+      width: 100%;
       padding: 10px;
       margin-bottom: 15px;
       border: 1px solid #ddd;
@@ -166,64 +165,52 @@
       background-color: #f9f9f9;
       transition: border-color 0.3s ease;
     }
-
     /* Ajustes para a tela de login */
     .login-container {
-      padding: 0 10px; /* Adiciona padding nas laterais */
+      padding: 0 10px;
     }
-
     .login-container input {
-      width: calc(98% - 20px); /* Reduz a largura dos campos de entrada */
+      width: calc(98% - 20px);
       margin-left: 10px;
       margin-right: 20px;
-      padding: 8px; /* Reduz o padding interno */
-      font-size: 12px; /* Reduz o tamanho da fonte */
-      margin-bottom: 10px; /* Reduz o espaçamento inferior */
+      padding: 8px;
+      font-size: 12px;
+      margin-bottom: 10px;
     }
-
     .login-container button {
-      width: calc(100% - 20px); /* Reduz a largura dos botões */
+      width: calc(100% - 20px);
       margin-left: 10px;
       margin-right: 10px;
-      padding: 8px; /* Reduz o padding interno */
-      font-size: 12px; /* Reduz o tamanho da fonte */
-      margin-bottom: 10px; /* Reduz o espaçamento inferior */
+      padding: 8px;
+      font-size: 12px;
+      margin-bottom: 10px;
     }
-
     /* Ajustes para mobile */
     @media (max-width: 600px) {
       h2 {
         font-size: 20px;
       }
-
-      /* Ajustes para o gerenciamento de quantidade */
       .pergaminhos input[type="number"] {
-        max-width: 100%; /* Faz o campo ocupar a largura total em dispositivos móveis */
+        max-width: 100%;
       }
-
-      /* Ajustes para a barra de pesquisa */
       .search-bar {
-        flex-direction: row; /* Mantém os botões lado a lado */
-        flex-wrap: wrap; /* Permite que os botões quebrem para a próxima linha se necessário */
+        flex-direction: row;
+        flex-wrap: wrap;
         gap: 10px;
-        padding: 0 10px; /* Adiciona padding nas laterais */
+        padding: 0 10px;
       }
-
       .search-bar input {
-        flex: 1 1 100%; /* Faz o campo de pesquisa ocupar a linha inteira */
-        max-width: 100%; /* Remove a limitação de largura */
+        flex: 1 1 100%;
+        max-width: 100%;
       }
-
       .search-bar button {
-        flex: 1 1 calc(50% - 10px); /* Faz os botões ocuparem metade da largura, menos o gap */
-        max-width: calc(50% - 10px); /* Limita a largura dos botões */
+        flex: 1 1 calc(50% - 10px);
+        max-width: calc(50% - 10px);
       }
-
-      /* Mantém a responsividade da tabela */
       table {
         display: block;
-        overflow-x: auto; /* Barra de rolagem horizontal */
-        white-space: nowrap; /* Evita quebra de linha */
+        overflow-x: auto;
+        white-space: nowrap;
       }
     }
   </style>
@@ -253,11 +240,11 @@
       <div class="pergaminhos">
         <div>
           <label>Quantidade Única:</label>
-          <input type="number" id="quantidade_unica" oninput="salvarQuantidades()">
+          <input type="number" id="quantidade_unica" oninput="atualizarQuantidades()">
         </div>
         <div>
           <label>Quantidade Aleatória:</label>
-          <input type="number" id="quantidade_aleatoria" oninput="salvarQuantidades()">
+          <input type="number" id="quantidade_aleatoria" oninput="atualizarQuantidades()">
         </div>
       </div>
     </div>
@@ -357,8 +344,8 @@
       <!-- Barra de pesquisa -->
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Pesquisar usuário...">
-        <button onclick="filtrarControle()">Pesquisar</button>
-        <button onclick="limparFiltro()">Limpar Filtro</button>
+        <button id="btnPesquisar">Pesquisar</button>
+        <button id="btnLimparFiltro">Limpar Filtro</button>
       </div>
       <table id="tabela_controle">
         <tr>
@@ -374,7 +361,6 @@
   </div>
 
   <script type="module">
-    // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
@@ -391,7 +377,6 @@
       measurementId: "G-3NNXXD5V2T"
     };
 
-    // Inicializa o Firebase
     const appFirebase = initializeApp(config);
     const database = getDatabase(appFirebase);
     const auth = getAuth(appFirebase);
@@ -400,142 +385,148 @@
     // Elementos de tela
     const telaLogin = document.getElementById("telaLogin");
     const telaPrincipal = document.getElementById("telaPrincipal");
+    const emailInput = document.getElementById("email");
+    const senhaInput = document.getElementById("senha");
     const botaoLogin = document.getElementById("botaoLogin");
     const botaoCadastro = document.getElementById("botaoCadastro");
     const botaoRecuperar = document.getElementById("botaoRecuperar");
     const botaoSair = document.getElementById("botaoSair");
+    const botaoSalvar = document.getElementById("botaoSalvar");
+    const searchInput = document.getElementById("searchInput");
+    const btnPesquisar = document.getElementById("btnPesquisar");
+    const btnLimparFiltro = document.getElementById("btnLimparFiltro");
+    const tabelaControle = document.getElementById("tabela_controle");
 
-    // Login
-    botaoLogin.addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
-      signInWithEmailAndPassword(auth, email, senha)
-        .then((userCredential) => {
-          usuarioAtual = userCredential.user;
-          mostrarTelaPrincipal();
-        })
-        .catch((error) => {
-          alert("Erro no login: " + error.message);
-        });
+    // Inputs de quantidade
+    const quantidadeUnica = document.getElementById("quantidade_unica");
+    const quantidadeAleatoria = document.getElementById("quantidade_aleatoria");
+
+    // Seletores de controle
+    const usuarioSelect = document.getElementById("usuario");
+    const cadastro1 = document.getElementById("cadastro1");
+    const cadastro2 = document.getElementById("cadastro2");
+    const cadastro3 = document.getElementById("cadastro3");
+    const cadastro4 = document.getElementById("cadastro4");
+
+    // Alterna as telas
+    const mostrarTelaLogin = () => {
+      telaLogin.classList.remove("hidden");
+      telaPrincipal.classList.add("hidden");
+    };
+
+    const mostrarTelaPrincipal = async () => {
+      telaLogin.classList.add("hidden");
+      telaPrincipal.classList.remove("hidden");
+      await carregarQuantidades();
+      await carregarControles();
+    };
+
+    // Autenticação
+    botaoLogin.addEventListener("click", async () => {
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, emailInput.value, senhaInput.value);
+        usuarioAtual = userCredential.user;
+        await mostrarTelaPrincipal();
+      } catch (error) {
+        alert("Erro no login: " + error.message);
+      }
     });
 
-    // Cadastro
-    botaoCadastro.addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
-      createUserWithEmailAndPassword(auth, email, senha)
-        .then((userCredential) => {
-          usuarioAtual = userCredential.user;
-          mostrarTelaPrincipal();
-        })
-        .catch((error) => {
-          alert("Erro no cadastro: " + error.message);
-        });
+    botaoCadastro.addEventListener("click", async () => {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, emailInput.value, senhaInput.value);
+        usuarioAtual = userCredential.user;
+        await mostrarTelaPrincipal();
+      } catch (error) {
+        alert("Erro no cadastro: " + error.message);
+      }
     });
 
-    // Recuperar Senha
-    botaoRecuperar.addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      if (!email) {
-        alert("Por favor, informe seu e-mail para recuperar a senha.");
+    botaoRecuperar.addEventListener("click", async () => {
+      if (!emailInput.value) {
+        alert("Informe seu e-mail para recuperar a senha.");
         return;
       }
-      sendPasswordResetEmail(auth, email)
-        .then(() => {
-          alert("E-mail de recuperação de senha enviado.");
-        })
-        .catch((error) => {
-          alert("Erro ao enviar e-mail: " + error.message);
-        });
+      try {
+        await sendPasswordResetEmail(auth, emailInput.value);
+        alert("E-mail de recuperação enviado.");
+      } catch (error) {
+        alert("Erro ao enviar e-mail: " + error.message);
+      }
     });
 
-    // Logout
-    botaoSair.addEventListener("click", () => {
-      signOut(auth)
-        .then(() => {
-          usuarioAtual = null;
-          mostrarTelaLogin();
-        })
-        .catch((error) => {
-          console.error("Erro ao sair:", error);
-        });
+    botaoSair.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        usuarioAtual = null;
+        mostrarTelaLogin();
+      } catch (error) {
+        console.error("Erro ao sair:", error);
+      }
     });
 
-    // Observa mudanças de autenticação
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         usuarioAtual = user;
-        mostrarTelaPrincipal();
+        await mostrarTelaPrincipal();
       } else {
         mostrarTelaLogin();
       }
     });
 
-    function mostrarTelaPrincipal() {
-      telaLogin.classList.add("hidden");
-      telaPrincipal.classList.remove("hidden");
-      carregarQuantidades();
-      carregarControles();
-    }
-
-    function mostrarTelaLogin() {
-      telaLogin.classList.remove("hidden");
-      telaPrincipal.classList.add("hidden");
-    }
-
-    // Função para salvar quantidades na base do usuário
-    function salvarQuantidades() {
-      const quantidadeUnica = document.getElementById("quantidade_unica").value;
-      const quantidadeAleatoria = document.getElementById("quantidade_aleatoria").value;
+    // Quantidades
+    async function atualizarQuantidades() {
       if (!usuarioAtual) return;
-      set(ref(database, 'users/' + usuarioAtual.uid + '/quantidades/'), {
-        unica: quantidadeUnica,
-        aleatoria: quantidadeAleatoria
-      }).then(() => {
+      try {
+        await set(ref(database, `users/${usuarioAtual.uid}/quantidades`), {
+          unica: quantidadeUnica.value,
+          aleatoria: quantidadeAleatoria.value
+        });
         console.log("Quantidades salvas com sucesso!");
-      }).catch((error) => {
+      } catch (error) {
         console.error("Erro ao salvar quantidades: ", error);
-      });
+      }
     }
 
-    // Função para carregar quantidades do usuário
-    function carregarQuantidades() {
+    async function carregarQuantidades() {
       if (!usuarioAtual) return;
-      get(ref(database, 'users/' + usuarioAtual.uid + '/quantidades/')).then((snapshot) => {
+      try {
+        const snapshot = await get(ref(database, `users/${usuarioAtual.uid}/quantidades`));
         if (snapshot.exists()) {
-          document.getElementById("quantidade_unica").value = snapshot.val().unica || "0";
-          document.getElementById("quantidade_aleatoria").value = snapshot.val().aleatoria || "0";
+          const dados = snapshot.val();
+          quantidadeUnica.value = dados.unica || "0";
+          quantidadeAleatoria.value = dados.aleatoria || "0";
           console.log("Quantidades carregadas com sucesso!");
         } else {
           console.log("Nenhuma quantidade salva ainda.");
         }
-      }).catch((error) => {
+      } catch (error) {
         console.error("Erro ao carregar quantidades: ", error);
-      });
+      }
     }
 
-    // Verifica se o usuário já existe na base de controle
-    function usuarioJaExiste(usuario, callback) {
-      if (!usuarioAtual) return;
-      get(ref(database, 'users/' + usuarioAtual.uid + '/controle/' + usuario))
-        .then((snapshot) => {
-          callback(snapshot.exists());
-        })
-        .catch((error) => {
-          console.error("Erro ao verificar usuário: ", error);
-        });
+    // Controle
+    async function usuarioJaExiste(chaveUsuario) {
+      if (!usuarioAtual) return false;
+      try {
+        const snapshot = await get(ref(database, `users/${usuarioAtual.uid}/controle/${chaveUsuario}`));
+        return snapshot.exists();
+      } catch (error) {
+        console.error("Erro ao verificar usuário: ", error);
+        return false;
+      }
     }
 
-    // Função para salvar controle
-    function salvarControle() {
-      console.log("salvarControle acionado", usuarioAtual);
-      let usuarioSelecionado = document.getElementById("usuario").value;
-      let cadastro1 = document.getElementById("cadastro1").value;
-      let cadastro2 = document.getElementById("cadastro2").value;
-      let cadastro3 = document.getElementById("cadastro3").value;
-      let cadastro4 = document.getElementById("cadastro4").value;
+    async function salvarControle() {
+      const usuarioSelecionado = usuarioSelect.value;
+      const dadosControle = {
+        cadastro1: cadastro1.value,
+        cadastro2: cadastro2.value,
+        cadastro3: cadastro3.value,
+        cadastro4: cadastro4.value
+      };
 
-      if (!usuarioSelecionado || !cadastro1 || !cadastro2 || !cadastro3 || !cadastro4) {
+      if (Object.values(dadosControle).some(valor => !valor)) {
         alert("Preencha todos os campos!");
         return;
       }
@@ -545,45 +536,38 @@
         return;
       }
 
-      usuarioJaExiste(usuarioSelecionado, (existe) => {
-        if (existe) {
-          const confirmacao = confirm("Este usuário já foi salvo. Tem certeza que deseja alterar?");
-          if (!confirmacao) return;
+      try {
+        if (await usuarioJaExiste(usuarioSelecionado)) {
+          if (!confirm("Este usuário já foi salvo. Tem certeza que deseja alterar?")) return;
         }
-        set(ref(database, 'users/' + usuarioAtual.uid + '/controle/' + usuarioSelecionado), {
-          cadastro1: cadastro1,
-          cadastro2: cadastro2,
-          cadastro3: cadastro3,
-          cadastro4: cadastro4
-        }).then(() => {
-          alert("Controle salvo com sucesso!");
-          carregarControles();
-        }).catch((error) => {
-          console.error("Erro ao salvar controle: ", error);
-        });
-        salvarQuantidades();
-      });
+        await set(ref(database, `users/${usuarioAtual.uid}/controle/${usuarioSelecionado}`), dadosControle);
+        alert("Controle salvo com sucesso!");
+        await carregarControles();
+        atualizarQuantidades();
+      } catch (error) {
+        console.error("Erro ao salvar controle: ", error);
+      }
     }
 
-    // Função para carregar os controles do usuário e incluir botão de exclusão na última coluna
-    function carregarControles() {
+    async function carregarControles() {
       if (!usuarioAtual) return;
-      get(ref(database, 'users/' + usuarioAtual.uid + '/controle/')).then((snapshot) => {
+      try {
+        const snapshot = await get(ref(database, `users/${usuarioAtual.uid}/controle`));
+        // Recria o cabeçalho da tabela
+        tabelaControle.innerHTML = `
+          <tr>
+            <th>Usuário</th>
+            <th>Cadastro 1</th>
+            <th>Cadastro 2</th>
+            <th>Cadastro 3</th>
+            <th>Cadastro 4</th>
+            <th>Ação</th>
+          </tr>
+        `;
         if (snapshot.exists()) {
-          let tabela = document.getElementById("tabela_controle");
-          tabela.innerHTML = `
-            <tr>
-              <th>Usuário</th>
-              <th>Cadastro 1</th>
-              <th>Cadastro 2</th>
-              <th>Cadastro 3</th>
-              <th>Cadastro 4</th>
-              <th>Ação</th>
-            </tr>`;
-          
-          snapshot.forEach((childSnapshot) => {
-            let dados = childSnapshot.val();
-            let linha = tabela.insertRow();
+          snapshot.forEach(childSnapshot => {
+            const dados = childSnapshot.val();
+            const linha = tabelaControle.insertRow();
             let cellUsuario = linha.insertCell();
             cellUsuario.textContent = childSnapshot.key;
             let cellCadastro1 = linha.insertCell();
@@ -594,66 +578,55 @@
             cellCadastro3.textContent = dados.cadastro3;
             let cellCadastro4 = linha.insertCell();
             cellCadastro4.textContent = dados.cadastro4;
-            // Botão de exclusão na última coluna com "X"
             let cellExcluir = linha.insertCell();
             cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirControle('${childSnapshot.key}')">X</button>`;
           });
         } else {
           console.log("Nenhum controle salvo ainda.");
         }
-      }).catch((error) => {
+      } catch (error) {
         console.error("Erro ao carregar controles: ", error);
-      });
-    }
-
-    // Função para excluir controle com confirmação
-    function excluirControle(usuario) {
-      if (!usuarioAtual) return;
-      if (confirm("Você tem certeza que deseja excluir o usuário?")) {
-        remove(ref(database, 'users/' + usuarioAtual.uid + '/controle/' + usuario))
-          .then(() => {
-            alert("Usuário excluído com sucesso!");
-            carregarControles();
-          })
-          .catch((error) => {
-            console.error("Erro ao excluir usuário: ", error);
-          });
       }
     }
 
-    // Expondo a função para o escopo global para uso inline
-    window.excluirControle = excluirControle;
+    async function excluirControle(chaveUsuario) {
+      if (!usuarioAtual) return;
+      if (!confirm("Você tem certeza que deseja excluir o usuário?")) return;
+      try {
+        await remove(ref(database, `users/${usuarioAtual.uid}/controle/${chaveUsuario}`));
+        alert("Usuário excluído com sucesso!");
+        carregarControles();
+      } catch (error) {
+        console.error("Erro ao excluir usuário: ", error);
+      }
+    }
 
-    // Função para filtrar a tabela somente quando o botão "Pesquisar" é clicado
+    // Filtro da tabela
     function filtrarControle() {
-      const input = document.getElementById("searchInput");
-      const filter = input.value.toUpperCase();
-      const table = document.getElementById("tabela_controle");
-      const tr = table.getElementsByTagName("tr");
-
-      for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName("td")[0]; // coluna "Usuário"
-        if (td) {
-          const txtValue = td.textContent || td.innerText;
-          tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
+      const filter = searchInput.value.toUpperCase();
+      const linhas = tabelaControle.getElementsByTagName("tr");
+      for (let i = 1; i < linhas.length; i++) {
+        const cell = linhas[i].getElementsByTagName("td")[0];
+        if (cell) {
+          const txtValue = cell.textContent || cell.innerText;
+          linhas[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
         }
       }
     }
 
-    // Função para limpar o filtro
     function limparFiltro() {
-      const input = document.getElementById("searchInput");
-      input.value = "";
+      searchInput.value = "";
       filtrarControle();
     }
 
-    // Evento do botão "Salvar"
-    document.getElementById("botaoSalvar").addEventListener("click", salvarControle);
+    // Eventos
+    botaoSalvar.addEventListener("click", salvarControle);
+    btnPesquisar.addEventListener("click", filtrarControle);
+    btnLimparFiltro.addEventListener("click", limparFiltro);
 
-    // Torna as funções globais para uso inline
-    window.filtrarControle = filtrarControle;
-    window.limparFiltro = limparFiltro;
-    window.salvarQuantidades = salvarQuantidades;
+    // Torna funções globais para uso inline (por exemplo, no botão de exclusão)
+    window.excluirControle = excluirControle;
+    window.atualizarQuantidades = atualizarQuantidades;
   </script>
 </body>
 </html>
