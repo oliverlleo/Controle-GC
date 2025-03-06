@@ -65,22 +65,41 @@
     .hidden {
       display: none;
     }
-    /* Tela de login */
-    .login-container {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    .login-container button {
-      margin-bottom: 10px;
-    }
-    /* Botão de recuperação de senha */
+    /* Botões personalizados */
     #botaoRecuperar {
       background-color: #e74c3c;
     }
     #botaoRecuperar:hover {
       background-color: #c0392b;
     }
-    /* Barra de pesquisa e botões da tela principal */
+    #botaoSair {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 16px;
+      line-height: 30px;
+      text-align: center;
+      background-color: #2c3e50;
+      transition: transform 0.2s ease;
+    }
+    #botaoSair:hover {
+      transform: scale(1.2);
+    }
+    .delete-button {
+      background: transparent;
+      border: none;
+      color: #e74c3c;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .delete-button:hover {
+      color: #c0392b;
+    }
+    /* Barra de pesquisa e tabela */
     .search-bar {
       margin-bottom: 20px;
       display: flex;
@@ -140,24 +159,6 @@
         white-space: nowrap;
       }
     }
-    /* Botão de Logout (X) */
-    #botaoSair {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      padding: 0;
-      font-size: 16px;
-      line-height: 30px;
-      text-align: center;
-      background-color: #2c3e50;
-      transition: transform 0.2s ease;
-    }
-    #botaoSair:hover {
-      transform: scale(1.2);
-    }
   </style>
 </head>
 <body>
@@ -177,7 +178,7 @@
 
   <!-- Tela principal -->
   <div class="container hidden" id="telaPrincipal">
-    <!-- Botão de Sair em forma de "X" -->
+    <!-- Botão de Sair -->
     <button id="botaoSair">X</button>
     <!-- Gerenciamento de Quantidade -->
     <div class="section">
@@ -283,10 +284,10 @@
       <button id="botaoSalvar">Salvar</button>
     </div>
 
-    <!-- Controle -->
+    <!-- Controle (Tabela) -->
     <div class="section">
       <h2>Controle</h2>
-      <!-- Barra de pesquisa com botões -->
+      <!-- Barra de pesquisa -->
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Pesquisar usuário...">
         <button onclick="filtrarControle()">Pesquisar</button>
@@ -294,6 +295,7 @@
       </div>
       <table id="tabela_controle">
         <tr>
+          <th>Ação</th>
           <th>Usuário</th>
           <th>Cadastro 1</th>
           <th>Cadastro 2</th>
@@ -307,10 +309,10 @@
   <script type="module">
     // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+    import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-    // Configuração do Firebase (não alterada para preservar a funcionalidade)
+    // Configuração do Firebase
     const config = {
       apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
       authDomain: "gc-controle.firebaseapp.com",
@@ -457,7 +459,7 @@
         });
     }
 
-    // Função para salvar controle com logs de debug
+    // Função para salvar controle
     function salvarControle() {
       console.log("salvarControle acionado", usuarioAtual);
       let usuarioSelecionado = document.getElementById("usuario").value;
@@ -496,7 +498,7 @@
       });
     }
 
-    // Função para carregar os controles do usuário
+    // Função para carregar os controles do usuário e incluir botão de exclusão
     function carregarControles() {
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/controle/')).then((snapshot) => {
@@ -504,6 +506,7 @@
           let tabela = document.getElementById("tabela_controle");
           tabela.innerHTML = `
             <tr>
+              <th>Ação</th>
               <th>Usuário</th>
               <th>Cadastro 1</th>
               <th>Cadastro 2</th>
@@ -514,50 +517,6 @@
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
             let linha = tabela.insertRow();
-            linha.insertCell(0).textContent = childSnapshot.key;
-            linha.insertCell(1).textContent = dados.cadastro1;
-            linha.insertCell(2).textContent = dados.cadastro2;
-            linha.insertCell(3).textContent = dados.cadastro3;
-            linha.insertCell(4).textContent = dados.cadastro4;
-          });
-        } else {
-          console.log("Nenhum controle salvo ainda.");
-        }
-      }).catch((error) => {
-        console.error("Erro ao carregar controles: ", error);
-      });
-    }
-
-    // Função para filtrar a tabela somente quando o botão "Pesquisar" é clicado
-    function filtrarControle() {
-      const input = document.getElementById("searchInput");
-      const filter = input.value.toUpperCase();
-      const table = document.getElementById("tabela_controle");
-      const tr = table.getElementsByTagName("tr");
-
-      for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName("td")[0];
-        if (td) {
-          const txtValue = td.textContent || td.innerText;
-          tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
-        }
-      }
-    }
-
-    // Função para limpar o filtro
-    function limparFiltro() {
-      const input = document.getElementById("searchInput");
-      input.value = "";
-      filtrarControle();
-    }
-
-    // Evento do botão "Salvar"
-    document.getElementById("botaoSalvar").addEventListener("click", salvarControle);
-
-    // Torna as funções globais para uso inline
-    window.filtrarControle = filtrarControle;
-    window.limparFiltro = limparFiltro;
-    window.salvarQuantidades = salvarQuantidades;
-  </script>
-</body>
-</html>
+            // Botão de exclusão
+            let cellExcluir = linha.insertCell();
+            cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirControle('${chi
