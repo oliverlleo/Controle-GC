@@ -519,4 +519,72 @@
             let linha = tabela.insertRow();
             // Botão de exclusão
             let cellExcluir = linha.insertCell();
-            cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirControle('${chi
+            cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirControle('${childSnapshot.key}')">&#128465;</button>`;
+            // Dados do cadastro
+            let cellUsuario = linha.insertCell();
+            cellUsuario.textContent = childSnapshot.key;
+            let cellCadastro1 = linha.insertCell();
+            cellCadastro1.textContent = dados.cadastro1;
+            let cellCadastro2 = linha.insertCell();
+            cellCadastro2.textContent = dados.cadastro2;
+            let cellCadastro3 = linha.insertCell();
+            cellCadastro3.textContent = dados.cadastro3;
+            let cellCadastro4 = linha.insertCell();
+            cellCadastro4.textContent = dados.cadastro4;
+          });
+        } else {
+          console.log("Nenhum controle salvo ainda.");
+        }
+      }).catch((error) => {
+        console.error("Erro ao carregar controles: ", error);
+      });
+    }
+
+    // Função para excluir controle com confirmação
+    function excluirControle(usuario) {
+      if (!usuarioAtual) return;
+      if (confirm("Você tem certeza que deseja excluir o usuário?")) {
+        remove(ref(database, 'users/' + usuarioAtual.uid + '/controle/' + usuario))
+          .then(() => {
+            alert("Usuário excluído com sucesso!");
+            carregarControles();
+          })
+          .catch((error) => {
+            console.error("Erro ao excluir usuário: ", error);
+          });
+      }
+    }
+
+    // Função para filtrar a tabela somente quando o botão "Pesquisar" é clicado
+    function filtrarControle() {
+      const input = document.getElementById("searchInput");
+      const filter = input.value.toUpperCase();
+      const table = document.getElementById("tabela_controle");
+      const tr = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < tr.length; i++) {
+        const td = tr[i].getElementsByTagName("td")[1]; // coluna "Usuário"
+        if (td) {
+          const txtValue = td.textContent || td.innerText;
+          tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
+        }
+      }
+    }
+
+    // Função para limpar o filtro
+    function limparFiltro() {
+      const input = document.getElementById("searchInput");
+      input.value = "";
+      filtrarControle();
+    }
+
+    // Evento do botão "Salvar"
+    document.getElementById("botaoSalvar").addEventListener("click", salvarControle);
+
+    // Torna as funções globais para uso inline
+    window.filtrarControle = filtrarControle;
+    window.limparFiltro = limparFiltro;
+    window.salvarQuantidades = salvarQuantidades;
+  </script>
+</body>
+</html>
