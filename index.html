@@ -177,7 +177,7 @@
 
   <!-- Tela principal -->
   <div class="container hidden" id="mainScreen">
-    <!-- Botão de Sair (X) -->
+    <!-- Botão de Sair em forma de "X" -->
     <button id="logoutBtn">X</button>
     <!-- Gerenciamento de Quantidade -->
     <div class="section">
@@ -414,7 +414,7 @@
       mainScreen.classList.add("hidden");
     }
 
-    // Função para salvar pergaminhos na base do usuário
+    // Função para salvar quantidades na base do usuário
     function salvarPergaminhos() {
       const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
@@ -423,39 +423,39 @@
         unico: pergaminhoUnico,
         aleatorio: pergaminhoAleatorio
       }).then(() => {
-        console.log("Pergaminhos salvos com sucesso!");
+        console.log("Quantidades salvas com sucesso!");
       }).catch((error) => {
-        console.error("Erro ao salvar pergaminhos: ", error);
+        console.error("Erro ao salvar quantidades: ", error);
       });
     }
 
-    // Função para carregar pergaminhos do usuário
+    // Função para carregar quantidades do usuário
     function carregarPergaminhos() {
       if(!currentUser) return;
       get(ref(db, 'users/' + currentUser.uid + '/pergaminhos/')).then((snapshot) => {
         if (snapshot.exists()) {
           document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
           document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
-          console.log("Pergaminhos carregados com sucesso!");
+          console.log("Quantidades carregadas com sucesso!");
         } else {
-          console.log("Nenhum valor de pergaminho salvo ainda.");
+          console.log("Nenhuma quantidade salva ainda.");
         }
       }).catch((error) => {
-        console.error("Erro ao carregar pergaminhos: ", error);
+        console.error("Erro ao carregar quantidades: ", error);
       });
     }
 
-    // Verifica se o personagem já existe na base do usuário
+    // Verifica se o usuário já existe na base do usuário
     function personagemJaExiste(personagem, callback) {
       if(!currentUser) return;
       get(ref(db, 'users/' + currentUser.uid + '/gc/' + personagem)).then((snapshot) => {
         callback(snapshot.exists());
       }).catch((error) => {
-        console.error("Erro ao verificar personagem: ", error);
+        console.error("Erro ao verificar usuário: ", error);
       });
     }
 
-    // Função para salvar GC com logs de debug
+    // Função para salvar controle com logs de debug
     function salvarGC() {
       console.log("salvarGC acionado", currentUser);
       let personagem = document.getElementById("personagem").value;
@@ -476,7 +476,7 @@
 
       personagemJaExiste(personagem, (existe) => {
         if (existe) {
-          const confirmacao = confirm("Este personagem já foi salvo. Tem certeza que deseja alterar?");
+          const confirmacao = confirm("Este usuário já foi salvo. Tem certeza que deseja alterar?");
           if (!confirmacao) return;
         }
         set(ref(db, 'users/' + currentUser.uid + '/gc/' + personagem), {
@@ -485,16 +485,16 @@
           anel: anel,
           berkas: berkas
         }).then(() => {
-          alert("GC salvo com sucesso!");
+          alert("Controle salvo com sucesso!");
           carregarGCs();
         }).catch((error) => {
-          console.error("Erro ao salvar GC: ", error);
+          console.error("Erro ao salvar controle: ", error);
         });
         salvarPergaminhos();
       });
     }
 
-    // Função para carregar os GCs do usuário
+    // Função para carregar os controles do usuário
     function carregarGCs() {
       if(!currentUser) return;
       get(ref(db, 'users/' + currentUser.uid + '/gc/')).then((snapshot) => {
@@ -519,14 +519,14 @@
             linha.insertCell(4).textContent = dados.berkas;
           });
         } else {
-          console.log("Nenhum GC salvo ainda.");
+          console.log("Nenhum controle salvo ainda.");
         }
       }).catch((error) => {
-        console.error("Erro ao carregar GCs: ", error);
+        console.error("Erro ao carregar controles: ", error);
       });
     }
 
-    // Função para filtrar a tabela
+    // Função para filtrar a tabela somente quando o botão "Pesquisar" é clicado
     function filtrarTabela() {
       const input = document.getElementById("searchInput");
       const filter = input.value.toUpperCase();
@@ -544,19 +544,18 @@
 
     // Função para limpar o filtro
     function limparFiltro() {
-      document.getElementById("searchInput").value = "";
+      const input = document.getElementById("searchInput");
+      input.value = "";
       filtrarTabela();
     }
-
-    // Adiciona listener para atualizar o filtro conforme o usuário digita
-    document.getElementById("searchInput").addEventListener("input", filtrarTabela);
 
     // Evento do botão "Salvar"
     document.getElementById("salvarGC").addEventListener("click", salvarGC);
 
-    // Expor funções para uso inline (caso opte pelos botões também)
+    // Torna as funções globais para uso inline
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
+    window.salvarPergaminhos = salvarPergaminhos;
   </script>
 </body>
 </html>
