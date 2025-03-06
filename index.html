@@ -7,9 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     /* Estilos gerais */
-    * {
-      box-sizing: border-box;
-    }
     body {
       font-family: 'Roboto', sans-serif;
       background-color: #f8f9fa;
@@ -116,7 +113,6 @@
       margin-bottom: 20px;
       display: flex;
       gap: 10px;
-      flex-wrap: nowrap;
     }
     .search-bar input {
       flex: 1;
@@ -133,7 +129,6 @@
       padding: 10px 20px;
       height: 42px;
       max-width: 150px;
-      flex-shrink: 0;
     }
     table {
       width: 100%;
@@ -157,21 +152,20 @@
     tr:hover {
       background-color: #f1f1f1;
     }
-    /* Ajustes para mobile */
     @media (max-width: 600px) {
-      .container {
-        margin: 10px;
+      h2 {
+        font-size: 20px;
       }
-      /* Adiciona espaçamento lateral aos inputs das telas de login e quantidade */
-      .login-container input,
-      .login-container select,
-      .pergaminhos input {
-        margin-left: 10px;
-        margin-right: 10px;
-      }
-      /* Garante que a barra de pesquisa não quebre */
       .search-bar {
-        flex-wrap: nowrap;
+        flex-direction: column;
+      }
+      .search-bar button {
+        width: 100%;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
       }
     }
   </style>
