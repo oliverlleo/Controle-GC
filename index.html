@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle GC</title>
+  <title>Sistema de Login e Controle GC</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* Estilos gerais (mantidos conforme o seu código original) */
+    /* Estilos gerais */
     body {
       font-family: 'Roboto', sans-serif;
       background-color: #f8f9fa;
@@ -36,7 +36,7 @@
       font-weight: 500;
       color: #555;
     }
-    input, select {
+    input, select, button {
       width: 100%;
       padding: 10px;
       margin-bottom: 15px;
@@ -55,15 +55,41 @@
       background-color: #2c3e50;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 500;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      font-weight: 500;
     }
     button:hover {
       background-color: #1a2a3a;
+    }
+    .hidden {
+      display: none;
+    }
+    /* Tela de login */
+    .login-container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    /* Barra de pesquisa e botões da tela principal */
+    .search-bar {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .search-bar input {
+      flex: 1;
+      max-width: 230px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #333;
+      background-color: #f9f9f9;
+      transition: border-color 0.3s ease;
+    }
+    .search-bar button {
+      padding: 10px 20px;
+      height: 42px;
+      max-width: 150px;
     }
     table {
       width: 100%;
@@ -87,66 +113,15 @@
     tr:hover {
       background-color: #f1f1f1;
     }
-    .search-bar {
-      margin-bottom: 20px;
-      display: flex;
-      gap: 10px;
-    }
-    .search-bar input {
-      flex: 1;
-      /* Aumenta aproximadamente 15% em relação ao valor original */
-      max-width: 230px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      color: #333;
-      background-color: #f9f9f9;
-      transition: border-color 0.3s ease;
-    }
-    .search-bar input:focus {
-      border-color: #2c3e50;
-      outline: none;
-    }
-    .search-bar button {
-      padding: 10px 20px;
-      /* Aumenta a largura e define a altura para ficar igual ao botão "Salvar GC" */
-      height: 42px;
-      max-width: 150px;
-    }
-    .section {
-      margin-bottom: 30px;
-    }
-    .columns {
-      display: flex;
-      gap: 20px;
-    }
-    .columns > div {
-      flex: 1;
-    }
-    .pergaminhos {
-      display: flex;
-      gap: 20px;
-    }
-    .pergaminhos input {
-      max-width: 100px;
-    }
     @media (max-width: 600px) {
       h2 {
         font-size: 20px;
       }
-      .columns {
+      .search-bar {
         flex-direction: column;
       }
-      .pergaminhos {
-        flex-direction: column;
-      }
-      .pergaminhos input {
-        max-width: 100%;
-      }
-      button {
+      .search-bar button {
         width: 100%;
-        max-width: 100%;
       }
       table {
         display: block;
@@ -157,7 +132,25 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- Tela de Login/Cadastro -->
+  <div class="container" id="loginScreen">
+    <h2>Login / Cadastro</h2>
+    <div class="login-container">
+      <label for="email">E-mail:</label>
+      <input type="email" id="email" placeholder="Digite seu e-mail">
+      <label for="password">Senha:</label>
+      <input type="password" id="password" placeholder="Digite sua senha">
+      <button id="loginBtn">Login</button>
+      <button id="registerBtn">Cadastrar</button>
+    </div>
+  </div>
+
+  <!-- Tela principal -->
+  <div class="container hidden" id="mainScreen">
+    <!-- Seção de Sair -->
+    <div style="text-align: right;">
+      <button id="logoutBtn">Sair</button>
+    </div>
     <!-- Gerenciamento de Pergaminhos -->
     <div class="section">
       <h2>Gerenciamento de Pergaminhos</h2>
@@ -258,14 +251,14 @@
           </select>
         </div>
       </div>
-      <!-- Botão "Salvar GC" em uma nova linha -->
+      <!-- Botão "Salvar GC" -->
       <button id="salvarGC">Salvar GC</button>
     </div>
 
     <!-- Lista de GCs Salvos -->
     <div class="section">
-      <h2>Controle Personagens</h2>
-      <!-- Barra de pesquisa com botão -->
+      <h2>Controle de Personagens</h2>
+      <!-- Barra de pesquisa com botões -->
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Pesquisar personagem...">
         <button onclick="filtrarTabela()">Pesquisar</button>
@@ -284,11 +277,12 @@
   </div>
 
   <script type="module">
-    // Import Firebase SDK
+    // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-    // Firebase configuration
+    // Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
       authDomain: "gc-controle.firebaseapp.com",
@@ -300,19 +294,87 @@
       measurementId: "G-3NNXXD5V2T"
     };
 
-    // Initialize Firebase
+    // Inicializa o Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth(app);
+    let currentUser = null;
 
-    // Função para salvar pergaminhos
+    // Funções para login/cadastro
+    const loginScreen = document.getElementById("loginScreen");
+    const mainScreen = document.getElementById("mainScreen");
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    loginBtn.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          currentUser = userCredential.user;
+          mostrarMainScreen();
+        })
+        .catch((error) => {
+          alert("Erro no login: " + error.message);
+        });
+    });
+
+    registerBtn.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          currentUser = userCredential.user;
+          mostrarMainScreen();
+        })
+        .catch((error) => {
+          alert("Erro no cadastro: " + error.message);
+        });
+    });
+
+    if(logoutBtn){
+      logoutBtn.addEventListener("click", () => {
+        signOut(auth)
+          .then(() => {
+            currentUser = null;
+            mostrarLoginScreen();
+          })
+          .catch((error) => {
+            console.error("Erro ao sair:", error);
+          });
+      });
+    }
+
+    // Observa o estado de autenticação
+    onAuthStateChanged(auth, (user) => {
+      if(user){
+        currentUser = user;
+        mostrarMainScreen();
+      } else {
+        mostrarLoginScreen();
+      }
+    });
+
+    function mostrarMainScreen() {
+      loginScreen.classList.add("hidden");
+      mainScreen.classList.remove("hidden");
+      carregarPergaminhos();
+      carregarGCs();
+    }
+
+    function mostrarLoginScreen() {
+      loginScreen.classList.remove("hidden");
+      mainScreen.classList.add("hidden");
+    }
+
+    // Função para salvar pergaminhos na base do usuário
     function salvarPergaminhos() {
       const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
 
-      console.log("Salvando pergaminhos:", pergaminhoUnico, pergaminhoAleatorio);
-
-      // Salva os valores no Firebase
-      set(ref(db, 'pergaminhos/'), {
+      if(!currentUser) return;
+      set(ref(db, 'users/' + currentUser.uid + '/pergaminhos/'), {
         unico: pergaminhoUnico,
         aleatorio: pergaminhoAleatorio
       }).then(() => {
@@ -322,11 +384,11 @@
       });
     }
 
-    // Função para carregar pergaminhos
+    // Função para carregar pergaminhos do usuário
     function carregarPergaminhos() {
-      get(ref(db, 'pergaminhos/')).then((snapshot) => {
+      if(!currentUser) return;
+      get(ref(db, 'users/' + currentUser.uid + '/pergaminhos/')).then((snapshot) => {
         if (snapshot.exists()) {
-          // Preenche os campos com os valores salvos
           document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
           document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
           console.log("Pergaminhos carregados com sucesso!");
@@ -338,21 +400,22 @@
       });
     }
 
-    // Função para verificar se o personagem já existe
+    // Verifica se o personagem já existe na base do usuário
     function personagemJaExiste(personagem, callback) {
-      get(ref(db, 'gc/' + personagem)).then((snapshot) => {
-        if (snapshot.exists()) {
-          callback(true); // Personagem já existe
-        } else {
-          callback(false); // Personagem não existe
-        }
+      if(!currentUser) return;
+      get(ref(db, 'users/' + currentUser.uid + '/gc/' + personagem)).then((snapshot) => {
+        callback(snapshot.exists());
       }).catch((error) => {
         console.error("Erro ao verificar personagem: ", error);
       });
     }
 
-    // Função para salvar GC
+    // Salva GC na base do usuário
     function salvarGC() {
+      if(!currentUser) {
+        alert("Você precisa estar logado!");
+        return;
+      }
       let personagem = document.getElementById("personagem").value;
       let brinco = document.getElementById("brinco").value;
       let piercing = document.getElementById("piercing").value;
@@ -364,37 +427,30 @@
         return;
       }
 
-      // Verifica se o personagem já existe
       personagemJaExiste(personagem, (existe) => {
         if (existe) {
-          // Se o personagem já existe, pede confirmação
           const confirmacao = confirm("Este personagem já foi salvo. Tem certeza que deseja alterar?");
-          if (!confirmacao) {
-            return; // Cancela a operação se o usuário escolher "Não"
-          }
+          if (!confirmacao) return;
         }
-
-        // Salva o GC no Firebase
-        set(ref(db, 'gc/' + personagem), {
+        set(ref(db, 'users/' + currentUser.uid + '/gc/' + personagem), {
           brinco: brinco,
           piercing: piercing,
           anel: anel,
           berkas: berkas
         }).then(() => {
           alert("GC salvo com sucesso!");
-          carregarGCs(); // Atualiza a tabela após salvar
+          carregarGCs();
         }).catch((error) => {
           console.error("Erro ao salvar GC: ", error);
         });
-
-        // Salva os pergaminhos ao salvar o GC
         salvarPergaminhos();
       });
     }
 
-    // Função para carregar GCs
+    // Carrega os GCs do usuário
     function carregarGCs() {
-      get(ref(db, 'gc/')).then((snapshot) => {
+      if(!currentUser) return;
+      get(ref(db, 'users/' + currentUser.uid + '/gc/')).then((snapshot) => {
         if (snapshot.exists()) {
           let tabela = document.getElementById("tabela-gc");
           tabela.innerHTML = `
@@ -430,15 +486,11 @@
       const table = document.getElementById("tabela-gc");
       const tr = table.getElementsByTagName("tr");
 
-      for (let i = 1; i < tr.length; i++) { // Começa em 1 para pular o cabeçalho
-        const td = tr[i].getElementsByTagName("td")[0]; // Filtra pela coluna "Personagem"
+      for (let i = 1; i < tr.length; i++) {
+        const td = tr[i].getElementsByTagName("td")[0];
         if (td) {
           const txtValue = td.textContent || td.innerText;
-          if (filter === "" || txtValue.toUpperCase().includes(filter)) {
-            tr[i].style.display = ""; // Mostra a linha
-          } else {
-            tr[i].style.display = "none"; // Esconde a linha
-          }
+          tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
         }
       }
     }
@@ -446,20 +498,21 @@
     // Função para limpar o filtro
     function limparFiltro() {
       const input = document.getElementById("searchInput");
-      input.value = ""; // Limpa o campo de pesquisa
-      filtrarTabela(); // Reaplica o filtro (mostra todas as linhas)
+      input.value = "";
+      filtrarTabela();
     }
 
-    // Carrega os dados ao abrir a página
+    // Carrega os dados ao abrir a tela principal
     window.onload = function() {
-      carregarPergaminhos(); // Carrega os valores dos pergaminhos
-      carregarGCs(); // Carrega a lista de GCs
+      // Se o usuário já estiver autenticado, a tela de main será exibida automaticamente
+      // Caso contrário, permanecerá na tela de login.
+      // onAuthStateChanged já cuida disso.
     };
 
-    // Adiciona o evento de clique ao botão "Salvar GC"
+    // Evento do botão "Salvar GC"
     document.getElementById("salvarGC").addEventListener("click", salvarGC);
 
-    // Torna as funções globais para serem acessíveis pelos atributos inline do HTML
+    // Torna funções globais para uso inline
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
     window.salvarPergaminhos = salvarPergaminhos;
