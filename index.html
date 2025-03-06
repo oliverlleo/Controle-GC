@@ -196,6 +196,13 @@
         flex: 1 1 calc(50% - 10px); /* Faz os botões ocuparem metade da largura, menos o gap */
         max-width: calc(50% - 10px); /* Limita a largura dos botões */
       }
+
+      /* Mantém a responsividade da tabela */
+      table {
+        display: block;
+        overflow-x: auto; /* Barra de rolagem horizontal */
+        white-space: nowrap; /* Evita quebra de linha */
+      }
     }
   </style>
 </head>
