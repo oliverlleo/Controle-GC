@@ -177,7 +177,7 @@
 
   <!-- Tela principal -->
   <div class="container hidden" id="mainScreen">
-    <!-- Botão de Sair em forma de "X" -->
+    <!-- Botão de Sair (X) -->
     <button id="logoutBtn">X</button>
     <!-- Gerenciamento de Quantidade -->
     <div class="section">
@@ -544,18 +544,19 @@
 
     // Função para limpar o filtro
     function limparFiltro() {
-      const input = document.getElementById("searchInput");
-      input.value = "";
+      document.getElementById("searchInput").value = "";
       filtrarTabela();
     }
 
-    // Evento do botão "Salvar GC"
+    // Adiciona listener para atualizar o filtro conforme o usuário digita
+    document.getElementById("searchInput").addEventListener("input", filtrarTabela);
+
+    // Evento do botão "Salvar"
     document.getElementById("salvarGC").addEventListener("click", salvarGC);
 
-    // Torna as funções globais para uso inline
+    // Expor funções para uso inline (caso opte pelos botões também)
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
-    window.salvarPergaminhos = salvarPergaminhos;
   </script>
 </body>
 </html>
