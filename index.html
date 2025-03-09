@@ -152,11 +152,10 @@
     tr:hover {
       background-color: #f1f1f1;
     }
-
     /* Ajustes para os campos de quantidade */
     .pergaminhos input[type="number"] {
-      max-width: 120px; /* Ajuste o valor conforme necessário */
-      width: 100%; /* Garante que o campo ocupe 100% da largura disponível */
+      max-width: 120px;
+      width: 100%;
       padding: 10px;
       margin-bottom: 15px;
       border: 1px solid #ddd;
@@ -166,64 +165,63 @@
       background-color: #f9f9f9;
       transition: border-color 0.3s ease;
     }
-
     /* Ajustes para a tela de login */
     .login-container {
-      padding: 0 10px; /* Adiciona padding nas laterais */
+      padding: 0 10px;
     }
-
     .login-container input {
-      width: calc(98% - 20px); /* Reduz a largura dos campos de entrada */
+      width: calc(98% - 20px);
       margin-left: 10px;
       margin-right: 20px;
-      padding: 8px; /* Reduz o padding interno */
-      font-size: 12px; /* Reduz o tamanho da fonte */
-      margin-bottom: 10px; /* Reduz o espaçamento inferior */
+      padding: 8px;
+      font-size: 12px;
+      margin-bottom: 10px;
     }
-
     .login-container button {
-      width: calc(100% - 20px); /* Reduz a largura dos botões */
+      width: calc(100% - 20px);
       margin-left: 10px;
       margin-right: 10px;
-      padding: 8px; /* Reduz o padding interno */
-      font-size: 12px; /* Reduz o tamanho da fonte */
-      margin-bottom: 10px; /* Reduz o espaçamento inferior */
+      padding: 8px;
+      font-size: 12px;
+      margin-bottom: 10px;
     }
-
+    /* Painel de berkas faltantes */
+    #missingBerkasPanel {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #eaf7ff;
+      border: 1px solid #bce0fd;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+    }
     /* Ajustes para mobile */
     @media (max-width: 600px) {
       h2 {
         font-size: 20px;
       }
-
-      /* Ajustes para o gerenciamento de quantidade */
       .pergaminhos input[type="number"] {
-        max-width: 100%; /* Faz o campo ocupar a largura total em dispositivos móveis */
+        max-width: 100%;
       }
-
-      /* Ajustes para a barra de pesquisa */
       .search-bar {
-        flex-direction: row; /* Mantém os botões lado a lado */
-        flex-wrap: wrap; /* Permite que os botões quebrem para a próxima linha se necessário */
+        flex-direction: row;
+        flex-wrap: wrap;
         gap: 10px;
-        padding: 0 10px; /* Adiciona padding nas laterais */
+        padding: 0 10px;
       }
-
       .search-bar input {
-        flex: 1 1 100%; /* Faz o campo de pesquisa ocupar a linha inteira */
-        max-width: 100%; /* Remove a limitação de largura */
+        flex: 1 1 100%;
+        max-width: 100%;
       }
-
       .search-bar button {
-        flex: 1 1 calc(50% - 10px); /* Faz os botões ocuparem metade da largura, menos o gap */
-        max-width: calc(50% - 10px); /* Limita a largura dos botões */
+        flex: 1 1 calc(50% - 10px);
+        max-width: calc(50% - 10px);
       }
-
-      /* Mantém a responsividade da tabela */
       table {
         display: block;
-        overflow-x: auto; /* Barra de rolagem horizontal */
-        white-space: nowrap; /* Evita quebra de linha */
+        overflow-x: auto;
+        white-space: nowrap;
       }
     }
   </style>
@@ -370,6 +368,8 @@
           <th>Ação</th>
         </tr>
       </table>
+      <!-- Painel de berkas faltantes -->
+      <div id="missingBerkasPanel"></div>
     </div>
   </div>
 
@@ -492,7 +492,7 @@
         unico: pergaminhoUnico,
         aleatorio: pergaminhoAleatorio
       }).then(() => {
-        console.log("Pergaminhos salvas com sucesso!");
+        console.log("Pergaminhos salvos com sucesso!");
       }).catch((error) => {
         console.error("Erro ao salvar pergaminhos: ", error);
       });
@@ -505,7 +505,7 @@
         if (snapshot.exists()) {
           document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
           document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
-          console.log("Pergaminhos carregadas com sucesso!");
+          console.log("Pergaminhos carregados com sucesso!");
         } else {
           console.log("Nenhum valor de pergaminho salvo ainda.");
         }
@@ -528,7 +528,6 @@
 
     // Função para salvar controle
     function salvarGC() {
-      console.log("salvarGC acionado", usuarioAtual);
       let personagemSelecionado = document.getElementById("personagem").value;
       let brinco = document.getElementById("brinco").value;
       let piercing = document.getElementById("piercing").value;
@@ -565,27 +564,42 @@
       });
     }
 
-    // Função para carregar os GCs do usuário e incluir botão de exclusão na última coluna
+    // Função para carregar os GCs do usuário, atualizar a tabela e calcular berkas faltantes
     function carregarGCs() {
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
-        if (snapshot.exists()) {
-          let tabela = document.getElementById("tabela_controle");
-          tabela.innerHTML = `
-            <tr>
-              <th>Personagem</th>
-              <th>Brinco</th>
-              <th>Piercing</th>
-              <th>Anel</th>
-              <th>Berkas</th>
-              <th>Ação</th>
-            </tr>`;
+        let tabela = document.getElementById("tabela_controle");
+        tabela.innerHTML = `
+          <tr>
+            <th>Personagem</th>
+            <th>Brinco</th>
+            <th>Piercing</th>
+            <th>Anel</th>
+            <th>Berkas</th>
+            <th>Ação</th>
+          </tr>`;
           
+        let totalMissing = 0; // acumulador de berkas faltantes
+
+        if (snapshot.exists()) {
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
+            let personagem = childSnapshot.key;
+            let berkasValor = dados.berkas;
+            let berkasNum = 0;
+            if (berkasValor === "Full") {
+              berkasNum = 12;
+            } else if (berkasValor === "Nenhum") {
+              berkasNum = 0;
+            } else {
+              berkasNum = parseInt(berkasValor) || 0;
+            }
+            let missing = 12 - berkasNum;
+            totalMissing += missing;
+
             let linha = tabela.insertRow();
             let cellPersonagem = linha.insertCell();
-            cellPersonagem.textContent = childSnapshot.key;
+            cellPersonagem.textContent = personagem;
             let cellBrinco = linha.insertCell();
             cellBrinco.textContent = dados.brinco;
             let cellPiercing = linha.insertCell();
@@ -596,11 +610,13 @@
             cellBerkas.textContent = dados.berkas;
             // Botão de exclusão na última coluna com "X"
             let cellExcluir = linha.insertCell();
-            cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${childSnapshot.key}')">X</button>`;
+            cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
           });
         } else {
           console.log("Nenhum GC salvo ainda.");
         }
+        // Atualiza o painel de berkas faltantes
+        document.getElementById("missingBerkasPanel").textContent = `Total de berkas faltantes para completar todos os personagens: ${totalMissing}`;
       }).catch((error) => {
         console.error("Erro ao carregar GCs: ", error);
       });
@@ -620,9 +636,6 @@
           });
       }
     }
-
-    // Expondo a função para o escopo global para uso inline
-    window.excluirGC = excluirGC;
 
     // Função para filtrar a tabela somente quando o botão "Pesquisar" é clicado
     function filtrarTabela() {
@@ -651,6 +664,7 @@
     document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
 
     // Torna as funções globais para uso inline
+    window.excluirGC = excluirGC;
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
     window.salvarPergaminhos = salvarPergaminhos;
