@@ -47,6 +47,7 @@
       color: #333;
       background-color: #f9f9f9;
       transition: border-color 0.3s ease;
+      box-sizing: border-box;
     }
     input:focus, select:focus {
       border-color: #2c3e50;
@@ -113,27 +114,26 @@
       margin-bottom: 30px;
     }
     .pergaminhos-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 20px;
-      flex-wrap: wrap;
+      align-items: center;
     }
     .pergaminhos-row > div {
-      flex: 1;
-      min-width: 150px;
+      /* Cada coluna ocupa 1 fração do espaço */
     }
-    /* Para inputs de pergaminhos com espaço para 5 dígitos */
     .pergaminhos-row input[type="number"] {
-      width: 6em;
+      width: 100%;
+      max-width: 80px; /* Espaço suficiente para cerca de 5 dígitos */
     }
     /* Seção de Controle de Itens - 3 Colunas */
     .controle-columns {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
-      flex-wrap: wrap;
     }
     .controle-columns > div {
-      flex: 1;
-      min-width: 150px;
+      /* Cada coluna do grid se ajusta igualmente */
     }
     /* Seção de Itens Faltantes */
     #missingBerkasPanel {
@@ -209,9 +209,8 @@
       h2 {
         font-size: 20px;
       }
-      .pergaminhos-row > div,
-      .controle-columns > div {
-        min-width: 100%;
+      .pergaminhos-row, .controle-columns {
+        grid-template-columns: 1fr;
       }
       .search-bar {
         flex-direction: row;
@@ -254,7 +253,7 @@
   <div class="container hidden" id="telaPrincipal">
     <button id="botaoSair">X</button>
 
-    <!-- Seção de Gerenciamento de Pergaminhos (mantida separada) -->
+    <!-- Seção de Gerenciamento de Pergaminhos -->
     <div class="section pergaminhos-section">
       <h2>Gerenciamento de Pergaminhos</h2>
       <div class="pergaminhos-row">
@@ -269,7 +268,7 @@
       </div>
     </div>
 
-    <!-- Seção de Controle de Itens (3 colunas) -->
+    <!-- Seção de Controle de Itens -->
     <div class="section" id="controleItens">
       <h2>Controle de Itens</h2>
       <div class="controle-columns">
@@ -445,7 +444,7 @@
   </div>
 
   <script type="module">
-    // Configuração do Firebase
+    // Configuração do Firebase e demais scripts permanecem inalterados...
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
@@ -547,7 +546,7 @@
       telaPrincipal.classList.add("hidden");
     }
 
-    // Salva os pergaminhos (mantido na seção de Pergaminhos)
+    // Salva os pergaminhos
     function salvarPergaminhos() {
       const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
@@ -822,4 +821,3 @@
   </script>
 </body>
 </html>
-
