@@ -135,12 +135,12 @@
       flex-direction: column;
       gap: 15px;
     }
-    /* Na 1ª coluna, o campo "Vazio" fica sozinho e o botão "Salvar GC" aparece abaixo, pequeno e alinhado à esquerda */
+    /* Botão "Salvar GC" ajustado para ocupar 100% da largura da coluna */
     .small-button {
       padding: 6px 10px;
-      max-width: 120px;
+      width: 100%;
     }
-    /* Barra de Pesquisa – mesmo linha, com input de largura fixa para 20 caracteres */
+    /* Barra de Pesquisa – mesma linha com campo maior */
     .search-bar {
       display: flex;
       align-items: center;
@@ -148,7 +148,7 @@
       margin-bottom: 15px;
     }
     .search-bar input {
-      width: 20ch;
+      width: 40ch; /* Dobra o tamanho anterior */
       margin-bottom: 0;
     }
     .search-bar button {
@@ -228,7 +228,6 @@
         flex-direction: column;
       }
       .small-button {
-        max-width: none;
         width: 100%;
       }
     }
@@ -412,7 +411,7 @@
     <div class="section">
       <h2>Controle de Personagens</h2>
       <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Pesquisar personagem..." maxlength="20" style="width:20ch;">
+        <input type="text" id="searchInput" placeholder="Pesquisar personagem..." maxlength="20" style="width:40ch;">
         <button onclick="filtrarTabela()">Pesquisar</button>
         <button onclick="limparFiltro()">Limpar Filtro</button>
       </div>
