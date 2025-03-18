@@ -6,7 +6,7 @@
   <title>Sistema de Login e Controle GC</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* Estilos gerais */
+    /* Estilos Gerais */
     body {
       font-family: 'Roboto', sans-serif;
       background-color: #f8f9fa;
@@ -19,7 +19,7 @@
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
-      background-color: #ffffff;
+      background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
@@ -54,7 +54,7 @@
     }
     button {
       background-color: #2c3e50;
-      color: white;
+      color: #fff;
       border: none;
       cursor: pointer;
       font-weight: 500;
@@ -89,14 +89,14 @@
     #botaoSair:hover {
       transform: scale(1.2);
     }
-    /* Botão de exclusão com X */
+    /* Botão de Exclusão */
     .delete-button {
       background-color: #e74c3c;
       border: none;
       border-radius: 50%;
       width: 28px;
       height: 28px;
-      color: white;
+      color: #fff;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
@@ -108,62 +108,24 @@
     .delete-button:hover {
       background-color: #c0392b;
     }
-    /* Barra de pesquisa e tabela */
-    .search-bar {
-      margin-bottom: 20px;
-      display: flex;
-      gap: 10px;
+    /* Seção de Gerenciamento de Pergaminhos */
+    .pergaminhos-section {
+      margin-bottom: 30px;
     }
-    .search-bar input {
+    .pergaminhos-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .pergaminhos-row > div {
       flex: 1;
-      max-width: 230px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      color: #333;
-      background-color: #f9f9f9;
-      transition: border-color 0.3s ease;
+      min-width: 150px;
     }
-    .search-bar button {
-      padding: 10px 20px;
-      height: 42px;
-      max-width: 150px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background-color: #ffffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    th {
-      background-color: #2c3e50;
-      color: white;
-      font-weight: 600;
-    }
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-    /* Espaçamento para inputs de Pergaminhos na seção de Controle de Itens */
-    .pergaminhos-inline {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .pergaminhos-inline input[type="number"] {
-      /* Tamanho fixo para 5 dígitos */
+    /* Para inputs de pergaminhos com espaço para 5 dígitos */
+    .pergaminhos-row input[type="number"] {
       width: 6em;
     }
-    /* Organização em 3 colunas para o Controle de Itens */
+    /* Seção de Controle de Itens - 3 Colunas */
     .controle-columns {
       display: flex;
       gap: 20px;
@@ -173,7 +135,7 @@
       flex: 1;
       min-width: 150px;
     }
-    /* Seção de itens faltantes */
+    /* Seção de Itens Faltantes */
     #missingBerkasPanel {
       margin-top: 20px;
       padding: 10px;
@@ -184,14 +146,14 @@
       font-size: 16px;
       font-weight: 500;
     }
-    /* Ataque Total - Design minimalista */
+    /* Painel de Ataque Total */
     #ataqueTotalPanel {
       border: 1px solid #2c3e50;
       border-radius: 4px;
       padding: 10px;
       margin-top: 20px;
       text-align: center;
-      background-color: #ffffff;
+      background-color: #fff;
     }
     #ataqueTotalPanel label {
       margin-bottom: 5px;
@@ -204,7 +166,7 @@
       font-weight: 500;
       color: #2c3e50;
     }
-    /* Botão minimalista para limpar o filtro de ataque total */
+    /* Botão para limpar filtro de Ataque Total */
     #botaoLimparAtaqueFiltro {
       background-color: transparent;
       border: 1px solid #2c3e50;
@@ -219,12 +181,35 @@
     #botaoLimparAtaqueFiltro:hover {
       background-color: #eaf7ff;
     }
-    /* Ajustes para mobile */
+    /* Tabela */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    th {
+      background-color: #2c3e50;
+      color: #fff;
+      font-weight: 600;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    /* Ajustes Mobile */
     @media (max-width: 600px) {
       h2 {
         font-size: 20px;
       }
-      .pergaminhos-inline,
+      .pergaminhos-row > div,
       .controle-columns > div {
         min-width: 100%;
       }
@@ -265,17 +250,30 @@
     </div>
   </div>
 
-  <!-- Tela principal -->
+  <!-- Tela Principal -->
   <div class="container hidden" id="telaPrincipal">
-    <!-- Botão de Sair -->
     <button id="botaoSair">X</button>
 
-    <!-- Controle de Itens -->
-    <!-- O id "controleItens" possibilita scroll para esta seção -->
+    <!-- Seção de Gerenciamento de Pergaminhos (mantida separada) -->
+    <div class="section pergaminhos-section">
+      <h2>Gerenciamento de Pergaminhos</h2>
+      <div class="pergaminhos-row">
+        <div>
+          <label>Pergaminho Único:</label>
+          <input type="number" id="pergaminho_unico" value="0" oninput="salvarPergaminhos()">
+        </div>
+        <div>
+          <label>Pergaminho Aleatório:</label>
+          <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção de Controle de Itens (3 colunas) -->
     <div class="section" id="controleItens">
       <h2>Controle de Itens</h2>
       <div class="controle-columns">
-        <!-- Coluna 1: Personagem e Pergaminhos -->
+        <!-- Coluna 1: Personagem -->
         <div>
           <label>Personagem:</label>
           <select id="personagem">
@@ -303,16 +301,6 @@
             <option>Ai</option>
             <option>Kallia Eldepel</option>
           </select>
-          <div class="pergaminhos-inline">
-            <div>
-              <label>Pergaminho Único:</label>
-              <input type="number" id="pergaminho_unico" value="0" oninput="salvarPergaminhos()">
-            </div>
-            <div>
-              <label>Pergaminho Aleatório:</label>
-              <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
-            </div>
-          </div>
         </div>
         <!-- Coluna 2: Brinco e Vazio -->
         <div>
@@ -404,7 +392,7 @@
       <button id="botaoSalvarGC">Salvar GC</button>
     </div>
 
-    <!-- Lista de GCs Salvos -->
+    <!-- Tabela de Controle de Personagens -->
     <div class="section">
       <h2>Controle de Personagens</h2>
       <div class="search-bar">
@@ -425,7 +413,6 @@
         </tr>
       </table>
       <div id="missingBerkasPanel"></div>
-      <!-- Painel de Ataque Total -->
       <div id="ataqueTotalPanel">
         <label>Selecione o valor de ataque total desejado:</label>
         <select id="selecionarAtaqueTotal">
@@ -458,6 +445,7 @@
   </div>
 
   <script type="module">
+    // Configuração do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
@@ -478,6 +466,7 @@
     let usuarioAtual = null;
     let gcData = {};
 
+    // Elementos de tela
     const telaLogin = document.getElementById("telaLogin");
     const telaPrincipal = document.getElementById("telaPrincipal");
     const botaoLogin = document.getElementById("botaoLogin");
@@ -558,8 +547,8 @@
       telaPrincipal.classList.add("hidden");
     }
 
+    // Salva os pergaminhos (mantido na seção de Pergaminhos)
     function salvarPergaminhos() {
-      // Neste exemplo, os campos de pergaminhos estão integrados no formulário de Controle de Itens (Coluna 1)
       const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
       if (!usuarioAtual) return;
@@ -596,7 +585,7 @@
       let vazio = document.getElementById("vazio").value;
       
       let vazioNum = (vazio === "Nenhum") ? "0" : vazio;
-
+      
       if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas || !ataqueTotal) {
         alert("Preencha todos os campos obrigatórios!");
         return;
@@ -605,7 +594,6 @@
         alert("Você precisa estar logado!");
         return;
       }
-      // Salva os dados no banco de dados
       personagemJaExiste(personagemSelecionado, (existe) => {
         if (existe) {
           const confirmacao = confirm("Este personagem já foi salvo. Tem certeza que deseja alterar?");
@@ -655,7 +643,7 @@
             let dados = childSnapshot.val();
             let personagem = childSnapshot.key;
             gcData[personagem] = dados;
-            // Processa berkas
+            // Processamento de Berkas
             let berkasValor = dados.berkas;
             let berkasNum = 0;
             if (berkasValor === "Full") {
@@ -665,9 +653,9 @@
             } else {
               berkasNum = parseInt(berkasValor) || 0;
             }
-            // Processa vazio (trata "Nenhum" como 0)
+            // Processamento de Vazio (trata "Nenhum" como 0)
             let vazioValor = (dados.vazio === "Nenhum" || !dados.vazio) ? 0 : parseInt(dados.vazio);
-            // Se houver vazio, o requisito para berkas é 6; caso contrário, 12.
+            // Se houver algum valor de vazio, o requisito para Berkas é 6; caso contrário, 12.
             let missingBerkas = (vazioValor > 0) ? Math.max(0, 6 - berkasNum) : Math.max(0, 12 - berkasNum);
             let missingVazio = (vazioValor > 0) ? Math.max(0, 6 - vazioValor) : 0;
             totalMissingBerkas += missingBerkas;
@@ -834,3 +822,4 @@
   </script>
 </body>
 </html>
+
