@@ -344,6 +344,32 @@
             <option>Full</option>
           </select>
         </div>
+        <div>
+          <label>Ataque Total:</label>
+          <select id="ataqueTotal">
+            <option>Nenhum</option>
+            <option>100k</option>
+            <option>200k</option>
+            <option>300k</option>
+            <option>400k</option>
+            <option>500k</option>
+            <option>600k</option>
+            <option>700k</option>
+            <option>800k</option>
+            <option>900k</option>
+            <option>1000k</option>
+            <option>1100k</option>
+            <option>1200k</option>
+            <option>1300k</option>
+            <option>1400k</option>
+            <option>1500k</option>
+            <option>1600k</option>
+            <option>1700k</option>
+            <option>1800k</option>
+            <option>1900k</option>
+            <option>2000k</option>
+          </select>
+        </div>
       </div>
       <!-- Botão "Salvar GC" -->
       <button id="botaoSalvarGC">Salvar GC</button>
@@ -365,11 +391,40 @@
           <th>Piercing</th>
           <th>Anel</th>
           <th>Berkas</th>
+          <th>Ataque Total</th>
           <th>Ação</th>
         </tr>
       </table>
       <!-- Painel de berkas faltantes -->
       <div id="missingBerkasPanel"></div>
+      <!-- Painel de ataque total -->
+      <div id="ataqueTotalPanel">
+        <label>Selecione o valor de ataque total desejado:</label>
+        <select id="selecionarAtaqueTotal">
+          <option>100k</option>
+          <option>200k</option>
+          <option>300k</option>
+          <option>400k</option>
+          <option>500k</option>
+          <option>600k</option>
+          <option>700k</option>
+          <option>800k</option>
+          <option>900k</option>
+          <option>1000k</option>
+          <option>1100k</option>
+          <option>1200k</option>
+          <option>1300k</option>
+          <option>1400k</option>
+          <option>1500k</option>
+          <option>1600k</option>
+          <option>1700k</option>
+          <option>1800k</option>
+          <option>1900k</option>
+          <option>2000k</option>
+        </select>
+        <button onclick="calcularAtaqueTotal()">Calcular</button>
+        <div id="resultadoAtaqueTotal"></div>
+      </div>
     </div>
   </div>
 
@@ -533,8 +588,9 @@
       let piercing = document.getElementById("piercing").value;
       let anel = document.getElementById("anel").value;
       let berkas = document.getElementById("berkas").value;
+      let ataqueTotal = document.getElementById("ataqueTotal").value;
 
-      if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas) {
+      if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas || !ataqueTotal) {
         alert("Preencha todos os campos!");
         return;
       }
@@ -553,7 +609,8 @@
           brinco: brinco,
           piercing: piercing,
           anel: anel,
-          berkas: berkas
+          berkas: berkas,
+          ataqueTotal: ataqueTotal
         }).then(() => {
           alert("GC salvo com sucesso!");
           carregarGCs();
@@ -576,6 +633,7 @@
             <th>Piercing</th>
             <th>Anel</th>
             <th>Berkas</th>
+            <th>Ataque Total</th>
             <th>Ação</th>
           </tr>`;
           
@@ -608,6 +666,8 @@
             cellAnel.textContent = dados.anel;
             let cellBerkas = linha.insertCell();
             cellBerkas.textContent = dados.berkas;
+            let cellAtaqueTotal = linha.insertCell();
+            cellAtaqueTotal.textContent = dados.ataqueTotal;
             // Botão de exclusão na última coluna com "X"
             let cellExcluir = linha.insertCell();
             cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
@@ -660,6 +720,30 @@
       filtrarTabela();
     }
 
+    // Função para calcular quantos personagens têm um determinado valor de ataque total ou superior
+    function calcularAtaqueTotal() {
+      const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
+      const ataqueDesejadoNum = parseInt(ataqueDesejado.replace("k", "")) * 1000;
+
+      if (!usuarioAtual) return;
+      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
+        let contador = 0;
+        if (snapshot.exists()) {
+          snapshot.forEach((childSnapshot) => {
+            let dados = childSnapshot.val();
+            let ataqueTotal = dados.ataqueTotal;
+            let ataqueTotalNum = parseInt(ataqueTotal.replace("k", "")) * 1000;
+            if (ataqueTotalNum >= ataqueDesejadoNum) {
+              contador++;
+            }
+          });
+        }
+        document.getElementById("resultadoAtaqueTotal").textContent = `Personagens com ${ataqueDesejado} ou mais: ${contador}`;
+      }).catch((error) => {
+        console.error("Erro ao calcular ataque total: ", error);
+      });
+    }
+
     // Evento do botão "Salvar GC"
     document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
 
@@ -668,6 +752,7 @@
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
     window.salvarPergaminhos = salvarPergaminhos;
+    window.calcularAtaqueTotal = calcularAtaqueTotal;
   </script>
 </body>
 </html>
