@@ -152,17 +152,16 @@
     tr:hover {
       background-color: #f1f1f1;
     }
-    /* Espaçamentos para inputs de Pergaminhos */
-    .pergaminhos-row {
+    /* Espaçamento para inputs de Pergaminhos na seção de Controle de Itens */
+    .pergaminhos-inline {
       display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin: 0 -10px;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 15px;
     }
-    .pergaminhos-row > div {
-      flex: 1;
-      min-width: 150px;
-      padding: 0 10px;
+    .pergaminhos-inline input[type="number"] {
+      /* Tamanho fixo para 5 dígitos */
+      width: 6em;
     }
     /* Organização em 3 colunas para o Controle de Itens */
     .controle-columns {
@@ -225,7 +224,7 @@
       h2 {
         font-size: 20px;
       }
-      .pergaminhos-row > div,
+      .pergaminhos-inline,
       .controle-columns > div {
         min-width: 100%;
       }
@@ -270,39 +269,14 @@
   <div class="container hidden" id="telaPrincipal">
     <!-- Botão de Sair -->
     <button id="botaoSair">X</button>
-    <!-- Gerenciamento de Pergaminhos -->
-    <div class="section">
-      <h2>Gerenciamento de Pergaminhos</h2>
-      <div class="pergaminhos-row">
-        <div>
-          <label>Pergaminho Único:</label>
-          <input type="number" id="pergaminho_unico" oninput="salvarPergaminhos()">
-        </div>
-        <div>
-          <label>Pergaminho Aleatório:</label>
-          <!-- Adicionei uma margem interna extra para não ficar colado -->
-          <input type="number" id="pergaminho_aleatorio" style="margin-right:10px;" oninput="salvarPergaminhos()">
-        </div>
-      </div>
-    </div>
 
     <!-- Controle de Itens -->
     <!-- O id "controleItens" possibilita scroll para esta seção -->
     <div class="section" id="controleItens">
       <h2>Controle de Itens</h2>
       <div class="controle-columns">
-        <!-- Coluna 1 -->
+        <!-- Coluna 1: Personagem e Pergaminhos -->
         <div>
-          <label>Vazio:</label>
-          <select id="vazio">
-            <option>Nenhum</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-          </select>
           <label>Personagem:</label>
           <select id="personagem">
             <option>Elesis</option>
@@ -329,6 +303,19 @@
             <option>Ai</option>
             <option>Kallia Eldepel</option>
           </select>
+          <div class="pergaminhos-inline">
+            <div>
+              <label>Pergaminho Único:</label>
+              <input type="number" id="pergaminho_unico" value="0" oninput="salvarPergaminhos()">
+            </div>
+            <div>
+              <label>Pergaminho Aleatório:</label>
+              <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
+            </div>
+          </div>
+        </div>
+        <!-- Coluna 2: Brinco e Vazio -->
+        <div>
           <label>Brinco:</label>
           <select id="brinco">
             <option>Nenhum</option>
@@ -337,8 +324,18 @@
             <option>Épico</option>
             <option>Lendário</option>
           </select>
+          <label>Vazio:</label>
+          <select id="vazio">
+            <option>Nenhum</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+          </select>
         </div>
-        <!-- Coluna 2 -->
+        <!-- Coluna 3: Piercing, Anel, Berkas e Ataque Total -->
         <div>
           <label>Piercing:</label>
           <select id="piercing">
@@ -362,9 +359,6 @@
             <option>Nível 3.2</option>
             <option>Nível 3.3</option>
           </select>
-        </div>
-        <!-- Coluna 3 -->
-        <div>
           <label>Berkas:</label>
           <select id="berkas">
             <option>Nenhum</option>
@@ -555,7 +549,6 @@
     function mostrarTelaPrincipal() {
       telaLogin.classList.add("hidden");
       telaPrincipal.classList.remove("hidden");
-      carregarPergaminhos();
       carregarGCs();
       calcularAtaqueTotal();
     }
@@ -566,6 +559,7 @@
     }
 
     function salvarPergaminhos() {
+      // Neste exemplo, os campos de pergaminhos estão integrados no formulário de Controle de Itens (Coluna 1)
       const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
       if (!usuarioAtual) return;
@@ -576,21 +570,6 @@
         console.log("Pergaminhos salvos com sucesso!");
       }).catch((error) => {
         console.error("Erro ao salvar pergaminhos: ", error);
-      });
-    }
-
-    function carregarPergaminhos() {
-      if (!usuarioAtual) return;
-      get(ref(database, 'users/' + usuarioAtual.uid + '/pergaminhos/')).then((snapshot) => {
-        if (snapshot.exists()) {
-          document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
-          document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "0";
-          console.log("Pergaminhos carregados com sucesso!");
-        } else {
-          console.log("Nenhum valor de pergaminho salvo ainda.");
-        }
-      }).catch((error) => {
-        console.error("Erro ao carregar pergaminhos: ", error);
       });
     }
 
@@ -607,6 +586,8 @@
 
     function salvarGC() {
       let personagemSelecionado = document.getElementById("personagem").value;
+      let pergaminhoUnico = document.getElementById("pergaminho_unico").value;
+      let pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
       let brinco = document.getElementById("brinco").value;
       let piercing = document.getElementById("piercing").value;
       let anel = document.getElementById("anel").value;
@@ -624,12 +605,16 @@
         alert("Você precisa estar logado!");
         return;
       }
+      // Salva os dados no banco de dados
       personagemJaExiste(personagemSelecionado, (existe) => {
         if (existe) {
           const confirmacao = confirm("Este personagem já foi salvo. Tem certeza que deseja alterar?");
           if (!confirmacao) return;
         }
         set(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagemSelecionado), {
+          personagem: personagemSelecionado,
+          pergaminho_unico: pergaminhoUnico,
+          pergaminho_aleatorio: pergaminhoAleatorio,
           brinco: brinco,
           piercing: piercing,
           anel: anel,
@@ -638,12 +623,12 @@
           vazio: vazioNum
         }).then(() => {
           alert("GC salvo com sucesso!");
+          salvarPergaminhos();
           carregarGCs();
           calcularAtaqueTotal();
         }).catch((error) => {
           console.error("Erro ao salvar GC: ", error);
         });
-        salvarPergaminhos();
       });
     }
 
@@ -652,7 +637,6 @@
       gcData = {};
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
         let tabela = document.getElementById("tabela_controle");
-        // Ordem das colunas: Personagem, Brinco, Piercing, Anel, Berkas, Vazio, Ataque Total, Ação
         tabela.innerHTML = `
           <tr>
             <th>Personagem</th>
@@ -683,7 +667,7 @@
             }
             // Processa vazio (trata "Nenhum" como 0)
             let vazioValor = (dados.vazio === "Nenhum" || !dados.vazio) ? 0 : parseInt(dados.vazio);
-            // Se houver algum valor de vazio, o requisito para berkas é 6; caso contrário, 12.
+            // Se houver vazio, o requisito para berkas é 6; caso contrário, 12.
             let missingBerkas = (vazioValor > 0) ? Math.max(0, 6 - berkasNum) : Math.max(0, 12 - berkasNum);
             let missingVazio = (vazioValor > 0) ? Math.max(0, 6 - vazioValor) : 0;
             totalMissingBerkas += missingBerkas;
@@ -691,13 +675,14 @@
             
             let linha = tabela.insertRow();
             linha.style.cursor = "pointer";
-            // Coluna Personagem: ao clicar, rola para o formulário de Controle de Itens e carrega os dados
             let cellPersonagem = linha.insertCell();
             cellPersonagem.textContent = personagem;
             cellPersonagem.style.cursor = "pointer";
             cellPersonagem.addEventListener("click", () => {
               document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
               document.getElementById("personagem").value = personagem.trim();
+              document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
+              document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
               document.getElementById("brinco").value = (dados.brinco || "").trim();
               document.getElementById("piercing").value = (dados.piercing || "").trim();
               document.getElementById("anel").value = (dados.anel || "").trim();
@@ -740,6 +725,8 @@
         document.getElementById("berkas").value = (dados.berkas || "").trim();
         document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
         document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
+        document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
+        document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
       }
     });
 
