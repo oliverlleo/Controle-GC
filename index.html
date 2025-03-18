@@ -185,7 +185,7 @@
       font-size: 12px;
       margin-bottom: 10px;
     }
-    /* Seção de Armaduras */
+    /* Organização em colunas */
     .columns {
       display: flex;
       gap: 20px;
@@ -195,7 +195,7 @@
       flex: 1;
       min-width: 150px;
     }
-    /* Painel de berkas faltantes */
+    /* Painel de itens faltantes */
     #missingBerkasPanel {
       margin-top: 20px;
       padding: 10px;
@@ -415,27 +415,11 @@
           </select>
         </div>
       </div>
-      <!-- Seção de Armaduras -->
+      <!-- Nova seção para Armadura Vazio (o valor de Berkas já existe) -->
       <div class="columns">
         <div>
-          <label>Armadura 1 - Tipo:</label>
-          <select id="armadura1_tipo">
-            <option>Nenhuma</option>
-            <option>Berkas</option>
-            <option>Vazio</option>
-          </select>
-          <label>Armadura 1 - Itens:</label>
-          <input type="number" id="armadura1_qtd" placeholder="Quantidade">
-        </div>
-        <div>
-          <label>Armadura 2 - Tipo:</label>
-          <select id="armadura2_tipo">
-            <option>Nenhuma</option>
-            <option>Berkas</option>
-            <option>Vazio</option>
-          </select>
-          <label>Armadura 2 - Itens:</label>
-          <input type="number" id="armadura2_qtd" placeholder="Quantidade">
+          <label>Armadura Vazio - Quantidade:</label>
+          <input type="number" id="vazio" placeholder="Quantidade de Vazio">
         </div>
       </div>
       <button id="botaoSalvarGC">Salvar GC</button>
@@ -453,13 +437,11 @@
         <tr>
           <th>Personagem</th>
           <th>Brinco</th>
-          <th>Selecionar</th>
           <th>Piercing</th>
           <th>Anel</th>
           <th>Berkas</th>
           <th>Ataque Total</th>
-          <th>Armadura 1</th>
-          <th>Armadura 2</th>
+          <th>Vazio</th>
           <th>Ação</th>
         </tr>
       </table>
@@ -467,7 +449,9 @@
       <!-- Painel de Ataque Total com design minimalista -->
       <div id="ataqueTotalPanel">
         <label>Selecione o valor de ataque total desejado:</label>
+        <!-- Adicionamos a opção "Todos" para o filtro inicial -->
         <select id="selecionarAtaqueTotal">
+          <option value="Todos">Todos</option>
           <option>100k</option>
           <option>200k</option>
           <option>300k</option>
@@ -490,7 +474,6 @@
           <option>2000k</option>
         </select>
         <div id="resultadoAtaqueTotal"></div>
-        <!-- Botão minimalista para limpar o filtro de ataque total -->
         <button id="botaoLimparAtaqueFiltro" onclick="limparFiltroAtaqueTotal()">Limpar Filtro Ataque</button>
       </div>
     </div>
@@ -647,19 +630,11 @@
       let anel = document.getElementById("anel").value;
       let berkas = document.getElementById("berkas").value;
       let ataqueTotal = document.getElementById("ataqueTotal").value;
-      
-      // Dados de armadura
-      let armadura1 = {
-        tipo: document.getElementById("armadura1_tipo").value,
-        quantidade: document.getElementById("armadura1_qtd").value || "0"
-      };
-      let armadura2 = {
-        tipo: document.getElementById("armadura2_tipo").value,
-        quantidade: document.getElementById("armadura2_qtd").value || "0"
-      };
+      // Novo campo para armadura vazio
+      let vazio = document.getElementById("vazio").value || "0";
 
       if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas || !ataqueTotal) {
-        alert("Preencha todos os campos!");
+        alert("Preencha todos os campos obrigatórios!");
         return;
       }
       if (!usuarioAtual) {
@@ -677,8 +652,7 @@
           anel: anel,
           berkas: berkas,
           ataqueTotal: ataqueTotal,
-          armadura1: armadura1,
-          armadura2: armadura2
+          vazio: vazio
         }).then(() => {
           alert("GC salvo com sucesso!");
           carregarGCs();
@@ -699,13 +673,11 @@
           <tr>
             <th>Personagem</th>
             <th>Brinco</th>
-            <th>Selecionar</th>
             <th>Piercing</th>
             <th>Anel</th>
             <th>Berkas</th>
             <th>Ataque Total</th>
-            <th>Armadura 1</th>
-            <th>Armadura 2</th>
+            <th>Vazio</th>
             <th>Ação</th>
           </tr>`;
         let totalMissingBerkas = 0;
@@ -715,25 +687,21 @@
             let dados = childSnapshot.val();
             let personagem = childSnapshot.key;
             gcData[personagem] = dados;
-            // Cálculo para berkas: somente somando os itens com tipo "Berkas"
-            let totalBerkas = 0;
-            if (dados.armadura1 && dados.armadura1.tipo === "Berkas") {
-              totalBerkas += parseInt(dados.armadura1.quantidade) || 0;
+            // Cálculo para berkas (usando o campo já existente)
+            let berkasValor = dados.berkas;
+            let berkasNum = 0;
+            if (berkasValor === "Full") {
+              berkasNum = 12;
+            } else if (berkasValor === "Nenhum") {
+              berkasNum = 0;
+            } else {
+              berkasNum = parseInt(berkasValor) || 0;
             }
-            if (dados.armadura2 && dados.armadura2.tipo === "Berkas") {
-              totalBerkas += parseInt(dados.armadura2.quantidade) || 0;
-            }
-            let missingBerkas = totalBerkas >= 7 ? 0 : 7 - totalBerkas;
+            let missingBerkas = berkasNum >= 7 ? 0 : 7 - berkasNum;
             totalMissingBerkas += missingBerkas;
-            // Cálculo para vazio: se o personagem tiver armadura do tipo "Vazio"
-            let totalVazio = 0;
-            if (dados.armadura1 && dados.armadura1.tipo === "Vazio") {
-              totalVazio += parseInt(dados.armadura1.quantidade) || 0;
-            }
-            if (dados.armadura2 && dados.armadura2.tipo === "Vazio") {
-              totalVazio += parseInt(dados.armadura2.quantidade) || 0;
-            }
-            let missingVazio = totalVazio >= 6 ? 0 : (dados.armadura1?.tipo === "Vazio" || dados.armadura2?.tipo === "Vazio" ? 6 - totalVazio : 0);
+            // Cálculo para vazio (novo campo)
+            let vazioNum = parseInt(dados.vazio) || 0;
+            let missingVazio = vazioNum >= 6 ? 0 : 6 - vazioNum;
             totalMissingVazio += missingVazio;
             
             let linha = tabela.insertRow();
@@ -744,9 +712,6 @@
             // Coluna Brinco
             let cellBrinco = linha.insertCell();
             cellBrinco.textContent = dados.brinco;
-            // Coluna Checkbox (Selecionar)
-            let cellCheckbox = linha.insertCell();
-            cellCheckbox.innerHTML = `<input type="checkbox">`;
             // Coluna Piercing
             let cellPiercing = linha.insertCell();
             cellPiercing.textContent = dados.piercing;
@@ -759,49 +724,22 @@
             // Coluna Ataque Total
             let cellAtaqueTotal = linha.insertCell();
             cellAtaqueTotal.textContent = dados.ataqueTotal;
-            // Coluna Armadura 1
-            let cellArmadura1 = linha.insertCell();
-            if (dados.armadura1 && dados.armadura1.tipo !== "Nenhuma") {
-              cellArmadura1.textContent = `${dados.armadura1.tipo} (${dados.armadura1.quantidade})`;
-            } else {
-              cellArmadura1.textContent = "Nenhuma";
-            }
-            // Coluna Armadura 2
-            let cellArmadura2 = linha.insertCell();
-            if (dados.armadura2 && dados.armadura2.tipo !== "Nenhuma") {
-              cellArmadura2.textContent = `${dados.armadura2.tipo} (${dados.armadura2.quantidade})`;
-            } else {
-              cellArmadura2.textContent = "Nenhuma";
-            }
+            // Coluna Vazio
+            let cellVazio = linha.insertCell();
+            cellVazio.textContent = dados.vazio || "0";
             // Coluna Ação
             let cellAcao = linha.insertCell();
             cellAcao.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
             
             linha.addEventListener("click", (event) => {
-              if (event.target.tagName.toLowerCase() === "button" || event.target.type === "checkbox") return;
-              // Preenche os campos do formulário com os dados da linha
+              if (event.target.tagName.toLowerCase() === "button") return;
               document.getElementById("personagem").value = personagem.trim();
               document.getElementById("brinco").value = (dados.brinco || "").trim();
               document.getElementById("piercing").value = (dados.piercing || "").trim();
               document.getElementById("anel").value = (dados.anel || "").trim();
               document.getElementById("berkas").value = (dados.berkas || "").trim();
               document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
-              
-              // Preenche os dados de armadura
-              if (dados.armadura1) {
-                document.getElementById("armadura1_tipo").value = dados.armadura1.tipo;
-                document.getElementById("armadura1_qtd").value = dados.armadura1.quantidade;
-              } else {
-                document.getElementById("armadura1_tipo").value = "Nenhuma";
-                document.getElementById("armadura1_qtd").value = "";
-              }
-              if (dados.armadura2) {
-                document.getElementById("armadura2_tipo").value = dados.armadura2.tipo;
-                document.getElementById("armadura2_qtd").value = dados.armadura2.quantidade;
-              } else {
-                document.getElementById("armadura2_tipo").value = "Nenhuma";
-                document.getElementById("armadura2_qtd").value = "";
-              }
+              document.getElementById("vazio").value = (dados.vazio || "0").trim();
             });
           });
         } else {
@@ -824,14 +762,7 @@
         document.getElementById("anel").value = (dados.anel || "").trim();
         document.getElementById("berkas").value = (dados.berkas || "").trim();
         document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
-        if (dados.armadura1) {
-          document.getElementById("armadura1_tipo").value = dados.armadura1.tipo;
-          document.getElementById("armadura1_qtd").value = dados.armadura1.quantidade;
-        }
-        if (dados.armadura2) {
-          document.getElementById("armadura2_tipo").value = dados.armadura2.tipo;
-          document.getElementById("armadura2_qtd").value = dados.armadura2.quantidade;
-        }
+        document.getElementById("vazio").value = (dados.vazio || "0").trim();
       }
     });
 
@@ -872,6 +803,12 @@
     // Função que calcula os contadores de ataque total e filtra a tabela
     function calcularAtaqueTotal() {
       const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
+      // Se o usuário escolher "Todos", não aplica filtro
+      if (ataqueDesejado === "Todos" || ataqueDesejado === "Nenhum") {
+        document.getElementById("resultadoAtaqueTotal").textContent = "";
+        limparFiltroAtaqueTotal();
+        return;
+      }
       const ataqueDesejadoNum = parseInt(ataqueDesejado.replace("k", "")) * 1000;
       if (!usuarioAtual) return;
       let countExact = 0;
@@ -897,7 +834,7 @@
         }
         document.getElementById("resultadoAtaqueTotal").textContent =
           `Exatos: ${countExact} | Acima: ${countAbove} | Abaixo: ${countBelow}`;
-        // Filtra a tabela para exibir apenas os personagens com ataque exato
+        // Aplica o filtro na tabela somente se for um valor numérico
         filtrarAtaqueTabela(ataqueDesejado);
       }).catch((error) => {
         console.error("Erro ao calcular ataque total: ", error);
@@ -910,7 +847,7 @@
       const tr = tabela.getElementsByTagName("tr");
       // Ignora o cabeçalho (linha 0)
       for (let i = 1; i < tr.length; i++){
-        const cellAtaque = tr[i].cells[6].textContent.trim();
+        const cellAtaque = tr[i].cells[5].textContent.trim();
         if (cellAtaque === ataqueDesejado) {
           tr[i].style.display = "";
         } else {
