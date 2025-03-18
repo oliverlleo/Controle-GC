@@ -157,29 +157,22 @@
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
-      margin: 0 -10px; /* Ajusta a margem interna */
+      margin: 0 -10px;
     }
     .pergaminhos-row > div {
       flex: 1;
       min-width: 150px;
       padding: 0 10px;
     }
-    /* Organização em colunas para o formulário de Controle de Itens */
-    .columns {
+    /* Organização em 3 colunas para o Controle de Itens */
+    .controle-columns {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
     }
-    .columns > div {
+    .controle-columns > div {
       flex: 1;
       min-width: 150px;
-    }
-    /* Para o Controle de Itens, reposicionamos o campo Vazio para a primeira coluna */
-    .col-left {
-      order: 1;
-    }
-    .col-right {
-      order: 2;
     }
     /* Seção de itens faltantes */
     #missingBerkasPanel {
@@ -233,7 +226,7 @@
         font-size: 20px;
       }
       .pergaminhos-row > div,
-      .columns > div {
+      .controle-columns > div {
         min-width: 100%;
       }
       .search-bar {
@@ -287,18 +280,19 @@
         </div>
         <div>
           <label>Pergaminho Aleatório:</label>
-          <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
+          <!-- Adicionei uma margem interna extra para não ficar colado -->
+          <input type="number" id="pergaminho_aleatorio" style="margin-right:10px;" oninput="salvarPergaminhos()">
         </div>
       </div>
     </div>
 
     <!-- Controle de Itens -->
-    <!-- Adicionamos id "controleItens" para possibilitar scroll -->
+    <!-- O id "controleItens" possibilita scroll para esta seção -->
     <div class="section" id="controleItens">
       <h2>Controle de Itens</h2>
-      <div class="columns">
-        <!-- Coluna da esquerda: agora inclui o campo Vazio -->
-        <div class="col-left">
+      <div class="controle-columns">
+        <!-- Coluna 1 -->
+        <div>
           <label>Vazio:</label>
           <select id="vazio">
             <option>Nenhum</option>
@@ -344,8 +338,8 @@
             <option>Lendário</option>
           </select>
         </div>
-        <!-- Coluna da direita -->
-        <div class="col-right">
+        <!-- Coluna 2 -->
+        <div>
           <label>Piercing:</label>
           <select id="piercing">
             <option>Nenhum</option>
@@ -368,6 +362,9 @@
             <option>Nível 3.2</option>
             <option>Nível 3.3</option>
           </select>
+        </div>
+        <!-- Coluna 3 -->
+        <div>
           <label>Berkas:</label>
           <select id="berkas">
             <option>Nenhum</option>
@@ -617,7 +614,6 @@
       let ataqueTotal = document.getElementById("ataqueTotal").value;
       let vazio = document.getElementById("vazio").value;
       
-      // Trata "Nenhum" como 0 para o campo vazio
       let vazioNum = (vazio === "Nenhum") ? "0" : vazio;
 
       if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas || !ataqueTotal) {
@@ -695,7 +691,7 @@
             
             let linha = tabela.insertRow();
             linha.style.cursor = "pointer";
-            // Coluna Personagem: ao clicar, rola para o formulário de Controle de Itens
+            // Coluna Personagem: ao clicar, rola para o formulário de Controle de Itens e carrega os dados
             let cellPersonagem = linha.insertCell();
             cellPersonagem.textContent = personagem;
             cellPersonagem.style.cursor = "pointer";
