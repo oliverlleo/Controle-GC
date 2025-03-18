@@ -21,7 +21,7 @@
       padding: 20px;
       background-color: #ffffff;
       border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     h2 {
       color: #2c3e50;
@@ -137,7 +137,7 @@
       background-color: #ffffff;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     th, td {
       padding: 12px;
@@ -152,20 +152,19 @@
     tr:hover {
       background-color: #f1f1f1;
     }
-    /* Ajustes para os campos de quantidade */
-    .pergaminhos input[type="number"] {
-      max-width: 120px;
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      color: #333;
-      background-color: #f9f9f9;
-      transition: border-color 0.3s ease;
+    /* Espaçamentos para inputs de Pergaminhos */
+    .pergaminhos-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 0 -10px; /* Ajusta a margem interna */
     }
-    /* Organização em colunas */
+    .pergaminhos-row > div {
+      flex: 1;
+      min-width: 150px;
+      padding: 0 10px;
+    }
+    /* Organização em colunas para o formulário de Controle de Itens */
     .columns {
       display: flex;
       gap: 20px;
@@ -175,15 +174,12 @@
       flex: 1;
       min-width: 150px;
     }
-    /* Gerenciamento de Pergaminhos em duas colunas */
-    .pergaminhos-row {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
+    /* Para o Controle de Itens, reposicionamos o campo Vazio para a primeira coluna */
+    .col-left {
+      order: 1;
     }
-    .pergaminhos-row > div {
-      flex: 1;
-      min-width: 150px;
+    .col-right {
+      order: 2;
     }
     /* Seção de itens faltantes */
     #missingBerkasPanel {
@@ -236,8 +232,9 @@
       h2 {
         font-size: 20px;
       }
-      .pergaminhos input[type="number"] {
-        max-width: 100%;
+      .pergaminhos-row > div,
+      .columns > div {
+        min-width: 100%;
       }
       .search-bar {
         flex-direction: row;
@@ -296,11 +293,22 @@
     </div>
 
     <!-- Controle de Itens -->
-    <!-- Adicionamos o id "controleItens" para possibilitar o scroll ao clicar no nome do personagem -->
+    <!-- Adicionamos id "controleItens" para possibilitar scroll -->
     <div class="section" id="controleItens">
       <h2>Controle de Itens</h2>
       <div class="columns">
-        <div>
+        <!-- Coluna da esquerda: agora inclui o campo Vazio -->
+        <div class="col-left">
+          <label>Vazio:</label>
+          <select id="vazio">
+            <option>Nenhum</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+          </select>
           <label>Personagem:</label>
           <select id="personagem">
             <option>Elesis</option>
@@ -336,7 +344,8 @@
             <option>Lendário</option>
           </select>
         </div>
-        <div>
+        <!-- Coluna da direita -->
+        <div class="col-right">
           <label>Piercing:</label>
           <select id="piercing">
             <option>Nenhum</option>
@@ -359,8 +368,6 @@
             <option>Nível 3.2</option>
             <option>Nível 3.3</option>
           </select>
-        </div>
-        <div>
           <label>Berkas:</label>
           <select id="berkas">
             <option>Nenhum</option>
@@ -400,17 +407,6 @@
             <option>1800k</option>
             <option>1900k</option>
             <option>2000k</option>
-          </select>
-          <label>Vazio:</label>
-          <!-- Campo Vazio agora em dropdown com opções de 0 a 6 -->
-          <select id="vazio">
-            <option>Nenhum</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
           </select>
         </div>
       </div>
@@ -660,7 +656,7 @@
       gcData = {};
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
         let tabela = document.getElementById("tabela_controle");
-        // Reordenação das colunas: Personagem, Brinco, Piercing, Anel, Berkas, Vazio, Ataque Total, Ação
+        // Ordem das colunas: Personagem, Brinco, Piercing, Anel, Berkas, Vazio, Ataque Total, Ação
         tabela.innerHTML = `
           <tr>
             <th>Personagem</th>
@@ -691,7 +687,7 @@
             }
             // Processa vazio (trata "Nenhum" como 0)
             let vazioValor = (dados.vazio === "Nenhum" || !dados.vazio) ? 0 : parseInt(dados.vazio);
-            // Se houver algum valor de vazio, o requisito para berkas é 6, caso contrário, 12.
+            // Se houver algum valor de vazio, o requisito para berkas é 6; caso contrário, 12.
             let missingBerkas = (vazioValor > 0) ? Math.max(0, 6 - berkasNum) : Math.max(0, 12 - berkasNum);
             let missingVazio = (vazioValor > 0) ? Math.max(0, 6 - vazioValor) : 0;
             totalMissingBerkas += missingBerkas;
@@ -699,13 +695,12 @@
             
             let linha = tabela.insertRow();
             linha.style.cursor = "pointer";
-            // Coluna Personagem (ao clicar, faz scroll para o formulário de Controle de Itens)
+            // Coluna Personagem: ao clicar, rola para o formulário de Controle de Itens
             let cellPersonagem = linha.insertCell();
             cellPersonagem.textContent = personagem;
             cellPersonagem.style.cursor = "pointer";
             cellPersonagem.addEventListener("click", () => {
               document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
-              // Carrega os dados do personagem no formulário
               document.getElementById("personagem").value = personagem.trim();
               document.getElementById("brinco").value = (dados.brinco || "").trim();
               document.getElementById("piercing").value = (dados.piercing || "").trim();
@@ -728,11 +723,6 @@
             cellAtaqueTotal.textContent = dados.ataqueTotal;
             let cellAcao = linha.insertCell();
             cellAcao.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
-            
-            linha.addEventListener("click", (event) => {
-              // Evita conflito com clique no botão de exclusão ou na célula "Personagem" (já tratada)
-              if (event.target.tagName.toLowerCase() === "button" || event.target === cellPersonagem) return;
-            });
           });
         } else {
           console.log("Nenhum GC salvo ainda.");
