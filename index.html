@@ -90,7 +90,6 @@
     #botaoSair:hover {
       transform: scale(1.2);
     }
-    /* Botão de Exclusão */
     .delete-button {
       background-color: #e74c3c;
       border: none;
@@ -109,29 +108,59 @@
     .delete-button:hover {
       background-color: #c0392b;
     }
-    /* Seção de Gerenciamento de Pergaminhos */
-    .pergaminhos-section {
-      margin-bottom: 30px;
+    /* Gerenciamento de Pergaminhos – layout em uma única linha */
+    .pergaminhos-flex {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    .pergaminhos-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px; /* Espaço reduzido para aproximar as caixas */
-      align-items: center;
+    .pergaminho-item {
+      flex: 1;
+      max-width: 200px;
     }
-    .pergaminhos-row input[type="number"] {
-      max-width: 80px; /* Aproximadamente espaço para 5 dígitos */
+    .pergaminhos-flex button {
+      padding: 8px 15px;
+      max-width: 120px;
     }
-    /* Seção de Controle de Itens (mantém a estrutura já definida anteriormente) */
+    /* Controle de Itens – 3 colunas */
     .controle-itens {
       display: flex;
       gap: 20px;
+      flex-wrap: wrap;
     }
     .controle-itens .col {
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 15px;
+    }
+    /* Na 1ª coluna, agrupa o campo "Vazio" e o botão "Salvar GC" na mesma linha */
+    .inline-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .inline-group select {
+      flex: 1;
+    }
+    .inline-group button {
+      padding: 8px 15px;
+      max-width: 120px;
+    }
+    /* Barra de Pesquisa – os elementos na mesma linha */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .search-bar input {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .search-bar button {
+      margin-bottom: 0;
     }
     /* Outras seções permanecem inalteradas */
     #missingBerkasPanel {
@@ -203,27 +232,15 @@
       h2 {
         font-size: 20px;
       }
-      .pergaminhos-row, .controle-itens {
+      .pergaminhos-flex, .controle-itens, .search-bar {
         flex-direction: column;
       }
-      .search-bar {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 0 10px;
+      .inline-group {
+        flex-direction: column;
       }
-      .search-bar input {
-        flex: 1 1 100%;
-        max-width: 100%;
-      }
-      .search-bar button {
-        flex: 1 1 calc(50% - 10px);
-        max-width: calc(50% - 10px);
-      }
-      table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+      .inline-group button {
+        max-width: none;
+        width: 100%;
       }
     }
   </style>
@@ -247,27 +264,27 @@
   <div class="container hidden" id="telaPrincipal">
     <button id="botaoSair">X</button>
 
-    <!-- Seção de Gerenciamento de Pergaminhos -->
+    <!-- Gerenciamento de Pergaminhos -->
     <div class="section pergaminhos-section">
       <h2>Gerenciamento de Pergaminhos</h2>
-      <div class="pergaminhos-row">
-        <div>
+      <div class="pergaminhos-flex">
+        <div class="pergaminho-item">
           <label>Pergaminho Único:</label>
           <input type="number" id="pergaminho_unico" value="0">
         </div>
-        <div>
+        <div class="pergaminho-item">
           <label>Pergaminho Aleatório:</label>
           <input type="number" id="pergaminho_aleatorio">
         </div>
+        <button id="botaoSalvarPergaminhos">Salvar</button>
       </div>
-      <!-- Botão individual para salvar a configuração dos pergaminhos -->
-      <button id="botaoSalvarPergaminhos">Salvar Configuração de Pergaminhos</button>
     </div>
 
-    <!-- Seção de Controle de Itens (estrutura já ajustada) -->
+    <!-- Controle de Itens -->
     <div class="section" id="controleItens">
       <h2>Controle de Itens</h2>
       <div class="controle-itens">
+        <!-- Coluna 1 -->
         <div class="col">
           <div class="item">
             <label>Personagem:</label>
@@ -307,19 +324,23 @@
               <option>Lendário</option>
             </select>
           </div>
-          <div class="item">
-            <label>Vazio:</label>
-            <select id="vazio">
-              <option>Nenhum</option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select>
+          <div class="item inline-group">
+            <div style="flex:1;">
+              <label>Vazio:</label>
+              <select id="vazio">
+                <option>Nenhum</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+              </select>
+            </div>
+            <button id="botaoSalvarGC">Salvar GC</button>
           </div>
         </div>
+        <!-- Coluna 2 -->
         <div class="col">
           <div class="item">
             <label>Piercing:</label>
@@ -348,6 +369,7 @@
             </select>
           </div>
         </div>
+        <!-- Coluna 3 -->
         <div class="col">
           <div class="item">
             <label>Berkas:</label>
@@ -395,10 +417,9 @@
           </div>
         </div>
       </div>
-      <button id="botaoSalvarGC">Salvar GC</button>
     </div>
 
-    <!-- Tabela de Controle de Personagens -->
+    <!-- Tabela de Controle de Personagens com barra de pesquisa em linha -->
     <div class="section">
       <h2>Controle de Personagens</h2>
       <div class="search-bar">
@@ -590,10 +611,9 @@
         });
     }
 
-    // Evento para o botão de salvar pergaminhos
     botaoSalvarPergaminhos.addEventListener("click", salvarPergaminhos);
 
-    // Funções para GC, tabela e ataque total permanecem inalteradas...
+    // Funções para GC, tabela e ataque total
     function personagemJaExiste(personagem, callback) {
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
@@ -643,7 +663,7 @@
           ataqueTotal: ataqueTotal
         }).then(() => {
           alert("GC salvo com sucesso!");
-          salvarPergaminhos();
+          // Opcional: atualiza os pergaminhos junto com o GC se necessário
           carregarGCs();
           calcularAtaqueTotal();
         }).catch((error) => {
@@ -675,7 +695,6 @@
             let dados = childSnapshot.val();
             let personagem = childSnapshot.key;
             gcData[personagem] = dados;
-            // Processamento de Berkas
             let berkasValor = dados.berkas;
             let berkasNum = 0;
             if (berkasValor === "Full") {
@@ -685,9 +704,7 @@
             } else {
               berkasNum = parseInt(berkasValor) || 0;
             }
-            // Processamento de Vazio (trata "Nenhum" como 0)
             let vazioValor = (dados.vazio === "Nenhum" || !dados.vazio) ? 0 : parseInt(dados.vazio);
-            // Se houver algum valor de vazio, o requisito para Berkas é 6; caso contrário, 12.
             let missingBerkas = (vazioValor > 0) ? Math.max(0, 6 - berkasNum) : Math.max(0, 12 - berkasNum);
             let missingVazio = (vazioValor > 0) ? Math.max(0, 6 - vazioValor) : 0;
             totalMissingBerkas += missingBerkas;
@@ -736,7 +753,6 @@
     }
 
     document.getElementById("selecionarAtaqueTotal").addEventListener("change", calcularAtaqueTotal);
-    document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
     window.excluirGC = excluirGC;
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
