@@ -108,7 +108,7 @@
     .delete-button:hover {
       background-color: #c0392b;
     }
-    /* Gerenciamento de Pergaminhos – layout em uma única linha */
+    /* Gerenciamento de Pergaminhos – mesma linha */
     .pergaminhos-flex {
       display: flex;
       align-items: flex-end;
@@ -135,20 +135,12 @@
       flex-direction: column;
       gap: 15px;
     }
-    /* Na 1ª coluna, agrupa o campo "Vazio" e o botão "Salvar GC" na mesma linha */
-    .inline-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .inline-group select {
-      flex: 1;
-    }
-    .inline-group button {
-      padding: 8px 15px;
+    /* Na 1ª coluna, o campo "Vazio" fica sozinho e o botão "Salvar GC" aparece abaixo, pequeno e alinhado à esquerda */
+    .small-button {
+      padding: 6px 10px;
       max-width: 120px;
     }
-    /* Barra de Pesquisa – os elementos na mesma linha */
+    /* Barra de Pesquisa – mesmo linha, com input de largura fixa para 20 caracteres */
     .search-bar {
       display: flex;
       align-items: center;
@@ -156,7 +148,7 @@
       margin-bottom: 15px;
     }
     .search-bar input {
-      flex: 1;
+      width: 20ch;
       margin-bottom: 0;
     }
     .search-bar button {
@@ -235,10 +227,7 @@
       .pergaminhos-flex, .controle-itens, .search-bar {
         flex-direction: column;
       }
-      .inline-group {
-        flex-direction: column;
-      }
-      .inline-group button {
+      .small-button {
         max-width: none;
         width: 100%;
       }
@@ -324,20 +313,20 @@
               <option>Lendário</option>
             </select>
           </div>
-          <div class="item inline-group">
-            <div style="flex:1;">
-              <label>Vazio:</label>
-              <select id="vazio">
-                <option>Nenhum</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-              </select>
-            </div>
-            <button id="botaoSalvarGC">Salvar GC</button>
+          <div class="item">
+            <label>Vazio:</label>
+            <select id="vazio">
+              <option>Nenhum</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select>
+          </div>
+          <div class="item">
+            <button id="botaoSalvarGC" class="small-button">Salvar GC</button>
           </div>
         </div>
         <!-- Coluna 2 -->
@@ -423,7 +412,7 @@
     <div class="section">
       <h2>Controle de Personagens</h2>
       <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Pesquisar personagem...">
+        <input type="text" id="searchInput" placeholder="Pesquisar personagem..." maxlength="20" style="width:20ch;">
         <button onclick="filtrarTabela()">Pesquisar</button>
         <button onclick="limparFiltro()">Limpar Filtro</button>
       </div>
@@ -663,7 +652,6 @@
           ataqueTotal: ataqueTotal
         }).then(() => {
           alert("GC salvo com sucesso!");
-          // Opcional: atualiza os pergaminhos junto com o GC se necessário
           carregarGCs();
           calcularAtaqueTotal();
         }).catch((error) => {
