@@ -616,11 +616,13 @@
         return;
       }
 
+      // Verifica se o personagem já existe
       personagemJaExiste(personagemSelecionado, (existe) => {
         if (existe) {
           const confirmacao = confirm("Este personagem já foi salvo. Tem certeza que deseja alterar?");
           if (!confirmacao) return;
         }
+        // Salva os dados no Firebase
         set(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagemSelecionado), {
           brinco: brinco,
           piercing: piercing,
@@ -629,11 +631,10 @@
           ataqueTotal: ataqueTotal
         }).then(() => {
           alert("GC salvo com sucesso!");
-          carregarGCs();
+          carregarGCs(); // Atualiza a tabela após salvar
         }).catch((error) => {
           console.error("Erro ao salvar GC: ", error);
         });
-        salvarPergaminhos();
       });
     }
 
