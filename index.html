@@ -266,7 +266,7 @@
       <div class="columns">
         <div>
           <label>Personagem:</label>
-          <select id="personagem">
+          <select id="personagem" onchange="preencherCamposSeExistir()">
             <option>Elesis</option>
             <option>Lire</option>
             <option>Arme</option>
@@ -569,15 +569,31 @@
       });
     }
 
-    // Verifica se o personagem já existe na base de controle
-    function personagemJaExiste(personagem, callback) {
-      if (!usuarioAtual) return;
-      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
+    // Função para preencher os campos se o personagem já existir
+    function preencherCamposSeExistir() {
+      const personagemSelecionado = document.getElementById("personagem").value;
+      if (!usuarioAtual || !personagemSelecionado) return;
+
+      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagemSelecionado))
         .then((snapshot) => {
-          callback(snapshot.exists());
+          if (snapshot.exists()) {
+            const dados = snapshot.val();
+            document.getElementById("brinco").value = dados.brinco;
+            document.getElementById("piercing").value = dados.piercing;
+            document.getElementById("anel").value = dados.anel;
+            document.getElementById("berkas").value = dados.berkas;
+            document.getElementById("ataqueTotal").value = dados.ataqueTotal;
+          } else {
+            // Limpa os campos se o personagem não existir
+            document.getElementById("brinco").value = "Nenhum";
+            document.getElementById("piercing").value = "Nenhum";
+            document.getElementById("anel").value = "Nenhum";
+            document.getElementById("berkas").value = "Nenhum";
+            document.getElementById("ataqueTotal").value = "Nenhum";
+          }
         })
         .catch((error) => {
-          console.error("Erro ao verificar personagem: ", error);
+          console.error("Erro ao buscar dados do personagem: ", error);
         });
     }
 
@@ -753,6 +769,7 @@
     window.limparFiltro = limparFiltro;
     window.salvarPergaminhos = salvarPergaminhos;
     window.calcularAtaqueTotal = calcularAtaqueTotal;
+    window.preencherCamposSeExistir = preencherCamposSeExistir;
   </script>
 </body>
 </html>
