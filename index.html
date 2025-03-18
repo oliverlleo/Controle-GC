@@ -208,12 +208,28 @@
     #ataqueTotalPanel label {
       margin-bottom: 5px;
       font-weight: 500;
+      display: block;
     }
     #resultadoAtaqueTotal {
       margin-top: 10px;
       font-size: 14px;
       font-weight: 500;
       color: #2c3e50;
+    }
+    /* Botão minimalista para limpar filtro de ataque total */
+    #botaoLimparAtaqueFiltro {
+      background-color: transparent;
+      border: 1px solid #2c3e50;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: #2c3e50;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+    #botaoLimparAtaqueFiltro:hover {
+      background-color: #eaf7ff;
     }
     /* Ajustes para mobile */
     @media (max-width: 600px) {
@@ -439,6 +455,8 @@
           <option>2000k</option>
         </select>
         <div id="resultadoAtaqueTotal"></div>
+        <!-- Botão minimalista para limpar o filtro de ataque total -->
+        <button id="botaoLimparAtaqueFiltro" onclick="limparFiltroAtaqueTotal()">Limpar Filtro Ataque</button>
       </div>
     </div>
   </div>
@@ -739,10 +757,7 @@
       filtrarTabela();
     }
 
-    // Função atualizada que calcula três grupos:
-    // - Personagens com exatamente o ataque selecionado;
-    // - Personagens com mais que o ataque selecionado;
-    // - Personagens com menos que o ataque selecionado.
+    // Função que calcula os contadores de ataque total e filtra a tabela
     function calcularAtaqueTotal() {
       const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
       const ataqueDesejadoNum = parseInt(ataqueDesejado.replace("k", "")) * 1000;
@@ -763,27 +778,53 @@
               countExact++;
             } else if (atkNum > ataqueDesejadoNum) {
               countAbove++;
-            } else if (atkNum < ataqueDesejadoNum) {
+            } else {
               countBelow++;
             }
           });
         }
         document.getElementById("resultadoAtaqueTotal").textContent =
           `Exatos: ${countExact} | Acima: ${countAbove} | Abaixo: ${countBelow}`;
+        // Filtra a tabela para exibir apenas os personagens com ataque exato
+        filtrarAtaqueTabela(ataqueDesejado);
       }).catch((error) => {
         console.error("Erro ao calcular ataque total: ", error);
       });
     }
 
-    // Atualiza o resultado sempre que o usuário muda o valor desejado
-    document.getElementById("selecionarAtaqueTotal").addEventListener("change", calcularAtaqueTotal);
+    // Filtra a tabela para mostrar apenas os personagens com ataque total exato
+    function filtrarAtaqueTabela(ataqueDesejado) {
+      const tabela = document.getElementById("tabela_controle");
+      const tr = tabela.getElementsByTagName("tr");
+      // Ignora o cabeçalho (linha 0)
+      for (let i = 1; i < tr.length; i++){
+        const cellAtaque = tr[i].cells[5].textContent.trim();
+        // Mostra apenas as linhas cujo valor de ataque total seja exatamente o selecionado
+        if (cellAtaque === ataqueDesejado) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
 
+    // Limpa o filtro de ataque total e exibe todos os personagens da tabela
+    function limparFiltroAtaqueTotal() {
+      const tabela = document.getElementById("tabela_controle");
+      const tr = tabela.getElementsByTagName("tr");
+      for (let i = 1; i < tr.length; i++){
+        tr[i].style.display = "";
+      }
+    }
+
+    document.getElementById("selecionarAtaqueTotal").addEventListener("change", calcularAtaqueTotal);
     document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
     window.excluirGC = excluirGC;
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
     window.salvarPergaminhos = salvarPergaminhos;
     window.calcularAtaqueTotal = calcularAtaqueTotal;
+    window.limparFiltroAtaqueTotal = limparFiltroAtaqueTotal;
   </script>
 </body>
 </html>
