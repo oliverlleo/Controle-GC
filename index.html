@@ -671,6 +671,18 @@
             // Botão de exclusão na última coluna com "X"
             let cellExcluir = linha.insertCell();
             cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
+
+            // Adiciona evento de clique na linha para preencher os campos de controle
+            linha.addEventListener("click", (event) => {
+              // Evita que o clique no botão de exclusão dispare este evento
+              if (event.target && event.target.classList.contains("delete-button")) return;
+              document.getElementById("personagem").value = personagem;
+              document.getElementById("brinco").value = dados.brinco;
+              document.getElementById("piercing").value = dados.piercing;
+              document.getElementById("anel").value = dados.anel;
+              document.getElementById("berkas").value = dados.berkas;
+              document.getElementById("ataqueTotal").value = dados.ataqueTotal;
+            });
           });
         } else {
           console.log("Nenhum GC salvo ainda.");
