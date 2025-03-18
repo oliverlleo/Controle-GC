@@ -185,6 +185,16 @@
       font-size: 12px;
       margin-bottom: 10px;
     }
+    /* Seção de Armaduras */
+    .columns {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .columns > div {
+      flex: 1;
+      min-width: 150px;
+    }
     /* Painel de berkas faltantes */
     #missingBerkasPanel {
       margin-top: 20px;
@@ -216,7 +226,7 @@
       font-weight: 500;
       color: #2c3e50;
     }
-    /* Botão minimalista para limpar filtro de ataque total */
+    /* Botão minimalista para limpar o filtro de ataque total */
     #botaoLimparAtaqueFiltro {
       background-color: transparent;
       border: 1px solid #2c3e50;
@@ -378,8 +388,7 @@
             <option>11</option>
             <option>Full</option>
           </select>
-        </div>
-        <div>
+          
           <label>Ataque Total:</label>
           <select id="ataqueTotal">
             <option>Nenhum</option>
@@ -406,6 +415,29 @@
           </select>
         </div>
       </div>
+      <!-- Seção de Armaduras -->
+      <div class="columns">
+        <div>
+          <label>Armadura 1 - Tipo:</label>
+          <select id="armadura1_tipo">
+            <option>Nenhuma</option>
+            <option>Berkas</option>
+            <option>Vazio</option>
+          </select>
+          <label>Armadura 1 - Itens:</label>
+          <input type="number" id="armadura1_qtd" placeholder="Quantidade">
+        </div>
+        <div>
+          <label>Armadura 2 - Tipo:</label>
+          <select id="armadura2_tipo">
+            <option>Nenhuma</option>
+            <option>Berkas</option>
+            <option>Vazio</option>
+          </select>
+          <label>Armadura 2 - Itens:</label>
+          <input type="number" id="armadura2_qtd" placeholder="Quantidade">
+        </div>
+      </div>
       <button id="botaoSalvarGC">Salvar GC</button>
     </div>
 
@@ -421,10 +453,13 @@
         <tr>
           <th>Personagem</th>
           <th>Brinco</th>
+          <th>Selecionar</th>
           <th>Piercing</th>
           <th>Anel</th>
           <th>Berkas</th>
           <th>Ataque Total</th>
+          <th>Armadura 1</th>
+          <th>Armadura 2</th>
           <th>Ação</th>
         </tr>
       </table>
@@ -612,6 +647,16 @@
       let anel = document.getElementById("anel").value;
       let berkas = document.getElementById("berkas").value;
       let ataqueTotal = document.getElementById("ataqueTotal").value;
+      
+      // Dados de armadura
+      let armadura1 = {
+        tipo: document.getElementById("armadura1_tipo").value,
+        quantidade: document.getElementById("armadura1_qtd").value || "0"
+      };
+      let armadura2 = {
+        tipo: document.getElementById("armadura2_tipo").value,
+        quantidade: document.getElementById("armadura2_qtd").value || "0"
+      };
 
       if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas || !ataqueTotal) {
         alert("Preencha todos os campos!");
@@ -631,7 +676,9 @@
           piercing: piercing,
           anel: anel,
           berkas: berkas,
-          ataqueTotal: ataqueTotal
+          ataqueTotal: ataqueTotal,
+          armadura1: armadura1,
+          armadura2: armadura2
         }).then(() => {
           alert("GC salvo com sucesso!");
           carregarGCs();
@@ -652,59 +699,116 @@
           <tr>
             <th>Personagem</th>
             <th>Brinco</th>
+            <th>Selecionar</th>
             <th>Piercing</th>
             <th>Anel</th>
             <th>Berkas</th>
             <th>Ataque Total</th>
+            <th>Armadura 1</th>
+            <th>Armadura 2</th>
             <th>Ação</th>
           </tr>`;
-        let totalMissing = 0;
+        let totalMissingBerkas = 0;
+        let totalMissingVazio = 0;
         if (snapshot.exists()) {
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
             let personagem = childSnapshot.key;
             gcData[personagem] = dados;
-            let berkasValor = dados.berkas;
-            let berkasNum = 0;
-            if (berkasValor === "Full") {
-              berkasNum = 12;
-            } else if (berkasValor === "Nenhum") {
-              berkasNum = 0;
-            } else {
-              berkasNum = parseInt(berkasValor) || 0;
+            // Cálculo para berkas: somente somando os itens com tipo "Berkas"
+            let totalBerkas = 0;
+            if (dados.armadura1 && dados.armadura1.tipo === "Berkas") {
+              totalBerkas += parseInt(dados.armadura1.quantidade) || 0;
             }
-            totalMissing += (12 - berkasNum);
+            if (dados.armadura2 && dados.armadura2.tipo === "Berkas") {
+              totalBerkas += parseInt(dados.armadura2.quantidade) || 0;
+            }
+            let missingBerkas = totalBerkas >= 7 ? 0 : 7 - totalBerkas;
+            totalMissingBerkas += missingBerkas;
+            // Cálculo para vazio: se o personagem tiver armadura do tipo "Vazio"
+            let totalVazio = 0;
+            if (dados.armadura1 && dados.armadura1.tipo === "Vazio") {
+              totalVazio += parseInt(dados.armadura1.quantidade) || 0;
+            }
+            if (dados.armadura2 && dados.armadura2.tipo === "Vazio") {
+              totalVazio += parseInt(dados.armadura2.quantidade) || 0;
+            }
+            let missingVazio = totalVazio >= 6 ? 0 : (dados.armadura1?.tipo === "Vazio" || dados.armadura2?.tipo === "Vazio" ? 6 - totalVazio : 0);
+            totalMissingVazio += missingVazio;
+            
             let linha = tabela.insertRow();
             linha.style.cursor = "pointer";
+            // Coluna Personagem
             let cellPersonagem = linha.insertCell();
             cellPersonagem.textContent = personagem;
+            // Coluna Brinco
             let cellBrinco = linha.insertCell();
             cellBrinco.textContent = dados.brinco;
+            // Coluna Checkbox (Selecionar)
+            let cellCheckbox = linha.insertCell();
+            cellCheckbox.innerHTML = `<input type="checkbox">`;
+            // Coluna Piercing
             let cellPiercing = linha.insertCell();
             cellPiercing.textContent = dados.piercing;
+            // Coluna Anel
             let cellAnel = linha.insertCell();
             cellAnel.textContent = dados.anel;
+            // Coluna Berkas
             let cellBerkas = linha.insertCell();
             cellBerkas.textContent = dados.berkas;
+            // Coluna Ataque Total
             let cellAtaqueTotal = linha.insertCell();
             cellAtaqueTotal.textContent = dados.ataqueTotal;
-            let cellExcluir = linha.insertCell();
-            cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
+            // Coluna Armadura 1
+            let cellArmadura1 = linha.insertCell();
+            if (dados.armadura1 && dados.armadura1.tipo !== "Nenhuma") {
+              cellArmadura1.textContent = `${dados.armadura1.tipo} (${dados.armadura1.quantidade})`;
+            } else {
+              cellArmadura1.textContent = "Nenhuma";
+            }
+            // Coluna Armadura 2
+            let cellArmadura2 = linha.insertCell();
+            if (dados.armadura2 && dados.armadura2.tipo !== "Nenhuma") {
+              cellArmadura2.textContent = `${dados.armadura2.tipo} (${dados.armadura2.quantidade})`;
+            } else {
+              cellArmadura2.textContent = "Nenhuma";
+            }
+            // Coluna Ação
+            let cellAcao = linha.insertCell();
+            cellAcao.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
+            
             linha.addEventListener("click", (event) => {
-              if (event.target.tagName.toLowerCase() === "button") return;
+              if (event.target.tagName.toLowerCase() === "button" || event.target.type === "checkbox") return;
+              // Preenche os campos do formulário com os dados da linha
               document.getElementById("personagem").value = personagem.trim();
               document.getElementById("brinco").value = (dados.brinco || "").trim();
               document.getElementById("piercing").value = (dados.piercing || "").trim();
               document.getElementById("anel").value = (dados.anel || "").trim();
               document.getElementById("berkas").value = (dados.berkas || "").trim();
               document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
+              
+              // Preenche os dados de armadura
+              if (dados.armadura1) {
+                document.getElementById("armadura1_tipo").value = dados.armadura1.tipo;
+                document.getElementById("armadura1_qtd").value = dados.armadura1.quantidade;
+              } else {
+                document.getElementById("armadura1_tipo").value = "Nenhuma";
+                document.getElementById("armadura1_qtd").value = "";
+              }
+              if (dados.armadura2) {
+                document.getElementById("armadura2_tipo").value = dados.armadura2.tipo;
+                document.getElementById("armadura2_qtd").value = dados.armadura2.quantidade;
+              } else {
+                document.getElementById("armadura2_tipo").value = "Nenhuma";
+                document.getElementById("armadura2_qtd").value = "";
+              }
             });
           });
         } else {
           console.log("Nenhum GC salvo ainda.");
         }
         document.getElementById("missingBerkasPanel").textContent =
-          `Total de berkas faltantes para completar todos os personagens: ${totalMissing}`;
+          `Total de berkas faltantes: ${totalMissingBerkas} | Total de vazio faltantes: ${totalMissingVazio}`;
       }).catch((error) => {
         console.error("Erro ao carregar GCs: ", error);
       });
@@ -720,6 +824,14 @@
         document.getElementById("anel").value = (dados.anel || "").trim();
         document.getElementById("berkas").value = (dados.berkas || "").trim();
         document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
+        if (dados.armadura1) {
+          document.getElementById("armadura1_tipo").value = dados.armadura1.tipo;
+          document.getElementById("armadura1_qtd").value = dados.armadura1.quantidade;
+        }
+        if (dados.armadura2) {
+          document.getElementById("armadura2_tipo").value = dados.armadura2.tipo;
+          document.getElementById("armadura2_qtd").value = dados.armadura2.quantidade;
+        }
       }
     });
 
@@ -798,8 +910,7 @@
       const tr = tabela.getElementsByTagName("tr");
       // Ignora o cabeçalho (linha 0)
       for (let i = 1; i < tr.length; i++){
-        const cellAtaque = tr[i].cells[5].textContent.trim();
-        // Mostra apenas as linhas cujo valor de ataque total seja exatamente o selecionado
+        const cellAtaque = tr[i].cells[6].textContent.trim();
         if (cellAtaque === ataqueDesejado) {
           tr[i].style.display = "";
         } else {
