@@ -443,6 +443,8 @@
     const database = getDatabase(appFirebase);
     const auth = getAuth(appFirebase);
     let usuarioAtual = null;
+    // Variável global para armazenar os dados de GC carregados
+    let gcData = {};
 
     // Elementos de tela
     const telaLogin = document.getElementById("telaLogin");
@@ -604,6 +606,8 @@
 
     function carregarGCs() {
       if (!usuarioAtual) return;
+      // Limpa o objeto de dados antes de recarregar
+      gcData = {};
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
         let tabela = document.getElementById("tabela_controle");
         tabela.innerHTML = `
@@ -621,6 +625,7 @@
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
             let personagem = childSnapshot.key;
+            gcData[personagem] = dados; // Armazena os dados no objeto global
             let berkasValor = dados.berkas;
             let berkasNum = 0;
             if (berkasValor === "Full") {
@@ -647,7 +652,7 @@
             cellAtaqueTotal.textContent = dados.ataqueTotal;
             let cellExcluir = linha.insertCell();
             cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
-            // Ao clicar na linha (exceto no botão), atualiza os selects com os dados
+            // Clique na linha para preencher os selects
             linha.addEventListener("click", (event) => {
               if (event.target.tagName.toLowerCase() === "button") return;
               console.log("Linha clicada:", personagem, dados);
@@ -668,6 +673,21 @@
         console.error("Erro ao carregar GCs: ", error);
       });
     }
+
+    // Evento para quando o usuário muda a seleção do personagem no select
+    document.getElementById("personagem").addEventListener("change", (event) => {
+      const personagemSelecionado = event.target.value;
+      // Se existir dados salvos para o personagem selecionado, preenche os outros campos
+      if (gcData[personagemSelecionado]) {
+        const dados = gcData[personagemSelecionado];
+        console.log("Personagem selecionado via dropdown:", personagemSelecionado, dados);
+        document.getElementById("brinco").value = (dados.brinco || "").trim();
+        document.getElementById("piercing").value = (dados.piercing || "").trim();
+        document.getElementById("anel").value = (dados.anel || "").trim();
+        document.getElementById("berkas").value = (dados.berkas || "").trim();
+        document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
+      }
+    });
 
     function excluirGC(personagem) {
       if (!usuarioAtual) return;
@@ -737,3 +757,4 @@
   </script>
 </body>
 </html>
+
