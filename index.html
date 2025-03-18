@@ -443,7 +443,7 @@
     const database = getDatabase(appFirebase);
     const auth = getAuth(appFirebase);
     let usuarioAtual = null;
-    // Variável global para armazenar os dados de GC carregados
+    // Objeto global para armazenar os dados de GC
     let gcData = {};
 
     // Elementos de tela
@@ -606,7 +606,6 @@
 
     function carregarGCs() {
       if (!usuarioAtual) return;
-      // Limpa o objeto de dados antes de recarregar
       gcData = {};
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
         let tabela = document.getElementById("tabela_controle");
@@ -625,7 +624,7 @@
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
             let personagem = childSnapshot.key;
-            gcData[personagem] = dados; // Armazena os dados no objeto global
+            gcData[personagem] = dados;
             let berkasValor = dados.berkas;
             let berkasNum = 0;
             if (berkasValor === "Full") {
@@ -652,7 +651,6 @@
             cellAtaqueTotal.textContent = dados.ataqueTotal;
             let cellExcluir = linha.insertCell();
             cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
-            // Clique na linha para preencher os selects
             linha.addEventListener("click", (event) => {
               if (event.target.tagName.toLowerCase() === "button") return;
               console.log("Linha clicada:", personagem, dados);
@@ -674,10 +672,9 @@
       });
     }
 
-    // Evento para quando o usuário muda a seleção do personagem no select
+    // Atualiza os selects automaticamente quando o usuário muda a seleção do personagem
     document.getElementById("personagem").addEventListener("change", (event) => {
       const personagemSelecionado = event.target.value;
-      // Se existir dados salvos para o personagem selecionado, preenche os outros campos
       if (gcData[personagemSelecionado]) {
         const dados = gcData[personagemSelecionado];
         console.log("Personagem selecionado via dropdown:", personagemSelecionado, dados);
@@ -722,12 +719,14 @@
       filtrarTabela();
     }
 
+    // Função atualizada que calcula e diferencia os personagens com exatamente o valor selecionado e os com mais do que o valor
     function calcularAtaqueTotal() {
       const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
       const ataqueDesejadoNum = parseInt(ataqueDesejado.replace("k", "")) * 1000;
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
-        let contador = 0;
+        let countExact = 0;
+        let countAbove = 0;
         if (snapshot.exists()) {
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
@@ -736,13 +735,15 @@
               atk = "0k";
             }
             let atkNum = parseInt(atk.replace("k", "")) * 1000;
-            if (atkNum >= ataqueDesejadoNum) {
-              contador++;
+            if (atkNum === ataqueDesejadoNum) {
+              countExact++;
+            } else if (atkNum > ataqueDesejadoNum) {
+              countAbove++;
             }
           });
         }
         document.getElementById("resultadoAtaqueTotal").textContent =
-          `Personagens com ${ataqueDesejado} ou mais: ${contador}`;
+          `Personagens com exatamente ${ataqueDesejado}: ${countExact} e com mais de ${ataqueDesejado}: ${countAbove}`;
       }).catch((error) => {
         console.error("Erro ao calcular ataque total: ", error);
       });
@@ -757,4 +758,3 @@
   </script>
 </body>
 </html>
-
