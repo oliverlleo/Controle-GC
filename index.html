@@ -445,12 +445,43 @@
       appId: "1:3109203796:web:f8619117f915f67ceba2c1",
       measurementId: "G-3NNXXD5V2T"
     };
+// Importações do Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-    // Inicializa o Firebase
-    const appFirebase = initializeApp(config);
-    const database = getDatabase(appFirebase);
-    const auth = getAuth(appFirebase);
-    let usuarioAtual = null;
+// Configuração do Firebase
+const config = {
+  apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
+  authDomain: "gc-controle.firebaseapp.com",
+  databaseURL: "https://gc-controle-default-rtdb.firebaseio.com",
+  projectId: "gc-controle",
+  storageBucket: "gc-controle.firebasestorage.app",
+  messagingSenderId: "3109203796",
+  appId: "1:3109203796:web:f8619117f915f67ceba2c1",
+  measurementId: "G-3NNXXD5V2T"
+};
+
+// Inicializa o Firebase
+const appFirebase = initializeApp(config);
+const database = getDatabase(appFirebase);
+const auth = getAuth(appFirebase);
+let usuarioAtual = null;
+
+// Função para verificar se o personagem já existe na base de dados
+function personagemJaExiste(personagem, callback) {
+  if (!usuarioAtual) return;
+  get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
+    .then((snapshot) => {
+      callback(snapshot.exists()); // Retorna true se o personagem existir
+    })
+    .catch((error) => {
+      console.error("Erro ao verificar personagem: ", error);
+    });
+}
+
+
+    
 
     // Elementos de tela
     const telaLogin = document.getElementById("telaLogin");
