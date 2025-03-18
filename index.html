@@ -115,27 +115,25 @@
     }
     .pergaminhos-row {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px; /* Espaço reduzido para aproximar as caixas */
       align-items: center;
     }
-    .pergaminhos-row > div {
-      /* Cada coluna ocupa 1 fração do espaço */
-    }
     .pergaminhos-row input[type="number"] {
-      width: 100%;
-      max-width: 80px; /* Espaço suficiente para cerca de 5 dígitos */
+      max-width: 80px; /* Aproximadamente espaço para 5 dígitos */
     }
-    /* Seção de Controle de Itens - 3 Colunas */
-    .controle-columns {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    /* Seção de Controle de Itens */
+    .controle-itens {
+      display: flex;
       gap: 20px;
     }
-    .controle-columns > div {
-      /* Cada coluna do grid se ajusta igualmente */
+    .controle-itens .col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
     }
-    /* Seção de Itens Faltantes */
+    /* Seção de Itens Faltantes e Painel de Ataque Total (mantém-se inalterado) */
     #missingBerkasPanel {
       margin-top: 20px;
       padding: 10px;
@@ -146,7 +144,6 @@
       font-size: 16px;
       font-weight: 500;
     }
-    /* Painel de Ataque Total */
     #ataqueTotalPanel {
       border: 1px solid #2c3e50;
       border-radius: 4px;
@@ -166,7 +163,6 @@
       font-weight: 500;
       color: #2c3e50;
     }
-    /* Botão para limpar filtro de Ataque Total */
     #botaoLimparAtaqueFiltro {
       background-color: transparent;
       border: 1px solid #2c3e50;
@@ -209,8 +205,8 @@
       h2 {
         font-size: 20px;
       }
-      .pergaminhos-row, .controle-columns {
-        grid-template-columns: 1fr;
+      .pergaminhos-row, .controle-itens {
+        flex-direction: column;
       }
       .search-bar {
         flex-direction: row;
@@ -271,121 +267,135 @@
     <!-- Seção de Controle de Itens -->
     <div class="section" id="controleItens">
       <h2>Controle de Itens</h2>
-      <div class="controle-columns">
-        <!-- Coluna 1: Personagem -->
-        <div>
-          <label>Personagem:</label>
-          <select id="personagem">
-            <option>Elesis</option>
-            <option>Lire</option>
-            <option>Arme</option>
-            <option>Lass</option>
-            <option>Ryan</option>
-            <option>Ronan</option>
-            <option>Amy</option>
-            <option>Jin</option>
-            <option>Sieghart</option>
-            <option>Mari</option>
-            <option>Dio</option>
-            <option>Zero</option>
-            <option>Rey</option>
-            <option>Lupus</option>
-            <option>Lin</option>
-            <option>Azin</option>
-            <option>Holy</option>
-            <option>Edel Frost</option>
-            <option>Veigas</option>
-            <option>Uno</option>
-            <option>Decane</option>
-            <option>Ai</option>
-            <option>Kallia Eldepel</option>
-          </select>
+      <div class="controle-itens">
+        <!-- Coluna 1: 3 itens (aqui a coluna recebe o extra por ser ímpar) -->
+        <div class="col">
+          <div class="item">
+            <label>Personagem:</label>
+            <select id="personagem">
+              <option>Elesis</option>
+              <option>Lire</option>
+              <option>Arme</option>
+              <option>Lass</option>
+              <option>Ryan</option>
+              <option>Ronan</option>
+              <option>Amy</option>
+              <option>Jin</option>
+              <option>Sieghart</option>
+              <option>Mari</option>
+              <option>Dio</option>
+              <option>Zero</option>
+              <option>Rey</option>
+              <option>Lupus</option>
+              <option>Lin</option>
+              <option>Azin</option>
+              <option>Holy</option>
+              <option>Edel Frost</option>
+              <option>Veigas</option>
+              <option>Uno</option>
+              <option>Decane</option>
+              <option>Ai</option>
+              <option>Kallia Eldepel</option>
+            </select>
+          </div>
+          <div class="item">
+            <label>Brinco:</label>
+            <select id="brinco">
+              <option>Nenhum</option>
+              <option>Harkyon</option>
+              <option>Normal</option>
+              <option>Épico</option>
+              <option>Lendário</option>
+            </select>
+          </div>
+          <div class="item">
+            <label>Vazio:</label>
+            <select id="vazio">
+              <option>Nenhum</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select>
+          </div>
         </div>
-        <!-- Coluna 2: Brinco e Vazio -->
-        <div>
-          <label>Brinco:</label>
-          <select id="brinco">
-            <option>Nenhum</option>
-            <option>Harkyon</option>
-            <option>Normal</option>
-            <option>Épico</option>
-            <option>Lendário</option>
-          </select>
-          <label>Vazio:</label>
-          <select id="vazio">
-            <option>Nenhum</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-          </select>
+        <!-- Coluna 2: 2 itens -->
+        <div class="col">
+          <div class="item">
+            <label>Piercing:</label>
+            <select id="piercing">
+              <option>Nenhum</option>
+              <option>Harkyon</option>
+              <option>Normal</option>
+              <option>Épico</option>
+              <option>Lendário</option>
+            </select>
+          </div>
+          <div class="item">
+            <label>Anel:</label>
+            <select id="anel">
+              <option>Nenhum</option>
+              <option>Harkyon</option>
+              <option>Nível 1.1</option>
+              <option>Nível 1.2</option>
+              <option>Nível 1.3</option>
+              <option>Nível 2.1</option>
+              <option>Nível 2.2</option>
+              <option>Nível 2.3</option>
+              <option>Nível 3.1</option>
+              <option>Nível 3.2</option>
+              <option>Nível 3.3</option>
+            </select>
+          </div>
         </div>
-        <!-- Coluna 3: Piercing, Anel, Berkas e Ataque Total -->
-        <div>
-          <label>Piercing:</label>
-          <select id="piercing">
-            <option>Nenhum</option>
-            <option>Harkyon</option>
-            <option>Normal</option>
-            <option>Épico</option>
-            <option>Lendário</option>
-          </select>
-          <label>Anel:</label>
-          <select id="anel">
-            <option>Nenhum</option>
-            <option>Harkyon</option>
-            <option>Nível 1.1</option>
-            <option>Nível 1.2</option>
-            <option>Nível 1.3</option>
-            <option>Nível 2.1</option>
-            <option>Nível 2.2</option>
-            <option>Nível 2.3</option>
-            <option>Nível 3.1</option>
-            <option>Nível 3.2</option>
-            <option>Nível 3.3</option>
-          </select>
-          <label>Berkas:</label>
-          <select id="berkas">
-            <option>Nenhum</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
-            <option>11</option>
-            <option>Full</option>
-          </select>
-          <label>Ataque Total:</label>
-          <select id="ataqueTotal">
-            <option>Nenhum</option>
-            <option>100k</option>
-            <option>200k</option>
-            <option>300k</option>
-            <option>400k</option>
-            <option>500k</option>
-            <option>600k</option>
-            <option>700k</option>
-            <option>800k</option>
-            <option>900k</option>
-            <option>1000k</option>
-            <option>1100k</option>
-            <option>1200k</option>
-            <option>1300k</option>
-            <option>1400k</option>
-            <option>1500k</option>
-            <option>1600k</option>
-            <option>1700k</option>
-            <option>1800k</option>
-            <option>1900k</option>
-            <option>2000k</option>
-          </select>
+        <!-- Coluna 3: 2 itens -->
+        <div class="col">
+          <div class="item">
+            <label>Berkas:</label>
+            <select id="berkas">
+              <option>Nenhum</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+              <option>10</option>
+              <option>11</option>
+              <option>Full</option>
+            </select>
+          </div>
+          <div class="item">
+            <label>Ataque Total:</label>
+            <select id="ataqueTotal">
+              <option>Nenhum</option>
+              <option>100k</option>
+              <option>200k</option>
+              <option>300k</option>
+              <option>400k</option>
+              <option>500k</option>
+              <option>600k</option>
+              <option>700k</option>
+              <option>800k</option>
+              <option>900k</option>
+              <option>1000k</option>
+              <option>1100k</option>
+              <option>1200k</option>
+              <option>1300k</option>
+              <option>1400k</option>
+              <option>1500k</option>
+              <option>1600k</option>
+              <option>1700k</option>
+              <option>1800k</option>
+              <option>1900k</option>
+              <option>2000k</option>
+            </select>
+          </div>
         </div>
       </div>
       <button id="botaoSalvarGC">Salvar GC</button>
@@ -577,15 +587,15 @@
       let pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       let pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
       let brinco = document.getElementById("brinco").value;
+      let vazio = document.getElementById("vazio").value;
       let piercing = document.getElementById("piercing").value;
       let anel = document.getElementById("anel").value;
       let berkas = document.getElementById("berkas").value;
       let ataqueTotal = document.getElementById("ataqueTotal").value;
-      let vazio = document.getElementById("vazio").value;
       
       let vazioNum = (vazio === "Nenhum") ? "0" : vazio;
       
-      if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas || !ataqueTotal) {
+      if (!personagemSelecionado || !brinco || !vazio || !piercing || !anel || !berkas || !ataqueTotal) {
         alert("Preencha todos os campos obrigatórios!");
         return;
       }
@@ -603,11 +613,11 @@
           pergaminho_unico: pergaminhoUnico,
           pergaminho_aleatorio: pergaminhoAleatorio,
           brinco: brinco,
+          vazio: vazioNum,
           piercing: piercing,
           anel: anel,
           berkas: berkas,
-          ataqueTotal: ataqueTotal,
-          vazio: vazioNum
+          ataqueTotal: ataqueTotal
         }).then(() => {
           alert("GC salvo com sucesso!");
           salvarPergaminhos();
@@ -671,11 +681,11 @@
               document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
               document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
               document.getElementById("brinco").value = (dados.brinco || "").trim();
+              document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
               document.getElementById("piercing").value = (dados.piercing || "").trim();
               document.getElementById("anel").value = (dados.anel || "").trim();
               document.getElementById("berkas").value = (dados.berkas || "").trim();
               document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
-              document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
             });
             let cellBrinco = linha.insertCell();
             cellBrinco.textContent = dados.brinco;
@@ -702,21 +712,15 @@
       });
     }
 
-    document.getElementById("personagem").addEventListener("change", (event) => {
-      const personagemSelecionado = event.target.value;
-      if (gcData[personagemSelecionado]) {
-        const dados = gcData[personagemSelecionado];
-        document.getElementById("brinco").value = (dados.brinco || "").trim();
-        document.getElementById("piercing").value = (dados.piercing || "").trim();
-        document.getElementById("anel").value = (dados.anel || "").trim();
-        document.getElementById("berkas").value = (dados.berkas || "").trim();
-        document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
-        document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
-        document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
-        document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
-      }
-    });
-
+    document.getElementById("selecionarAtaqueTotal").addEventListener("change", calcularAtaqueTotal);
+    document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
+    window.excluirGC = excluirGC;
+    window.filtrarTabela = filtrarTabela;
+    window.limparFiltro = limparFiltro;
+    window.salvarPergaminhos = salvarPergaminhos;
+    window.calcularAtaqueTotal = calcularAtaqueTotal;
+    window.limparFiltroAtaqueTotal = limparFiltroAtaqueTotal;
+    
     function excluirGC(personagem) {
       if (!usuarioAtual) return;
       if (confirm("Você tem certeza que deseja excluir o personagem?")) {
@@ -731,7 +735,7 @@
           });
       }
     }
-
+    
     function filtrarTabela() {
       const input = document.getElementById("searchInput");
       const filter = input.value.toUpperCase();
@@ -745,12 +749,12 @@
         }
       }
     }
-
+    
     function limparFiltro() {
       document.getElementById("searchInput").value = "";
       filtrarTabela();
     }
-
+    
     function calcularAtaqueTotal() {
       const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
       if (ataqueDesejado === "Todos" || ataqueDesejado === "Nenhum") {
@@ -788,7 +792,7 @@
         console.error("Erro ao calcular ataque total: ", error);
       });
     }
-
+    
     function filtrarAtaqueTabela(ataqueDesejado) {
       const tabela = document.getElementById("tabela_controle");
       const tr = tabela.getElementsByTagName("tr");
@@ -801,7 +805,7 @@
         }
       }
     }
-
+    
     function limparFiltroAtaqueTotal() {
       const tabela = document.getElementById("tabela_controle");
       const tr = tabela.getElementsByTagName("tr");
@@ -809,15 +813,6 @@
         tr[i].style.display = "";
       }
     }
-
-    document.getElementById("selecionarAtaqueTotal").addEventListener("change", calcularAtaqueTotal);
-    document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
-    window.excluirGC = excluirGC;
-    window.filtrarTabela = filtrarTabela;
-    window.limparFiltro = limparFiltro;
-    window.salvarPergaminhos = salvarPergaminhos;
-    window.calcularAtaqueTotal = calcularAtaqueTotal;
-    window.limparFiltroAtaqueTotal = limparFiltroAtaqueTotal;
   </script>
 </body>
 </html>
