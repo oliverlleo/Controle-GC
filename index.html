@@ -434,7 +434,7 @@
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-    // Configuração do Firebase
+    // Inicializa o Firebase
     const config = {
       apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
       authDomain: "gc-controle.firebaseapp.com",
@@ -445,12 +445,23 @@
       appId: "1:3109203796:web:f8619117f915f67ceba2c1",
       measurementId: "G-3NNXXD5V2T"
     };
-
-    // Inicializa o Firebase
     const appFirebase = initializeApp(config);
     const database = getDatabase(appFirebase);
     const auth = getAuth(appFirebase);
     let usuarioAtual = null;
+
+    // Função auxiliar para definir o valor do select com base no texto da option
+    function setSelectValue(selectId, value) {
+      const selectElem = document.getElementById(selectId);
+      for (let i = 0; i < selectElem.options.length; i++) {
+        if (selectElem.options[i].text.trim() === value.trim()) {
+          selectElem.selectedIndex = i;
+          return;
+        }
+      }
+      // Se não encontrou, opcionalmente definir como o valor default (primeira option)
+      selectElem.selectedIndex = 0;
+    }
 
     // Elementos de tela
     const telaLogin = document.getElementById("telaLogin");
@@ -656,7 +667,6 @@
             totalMissing += missing;
 
             let linha = tabela.insertRow();
-            // Define cursor pointer para indicar que a linha é clicável
             linha.style.cursor = "pointer";
 
             let cellPersonagem = linha.insertCell();
@@ -671,27 +681,24 @@
             cellBerkas.textContent = dados.berkas;
             let cellAtaqueTotal = linha.insertCell();
             cellAtaqueTotal.textContent = dados.ataqueTotal;
-            // Botão de exclusão na última coluna com "X"
             let cellExcluir = linha.insertCell();
             cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
 
-            // Evento de clique na linha para preencher os campos (exceto se o clique for no botão)
+            // Evento de clique na linha para preencher os selects com os valores do registro
             linha.addEventListener("click", (event) => {
-              // Se o clique for em um botão, não preenche
               if (event.target.tagName.toLowerCase() === "button") return;
               console.log("Linha clicada para preencher:", personagem, dados);
-              document.getElementById("personagem").value = personagem;
-              document.getElementById("brinco").value = dados.brinco;
-              document.getElementById("piercing").value = dados.piercing;
-              document.getElementById("anel").value = dados.anel;
-              document.getElementById("berkas").value = dados.berkas;
-              document.getElementById("ataqueTotal").value = dados.ataqueTotal;
+              setSelectValue("personagem", personagem);
+              setSelectValue("brinco", dados.brinco);
+              setSelectValue("piercing", dados.piercing);
+              setSelectValue("anel", dados.anel);
+              setSelectValue("berkas", dados.berkas);
+              setSelectValue("ataqueTotal", dados.ataqueTotal);
             });
           });
         } else {
           console.log("Nenhum GC salvo ainda.");
         }
-        // Atualiza o painel de berkas faltantes
         document.getElementById("missingBerkasPanel").textContent = `Total de berkas faltantes para completar todos os personagens: ${totalMissing}`;
       }).catch((error) => {
         console.error("Erro ao carregar GCs: ", error);
@@ -721,7 +728,7 @@
       const tr = table.getElementsByTagName("tr");
 
       for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName("td")[0]; // coluna "Personagem"
+        const td = tr[i].getElementsByTagName("td")[0];
         if (td) {
           const txtValue = td.textContent || td.innerText;
           tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
@@ -747,9 +754,12 @@
         if (snapshot.exists()) {
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
-            let ataqueTotal = dados.ataqueTotal;
-            let ataqueTotalNum = parseInt(ataqueTotal.replace("k", "")) * 1000;
-            if (ataqueTotalNum >= ataqueDesejadoNum) {
+            let atk = dados.ataqueTotal;
+            if (!atk || typeof atk !== "string" || !atk.includes("k")) {
+              atk = "0k";
+            }
+            let atkNum = parseInt(atk.replace("k", "")) * 1000;
+            if (atkNum >= ataqueDesejadoNum) {
               contador++;
             }
           });
