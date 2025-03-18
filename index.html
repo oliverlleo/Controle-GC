@@ -530,6 +530,17 @@
       telaLogin.classList.add("hidden");
       telaPrincipal.classList.remove("hidden");
       carregarPergaminhos();
+      // Função para verificar se o personagem já existe na base de dados
+function personagemJaExiste(personagem, callback) {
+  if (!usuarioAtual) return;
+  get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
+    .then((snapshot) => {
+      callback(snapshot.exists()); // Retorna true se o personagem existir
+    })
+    .catch((error) => {
+      console.error("Erro ao verificar personagem: ", error);
+    });
+}
       carregarGCs();
     }
 
