@@ -196,6 +196,25 @@
       font-size: 16px;
       font-weight: 500;
     }
+    /* Ataque Total - Design minimalista */
+    #ataqueTotalPanel {
+      border: 1px solid #2c3e50;
+      border-radius: 4px;
+      padding: 10px;
+      margin-top: 20px;
+      text-align: center;
+      background-color: #ffffff;
+    }
+    #ataqueTotalPanel label {
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    #resultadoAtaqueTotal {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #2c3e50;
+    }
     /* Ajustes para mobile */
     @media (max-width: 600px) {
       h2 {
@@ -394,6 +413,7 @@
         </tr>
       </table>
       <div id="missingBerkasPanel"></div>
+      <!-- Painel de Ataque Total com design minimalista -->
       <div id="ataqueTotalPanel">
         <label>Selecione o valor de ataque total desejado:</label>
         <select id="selecionarAtaqueTotal">
@@ -418,7 +438,6 @@
           <option>1900k</option>
           <option>2000k</option>
         </select>
-        <button onclick="calcularAtaqueTotal()">Calcular</button>
         <div id="resultadoAtaqueTotal"></div>
       </div>
     </div>
@@ -520,6 +539,7 @@
       telaPrincipal.classList.remove("hidden");
       carregarPergaminhos();
       carregarGCs();
+      calcularAtaqueTotal(); // Atualiza o painel assim que a tela é exibida
     }
 
     function mostrarTelaLogin() {
@@ -597,6 +617,7 @@
         }).then(() => {
           alert("GC salvo com sucesso!");
           carregarGCs();
+          calcularAtaqueTotal();
         }).catch((error) => {
           console.error("Erro ao salvar GC: ", error);
         });
@@ -653,7 +674,6 @@
             cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
             linha.addEventListener("click", (event) => {
               if (event.target.tagName.toLowerCase() === "button") return;
-              console.log("Linha clicada:", personagem, dados);
               document.getElementById("personagem").value = personagem.trim();
               document.getElementById("brinco").value = (dados.brinco || "").trim();
               document.getElementById("piercing").value = (dados.piercing || "").trim();
@@ -677,7 +697,6 @@
       const personagemSelecionado = event.target.value;
       if (gcData[personagemSelecionado]) {
         const dados = gcData[personagemSelecionado];
-        console.log("Personagem selecionado via dropdown:", personagemSelecionado, dados);
         document.getElementById("brinco").value = (dados.brinco || "").trim();
         document.getElementById("piercing").value = (dados.piercing || "").trim();
         document.getElementById("anel").value = (dados.anel || "").trim();
@@ -693,6 +712,7 @@
           .then(() => {
             alert("Personagem excluído com sucesso!");
             carregarGCs();
+            calcularAtaqueTotal();
           })
           .catch((error) => {
             console.error("Erro ao excluir personagem: ", error);
@@ -719,14 +739,18 @@
       filtrarTabela();
     }
 
-    // Função atualizada que calcula e diferencia os personagens com exatamente o valor selecionado e os com mais do que o valor
+    // Função atualizada que calcula três grupos:
+    // - Personagens com exatamente o ataque selecionado;
+    // - Personagens com mais que o ataque selecionado;
+    // - Personagens com menos que o ataque selecionado.
     function calcularAtaqueTotal() {
       const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
       const ataqueDesejadoNum = parseInt(ataqueDesejado.replace("k", "")) * 1000;
       if (!usuarioAtual) return;
+      let countExact = 0;
+      let countAbove = 0;
+      let countBelow = 0;
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
-        let countExact = 0;
-        let countAbove = 0;
         if (snapshot.exists()) {
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
@@ -739,15 +763,20 @@
               countExact++;
             } else if (atkNum > ataqueDesejadoNum) {
               countAbove++;
+            } else if (atkNum < ataqueDesejadoNum) {
+              countBelow++;
             }
           });
         }
         document.getElementById("resultadoAtaqueTotal").textContent =
-          `Personagens com exatamente ${ataqueDesejado}: ${countExact} e com mais de ${ataqueDesejado}: ${countAbove}`;
+          `Exatos: ${countExact} | Acima: ${countAbove} | Abaixo: ${countBelow}`;
       }).catch((error) => {
         console.error("Erro ao calcular ataque total: ", error);
       });
     }
+
+    // Atualiza o resultado sempre que o usuário muda o valor desejado
+    document.getElementById("selecionarAtaqueTotal").addEventListener("change", calcularAtaqueTotal);
 
     document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
     window.excluirGC = excluirGC;
