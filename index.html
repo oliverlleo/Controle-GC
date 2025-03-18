@@ -266,7 +266,7 @@
       <div class="columns">
         <div>
           <label>Personagem:</label>
-          <select id="personagem" onchange="preencherCamposSeExistir()">
+          <select id="personagem">
             <option>Elesis</option>
             <option>Lire</option>
             <option>Arme</option>
@@ -372,7 +372,7 @@
         </div>
       </div>
       <!-- Botão "Salvar GC" -->
-      <button id="botaoSalvarGC" onclick="salvarGC()">Salvar GC</button>
+      <button id="botaoSalvarGC">Salvar GC</button>
     </div>
 
     <!-- Lista de GCs Salvos -->
@@ -452,16 +452,90 @@
     const auth = getAuth(appFirebase);
     let usuarioAtual = null;
 
-    // Função para verificar se o personagem já existe na base de dados
-    function personagemJaExiste(personagem, callback) {
-      if (!usuarioAtual) return;
-      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
-        .then((snapshot) => {
-          callback(snapshot.exists()); // Retorna true se o personagem existir
+    // Elementos de tela
+    const telaLogin = document.getElementById("telaLogin");
+    const telaPrincipal = document.getElementById("telaPrincipal");
+    const botaoLogin = document.getElementById("botaoLogin");
+    const botaoCadastro = document.getElementById("botaoCadastro");
+    const botaoRecuperar = document.getElementById("botaoRecuperar");
+    const botaoSair = document.getElementById("botaoSair");
+
+    // Login
+    botaoLogin.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      signInWithEmailAndPassword(auth, email, senha)
+        .then((userCredential) => {
+          usuarioAtual = userCredential.user;
+          mostrarTelaPrincipal();
         })
         .catch((error) => {
-          console.error("Erro ao verificar personagem: ", error);
+          alert("Erro no login: " + error.message);
         });
+    });
+
+    // Cadastro
+    botaoCadastro.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      createUserWithEmailAndPassword(auth, email, senha)
+        .then((userCredential) => {
+          usuarioAtual = userCredential.user;
+          mostrarTelaPrincipal();
+        })
+        .catch((error) => {
+          alert("Erro no cadastro: " + error.message);
+        });
+    });
+
+    // Recuperar Senha
+    botaoRecuperar.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      if (!email) {
+        alert("Por favor, informe seu e-mail para recuperar a senha.");
+        return;
+      }
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          alert("E-mail de recuperação de senha enviado.");
+        })
+        .catch((error) => {
+          alert("Erro ao enviar e-mail: " + error.message);
+        });
+    });
+
+    // Logout
+    botaoSair.addEventListener("click", () => {
+      signOut(auth)
+        .then(() => {
+          usuarioAtual = null;
+          mostrarTelaLogin();
+        })
+        .catch((error) => {
+          console.error("Erro ao sair:", error);
+        });
+    });
+
+    // Observa mudanças de autenticação
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        usuarioAtual = user;
+        mostrarTelaPrincipal();
+      } else {
+        mostrarTelaLogin();
+      }
+    });
+
+    function mostrarTelaPrincipal() {
+      telaLogin.classList.add("hidden");
+      telaPrincipal.classList.remove("hidden");
+      carregarPergaminhos();
+      carregarGCs();
+    }
+
+    function mostrarTelaLogin() {
+      telaLogin.classList.remove("hidden");
+      telaPrincipal.classList.add("hidden");
     }
 
     // Função para salvar pergaminhos na base do usuário
@@ -495,31 +569,15 @@
       });
     }
 
-    // Função para preencher os campos se o personagem já existir
-    function preencherCamposSeExistir() {
-      const personagemSelecionado = document.getElementById("personagem").value;
-      if (!usuarioAtual || !personagemSelecionado) return;
-
-      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagemSelecionado))
+    // Verifica se o personagem já existe na base de controle
+    function personagemJaExiste(personagem, callback) {
+      if (!usuarioAtual) return;
+      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
         .then((snapshot) => {
-          if (snapshot.exists()) {
-            const dados = snapshot.val();
-            document.getElementById("brinco").value = dados.brinco;
-            document.getElementById("piercing").value = dados.piercing;
-            document.getElementById("anel").value = dados.anel;
-            document.getElementById("berkas").value = dados.berkas;
-            document.getElementById("ataqueTotal").value = dados.ataqueTotal;
-          } else {
-            // Limpa os campos se o personagem não existir
-            document.getElementById("brinco").value = "Nenhum";
-            document.getElementById("piercing").value = "Nenhum";
-            document.getElementById("anel").value = "Nenhum";
-            document.getElementById("berkas").value = "Nenhum";
-            document.getElementById("ataqueTotal").value = "Nenhum";
-          }
+          callback(snapshot.exists());
         })
         .catch((error) => {
-          console.error("Erro ao buscar dados do personagem: ", error);
+          console.error("Erro ao verificar personagem: ", error);
         });
     }
 
@@ -542,13 +600,11 @@
         return;
       }
 
-      // Verifica se o personagem já existe
       personagemJaExiste(personagemSelecionado, (existe) => {
         if (existe) {
           const confirmacao = confirm("Este personagem já foi salvo. Tem certeza que deseja alterar?");
           if (!confirmacao) return;
         }
-        // Salva os dados no Firebase
         set(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagemSelecionado), {
           brinco: brinco,
           piercing: piercing,
@@ -557,10 +613,11 @@
           ataqueTotal: ataqueTotal
         }).then(() => {
           alert("GC salvo com sucesso!");
-          carregarGCs(); // Atualiza a tabela após salvar
+          carregarGCs();
         }).catch((error) => {
           console.error("Erro ao salvar GC: ", error);
         });
+        salvarPergaminhos();
       });
     }
 
@@ -687,14 +744,15 @@
       });
     }
 
+    // Evento do botão "Salvar GC"
+    document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
+
     // Torna as funções globais para uso inline
     window.excluirGC = excluirGC;
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
     window.salvarPergaminhos = salvarPergaminhos;
     window.calcularAtaqueTotal = calcularAtaqueTotal;
-    window.preencherCamposSeExistir = preencherCamposSeExistir;
-    window.salvarGC = salvarGC;
   </script>
 </body>
 </html>
