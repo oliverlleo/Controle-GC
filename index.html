@@ -371,14 +371,12 @@
           </select>
         </div>
       </div>
-      <!-- Botão "Salvar GC" -->
       <button id="botaoSalvarGC">Salvar GC</button>
     </div>
 
     <!-- Lista de GCs Salvos -->
     <div class="section">
       <h2>Controle de Personagens</h2>
-      <!-- Barra de pesquisa -->
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Pesquisar personagem...">
         <button onclick="filtrarTabela()">Pesquisar</button>
@@ -395,9 +393,7 @@
           <th>Ação</th>
         </tr>
       </table>
-      <!-- Painel de berkas faltantes -->
       <div id="missingBerkasPanel"></div>
-      <!-- Painel de ataque total -->
       <div id="ataqueTotalPanel">
         <label>Selecione o valor de ataque total desejado:</label>
         <select id="selecionarAtaqueTotal">
@@ -429,12 +425,10 @@
   </div>
 
   <script type="module">
-    // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-    // Inicializa o Firebase
     const config = {
       apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
       authDomain: "gc-controle.firebaseapp.com",
@@ -450,19 +444,6 @@
     const auth = getAuth(appFirebase);
     let usuarioAtual = null;
 
-    // Função auxiliar para definir o valor do select com base no texto da option
-    function setSelectValue(selectId, value) {
-      const selectElem = document.getElementById(selectId);
-      for (let i = 0; i < selectElem.options.length; i++) {
-        if (selectElem.options[i].text.trim() === value.trim()) {
-          selectElem.selectedIndex = i;
-          return;
-        }
-      }
-      // Se não encontrou, opcionalmente definir como o valor default (primeira option)
-      selectElem.selectedIndex = 0;
-    }
-
     // Elementos de tela
     const telaLogin = document.getElementById("telaLogin");
     const telaPrincipal = document.getElementById("telaPrincipal");
@@ -471,7 +452,6 @@
     const botaoRecuperar = document.getElementById("botaoRecuperar");
     const botaoSair = document.getElementById("botaoSair");
 
-    // Login
     botaoLogin.addEventListener("click", () => {
       const email = document.getElementById("email").value;
       const senha = document.getElementById("senha").value;
@@ -485,7 +465,6 @@
         });
     });
 
-    // Cadastro
     botaoCadastro.addEventListener("click", () => {
       const email = document.getElementById("email").value;
       const senha = document.getElementById("senha").value;
@@ -499,7 +478,6 @@
         });
     });
 
-    // Recuperar Senha
     botaoRecuperar.addEventListener("click", () => {
       const email = document.getElementById("email").value;
       if (!email) {
@@ -515,7 +493,6 @@
         });
     });
 
-    // Logout
     botaoSair.addEventListener("click", () => {
       signOut(auth)
         .then(() => {
@@ -527,7 +504,6 @@
         });
     });
 
-    // Observa mudanças de autenticação
     onAuthStateChanged(auth, (user) => {
       if (user) {
         usuarioAtual = user;
@@ -549,7 +525,6 @@
       telaPrincipal.classList.add("hidden");
     }
 
-    // Função para salvar pergaminhos na base do usuário
     function salvarPergaminhos() {
       const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
@@ -564,7 +539,6 @@
       });
     }
 
-    // Função para carregar pergaminhos do usuário
     function carregarPergaminhos() {
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/pergaminhos/')).then((snapshot) => {
@@ -580,7 +554,6 @@
       });
     }
 
-    // Verifica se o personagem já existe na base de controle
     function personagemJaExiste(personagem, callback) {
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
@@ -592,7 +565,6 @@
         });
     }
 
-    // Função para salvar controle
     function salvarGC() {
       let personagemSelecionado = document.getElementById("personagem").value;
       let brinco = document.getElementById("brinco").value;
@@ -605,12 +577,10 @@
         alert("Preencha todos os campos!");
         return;
       }
-
       if (!usuarioAtual) {
         alert("Você precisa estar logado!");
         return;
       }
-
       personagemJaExiste(personagemSelecionado, (existe) => {
         if (existe) {
           const confirmacao = confirm("Este personagem já foi salvo. Tem certeza que deseja alterar?");
@@ -632,7 +602,6 @@
       });
     }
 
-    // Função para carregar os GCs do usuário, atualizar a tabela e calcular berkas faltantes
     function carregarGCs() {
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
@@ -647,9 +616,7 @@
             <th>Ataque Total</th>
             <th>Ação</th>
           </tr>`;
-          
-        let totalMissing = 0; // acumulador de berkas faltantes
-
+        let totalMissing = 0;
         if (snapshot.exists()) {
           snapshot.forEach((childSnapshot) => {
             let dados = childSnapshot.val();
@@ -663,12 +630,9 @@
             } else {
               berkasNum = parseInt(berkasValor) || 0;
             }
-            let missing = 12 - berkasNum;
-            totalMissing += missing;
-
+            totalMissing += (12 - berkasNum);
             let linha = tabela.insertRow();
             linha.style.cursor = "pointer";
-
             let cellPersonagem = linha.insertCell();
             cellPersonagem.textContent = personagem;
             let cellBrinco = linha.insertCell();
@@ -683,29 +647,28 @@
             cellAtaqueTotal.textContent = dados.ataqueTotal;
             let cellExcluir = linha.insertCell();
             cellExcluir.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
-
-            // Evento de clique na linha para preencher os selects com os valores do registro
+            // Ao clicar na linha (exceto no botão), atualiza os selects com os dados
             linha.addEventListener("click", (event) => {
               if (event.target.tagName.toLowerCase() === "button") return;
-              console.log("Linha clicada para preencher:", personagem, dados);
-              setSelectValue("personagem", personagem);
-              setSelectValue("brinco", dados.brinco);
-              setSelectValue("piercing", dados.piercing);
-              setSelectValue("anel", dados.anel);
-              setSelectValue("berkas", dados.berkas);
-              setSelectValue("ataqueTotal", dados.ataqueTotal);
+              console.log("Linha clicada:", personagem, dados);
+              document.getElementById("personagem").value = personagem.trim();
+              document.getElementById("brinco").value = (dados.brinco || "").trim();
+              document.getElementById("piercing").value = (dados.piercing || "").trim();
+              document.getElementById("anel").value = (dados.anel || "").trim();
+              document.getElementById("berkas").value = (dados.berkas || "").trim();
+              document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
             });
           });
         } else {
           console.log("Nenhum GC salvo ainda.");
         }
-        document.getElementById("missingBerkasPanel").textContent = `Total de berkas faltantes para completar todos os personagens: ${totalMissing}`;
+        document.getElementById("missingBerkasPanel").textContent =
+          `Total de berkas faltantes para completar todos os personagens: ${totalMissing}`;
       }).catch((error) => {
         console.error("Erro ao carregar GCs: ", error);
       });
     }
 
-    // Função para excluir controle com confirmação
     function excluirGC(personagem) {
       if (!usuarioAtual) return;
       if (confirm("Você tem certeza que deseja excluir o personagem?")) {
@@ -720,13 +683,11 @@
       }
     }
 
-    // Função para filtrar a tabela somente quando o botão "Pesquisar" é clicado
     function filtrarTabela() {
       const input = document.getElementById("searchInput");
       const filter = input.value.toUpperCase();
       const table = document.getElementById("tabela_controle");
       const tr = table.getElementsByTagName("tr");
-
       for (let i = 1; i < tr.length; i++) {
         const td = tr[i].getElementsByTagName("td")[0];
         if (td) {
@@ -736,18 +697,14 @@
       }
     }
 
-    // Função para limpar o filtro
     function limparFiltro() {
-      const input = document.getElementById("searchInput");
-      input.value = "";
+      document.getElementById("searchInput").value = "";
       filtrarTabela();
     }
 
-    // Função para calcular quantos personagens têm um determinado valor de ataque total ou superior
     function calcularAtaqueTotal() {
       const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
       const ataqueDesejadoNum = parseInt(ataqueDesejado.replace("k", "")) * 1000;
-
       if (!usuarioAtual) return;
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
         let contador = 0;
@@ -764,16 +721,14 @@
             }
           });
         }
-        document.getElementById("resultadoAtaqueTotal").textContent = `Personagens com ${ataqueDesejado} ou mais: ${contador}`;
+        document.getElementById("resultadoAtaqueTotal").textContent =
+          `Personagens com ${ataqueDesejado} ou mais: ${contador}`;
       }).catch((error) => {
         console.error("Erro ao calcular ataque total: ", error);
       });
     }
 
-    // Evento do botão "Salvar GC"
     document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
-
-    // Torna as funções globais para uso inline
     window.excluirGC = excluirGC;
     window.filtrarTabela = filtrarTabela;
     window.limparFiltro = limparFiltro;
