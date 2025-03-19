@@ -39,11 +39,11 @@
       color: #555;
     }
     input, select, button {
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 15px;
       border: 1px solid #ddd;
       border-radius: 4px;
-      font-size: 16px; /* Aumentado para melhor visibilidade */
+      font-size: 16px;
       color: #333;
       background: #f9f9f9;
       transition: border-color 0.3s ease;
@@ -93,8 +93,8 @@
       background: #e74c3c;
       border: none;
       border-radius: 50%;
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       color: #fff;
       font-size: 16px;
       font-weight: bold;
@@ -120,19 +120,19 @@
       width: 6em; /* Espaço para até 5 dígitos */
     }
     .pergaminhos-row button {
-      padding: 10px 15px;
+      padding: 12px 15px;
     }
     /* Seção de Controle de Itens – Layout em CSS Grid */
     #controleItensGrid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      grid-gap: 10px; /* Gap reduzido para 10px */
+      grid-gap: 10px; /* Gap de 10px entre as colunas */
     }
     /* Linha 1: Personagem ocupa 3 colunas */
     .full-width {
       grid-column: 1 / -1;
     }
-    /* Seção de Pesquisa em Controle de Personagens */
+    /* Seção de Pesquisa para Controle de Personagens */
     .search-bar {
       display: flex;
       align-items: center;
@@ -140,10 +140,11 @@
       margin-bottom: 20px;
     }
     .search-bar input {
-      width: 45ch; /* Aproximadamente 45 caracteres de largura */
+      width: 45ch;
+      max-width: 100%;
     }
     .search-bar button {
-      padding: 10px 15px;
+      padding: 12px 15px;
     }
     /* Tabela de Controle de Personagens */
     table {
@@ -213,14 +214,23 @@
     #botaoLimparAtaqueFiltro:hover {
       background: #eaf7ff;
     }
-    /* Mobile: Grid com 2 colunas */
+    /* Responsividade – Mobile */
     @media (max-width: 600px) {
       #controleItensGrid {
         grid-template-columns: repeat(2, 1fr);
       }
-      .search-bar { flex-direction: column; }
-      .search-bar input, .search-bar button { width: 100%; }
-      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .search-bar {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .search-bar input, .search-bar button {
+        width: 100%;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
     }
   </style>
 </head>
@@ -262,7 +272,7 @@
     </div>
 
     <!-- Seção de Controle de Itens -->
-    <!-- O id "controleItens" possibilita o scroll para esta seção -->
+    <!-- O id "controleItens" possibilita scroll para esta seção -->
     <div class="section" id="controleItens">
       <h2>Controle de Itens</h2>
       <div id="controleItensGrid">
@@ -295,7 +305,7 @@
             <option>Kallia Eldepel</option>
           </select>
         </div>
-        <!-- Linha 2: Dividida em 3 células: Piercing, Brinco, Anel -->
+        <!-- Linha 2: 3 células: Piercing, Brinco, Anel -->
         <div>
           <label for="piercing">Piercing:</label>
           <select id="piercing">
@@ -332,7 +342,7 @@
             <option>Nível 3.3</option>
           </select>
         </div>
-        <!-- Linha 3: Dividida em 3 células: Berkas, Vazio, Ataque Total -->
+        <!-- Linha 3: 3 células: Berkas, Vazio, Ataque Total -->
         <div>
           <label for="berkas">Berkas:</label>
           <select id="berkas">
@@ -397,7 +407,7 @@
     <div class="section">
       <h2>Controle de Personagens</h2>
       <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Pesquisar personagem..." style="width:45ch;">
+        <input type="text" id="searchInput" placeholder="Pesquisar personagem..." style="width:45ch; max-width:100%;">
         <button onclick="filtrarTabela()">Pesquisar</button>
         <button onclick="limparFiltro()">Limpar Filtro</button>
       </div>
@@ -445,7 +455,7 @@
     </div>
   </div>
 
-  <!-- Script com Firebase e Funções -->
+  <!-- Script com Firebase e funções -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
@@ -461,6 +471,7 @@
       appId: "1:3109203796:web:f8619117f915f67ceba2c1",
       measurementId: "G-3NNXXD5V2T"
     };
+
     const appFirebase = initializeApp(config);
     const database = getDatabase(appFirebase);
     const auth = getAuth(appFirebase);
