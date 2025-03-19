@@ -39,7 +39,7 @@
       font-weight: 500;
       color: #555;
     }
-    /* Inputs e selects – Aumentados, mas sem exagerar a altura */
+    /* Inputs e selects */
     input, select {
       padding: 10px 14px;
       font-size: 16px;
@@ -70,14 +70,14 @@
     .hidden {
       display: none;
     }
-    /* Botões específicos */
+    /* Botões Específicos */
     #botaoRecuperar {
       background: #e74c3c;
     }
     #botaoRecuperar:hover {
       background: #c0392b;
     }
-    /* Botão de Menu (substitui o antigo X de sair) */
+    /* Botão de Toggle do Menu (único) */
     #menuToggle {
       position: absolute;
       top: 10px;
@@ -129,7 +129,7 @@
     .pergaminhos-save {
       margin-top: 10px;
     }
-    /* Seção de Controle de Itens – Layout em CSS Grid */
+    /* Seção de Controle de Itens – CSS Grid */
     #controleItensGrid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -139,7 +139,7 @@
     .full-width {
       grid-column: 1 / -1;
     }
-    /* Seção de Pesquisa para Controle de Personagens */
+    /* Pesquisa para Controle de Personagens */
     .search-bar {
       display: flex;
       align-items: center;
@@ -177,7 +177,7 @@
     tr:hover {
       background: #f1f1f1;
     }
-    /* Painel de Itens Faltantes */
+    /* Painéis */
     #missingBerkasPanel {
       margin-top: 20px;
       padding: 10px;
@@ -188,7 +188,6 @@
       font-size: 16px;
       font-weight: 500;
     }
-    /* Painel de Ataque Total */
     #ataqueTotalPanel {
       border: 1px solid #2c3e50;
       border-radius: 4px;
@@ -221,7 +220,7 @@
     #botaoLimparAtaqueFiltro:hover {
       background: #eaf7ff;
     }
-    /* Responsividade – Mobile */
+    /* Responsividade */
     @media (max-width: 600px) {
       #controleItensGrid {
         grid-template-columns: repeat(2, 1fr);
@@ -243,7 +242,7 @@
     #sidebar {
       position: fixed;
       top: 0;
-      right: -250px;
+      right: -250px; /* Escondido inicialmente */
       width: 250px;
       height: 100%;
       background-color: #2c3e50;
@@ -263,7 +262,7 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    /* Tema Grandchase – Visual inspirado no site oficial */
+    /* Tema Grandchase – inspirado no visual oficial */
     .theme-grandchase {
       background-color: #121212;
       background-image: linear-gradient(135deg, #1e1e1e, #3a3a3a);
@@ -285,25 +284,20 @@
   </style>
 </head>
 <body>
-  <!-- Sidebar Menu Lateral -->
+  <!-- Sidebar Menu Lateral (sem botão duplicado) -->
   <div id="sidebar">
-    <!-- Botão de toggle (será movido para o cabeçalho do menu quando aberto) -->
-    <button id="menuToggle">☰</button>
     <h3 id="menuTitle">Menu</h3>
-    <!-- Opção de Linguagem -->
     <label id="labelLanguage" for="languageSelect">Linguagem</label>
     <select id="languageSelect">
       <option value="pt">Português</option>
       <option value="en">English</option>
       <option value="kr">한국어</option>
     </select>
-    <!-- Opção de Tema -->
     <label id="labelTheme" for="themeSelect">Tema</label>
     <select id="themeSelect">
       <option value="classic">Tema Clássico</option>
       <option value="grandchase">Grandchase</option>
     </select>
-    <!-- Botão Sair -->
     <button id="btnExit">Sair</button>
   </div>
 
@@ -323,7 +317,7 @@
 
   <!-- Tela Principal -->
   <div class="container hidden" id="telaPrincipal">
-    <!-- O botão de menu (menuToggle) já está posicionado; ele será movido conforme o estado do menu -->
+    <!-- O botão de menu será criado via JS e inicialmente posicionado aqui -->
     <!-- Seção de Gerenciamento de Pergaminhos -->
     <div class="section pergaminhos-section">
       <h2 id="titlePergaminhos">Gerenciamento de Pergaminhos</h2>
@@ -479,7 +473,7 @@
         <button id="botaoLimparFiltro" onclick="limparFiltro()">Limpar Filtro</button>
       </div>
       <table id="tabela_controle">
-        <!-- A tabela será gerada dinamicamente na função carregarGCs() -->
+        <!-- A tabela será gerada dinamicamente em carregarGCs() -->
       </table>
       <div id="missingBerkasPanel">Total de berkas faltantes:</div>
       <div id="ataqueTotalPanel">
@@ -713,32 +707,21 @@
         });
     });
 
-    // Função para alternar o Sidebar – o botão de toggle será movido entre o container e o menu
+    // Função para alternar o Sidebar
     function toggleSidebar() {
       const sidebar = document.getElementById("sidebar");
-      const menuToggle = document.getElementById("menuToggle");
-      const telaPrincipal = document.getElementById("telaPrincipal");
       if (sidebar.classList.contains("open")) {
-        // Fechar sidebar: remove classe e move o botão de volta para o container
         sidebar.classList.remove("open");
-        telaPrincipal.appendChild(menuToggle);
-        menuToggle.style.position = "absolute";
-        menuToggle.style.top = "10px";
-        menuToggle.style.right = "10px";
       } else {
-        // Abrir sidebar: adiciona classe e move o botão para o topo do menu
         sidebar.classList.add("open");
-        sidebar.insertBefore(menuToggle, sidebar.firstChild);
-        menuToggle.style.position = "static";
       }
     }
 
-    // Inicializa o botão de menu (substituindo o antigo botão de sair)
+    // Cria o botão de toggle (único) e o insere na telaPrincipal
     const menuToggle = document.createElement("button");
     menuToggle.id = "menuToggle";
     menuToggle.innerText = "☰";
     menuToggle.addEventListener("click", toggleSidebar);
-    // Adiciona o botão no container de telaPrincipal (na posição do antigo botão de sair)
     document.getElementById("telaPrincipal").appendChild(menuToggle);
 
     const telaLogin = document.getElementById("telaLogin");
@@ -927,17 +910,8 @@
             let dados = childSnapshot.val();
             let personagem = childSnapshot.key;
             gcData[personagem] = dados;
-            // Processa Berkas
             let berkasValor = dados.berkas;
-            let berkasNum = 0;
-            if (berkasValor === "Full") {
-              berkasNum = 12;
-            } else if (berkasValor === "Nenhum") {
-              berkasNum = 0;
-            } else {
-              berkasNum = parseInt(berkasValor) || 0;
-            }
-            // Processa Vazio
+            let berkasNum = (berkasValor === "Full") ? 12 : ((berkasValor === "Nenhum") ? 0 : parseInt(berkasValor) || 0);
             let vazioValor = (dados.vazio === "Nenhum" || !dados.vazio) ? 0 : parseInt(dados.vazio);
             let missingBerkas = (vazioValor > 0) ? Math.max(0, 6 - berkasNum) : Math.max(0, 12 - berkasNum);
             let missingVazio = (vazioValor > 0) ? Math.max(0, 6 - vazioValor) : 0;
@@ -947,11 +921,9 @@
             let linha = tabela.insertRow();
             linha.style.cursor = "pointer";
             if (currentTheme === "grandchase") {
-              // Célula de Avatar (lado esquerdo)
               let cellAvatar = linha.insertCell();
               let imgSrc = "img/" + personagem.replace(/\s+/g, '').toLowerCase() + ".png";
               cellAvatar.innerHTML = `<img src="${imgSrc}" alt="${personagem}" width="40" height="40" style="border-radius:50%;" onerror="this.src='https://via.placeholder.com/40'">`;
-              // Célula do Nome
               let cellPersonagem = linha.insertCell();
               cellPersonagem.textContent = personagem;
               cellPersonagem.style.cursor = "pointer";
@@ -984,7 +956,6 @@
                 document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
               });
             }
-            // Caso o tema seja "classic" ou se já inserimos a coluna de nome para Grandchase, as demais células seguem:
             let cellBrinco = linha.insertCell();
             cellBrinco.textContent = dados.brinco;
             let cellPiercing = linha.insertCell();
@@ -1101,7 +1072,6 @@
       const tabela = document.getElementById("tabela_controle");
       const tr = tabela.getElementsByTagName("tr");
       for (let i = 1; i < tr.length; i++){
-        // Se tema grandchase, a coluna de Ataque Total é a 8ª (index 7), senão é a 7ª (index 6)
         const cellAtaque = tr[i].cells[currentTheme === "grandchase" ? 7 : 6].textContent.trim();
         if (cellAtaque === ataqueDesejado) {
           tr[i].style.display = "";
