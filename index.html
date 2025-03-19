@@ -24,6 +24,7 @@
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       margin-bottom: 20px;
       position: relative;
+      transition: background 0.5s ease;
     }
     h2 {
       font-size: 24px;
@@ -32,6 +33,7 @@
       margin-bottom: 15px;
       border-bottom: 2px solid #e0e0e0;
       padding-bottom: 10px;
+      transition: color 0.5s ease, border-color 0.5s ease;
     }
     label {
       display: block;
@@ -63,6 +65,7 @@
       border-radius: 4px;
       cursor: pointer;
       font-weight: 500;
+      transition: background 0.3s ease;
     }
     button:hover {
       background: #1a2a3a;
@@ -214,7 +217,7 @@
       font-size: 12px;
       color: #2c3e50;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s ease;
       margin-top: 10px;
     }
     #botaoLimparAtaqueFiltro:hover {
@@ -238,7 +241,7 @@
         white-space: nowrap;
       }
     }
-    /* Sidebar (Menu Lateral) usando transform para ficar totalmente fora da tela */
+    /* Sidebar (Menu Lateral) usando transform para manter-o fora da tela */
     #sidebar {
       position: fixed;
       top: 0;
@@ -263,24 +266,45 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    /* Tema Grandchase – inspirado no visual oficial */
+    /* Tema Grandchase – NOVO TEMA com animações e efeitos */
     .theme-grandchase {
-      background-color: #121212;
-      background-image: linear-gradient(135deg, #1e1e1e, #3a3a3a);
+      /* Fundo animado com gradiente em movimento */
+      background: linear-gradient(45deg, #1a001a, #330033, #1a001a, #660066);
+      background-size: 400% 400%;
+      animation: gradientAnimation 10s ease infinite;
       color: #e0e0e0;
     }
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
     .theme-grandchase .container {
-      background: rgba(0, 0, 0, 0.85);
-      border: 1px solid #333;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #660066;
+      box-shadow: 0 0 15px rgba(102, 0, 102, 0.7);
     }
     .theme-grandchase h2 {
-      color: #f5c518;
-      border-bottom-color: #f5c518;
+      color: #ffcc00;
+      text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+      border-bottom-color: #ffcc00;
     }
     .theme-grandchase button {
-      background: #f5c518;
-      color: #000;
+      background: linear-gradient(45deg, #660066, #993399);
+      color: #fff;
+      border: 1px solid #ffcc00;
+      box-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .theme-grandchase button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255, 204, 0, 1);
+    }
+    .theme-grandchase img {
+      transition: transform 0.3s ease;
+    }
+    .theme-grandchase img:hover {
+      transform: scale(1.1);
     }
   </style>
 </head>
@@ -318,7 +342,7 @@
 
   <!-- Tela Principal -->
   <div class="container hidden" id="telaPrincipal">
-    <!-- O botão de menu será criado via JS e inserido aqui -->
+    <!-- O botão de menu será inserido via JS (único) -->
     <div class="section pergaminhos-section">
       <h2 id="titlePergaminhos">Gerenciamento de Pergaminhos</h2>
       <div class="pergaminhos-row">
