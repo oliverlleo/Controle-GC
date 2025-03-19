@@ -77,8 +77,25 @@
     #botaoRecuperar:hover {
       background: #c0392b;
     }
-    /* Removi o botão antigo de sair */
-    /* #botaoSair { ... } */
+    /* Botão de Menu (substitui o antigo X de sair) */
+    #menuToggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 20px;
+      line-height: 30px;
+      text-align: center;
+      background: #2c3e50;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+    #menuToggle:hover {
+      transform: scale(1.2);
+    }
     .delete-button {
       background: #e74c3c;
       border: none;
@@ -109,7 +126,6 @@
       flex-wrap: wrap;
       align-items: center;
     }
-    /* Botão "Salvar Pergaminho" ficará em uma linha separada */
     .pergaminhos-save {
       margin-top: 10px;
     }
@@ -120,7 +136,6 @@
       grid-gap: 10px;
       margin-bottom: 20px;
     }
-    /* Linha 1: O campo "Personagem" ocupa todas as 3 colunas */
     .full-width {
       grid-column: 1 / -1;
     }
@@ -228,17 +243,17 @@
     #sidebar {
       position: fixed;
       top: 0;
-      left: -250px; /* Oculto por padrão */
+      right: -250px;
       width: 250px;
       height: 100%;
       background-color: #2c3e50;
       color: #fff;
       padding: 20px;
-      transition: left 0.3s ease;
+      transition: right 0.3s ease;
       z-index: 1000;
     }
     #sidebar.open {
-      left: 0;
+      right: 0;
     }
     #sidebar h3 {
       margin-top: 0;
@@ -248,47 +263,32 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    /* Botão para abrir o menu */
-    #menuButton {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background: #2c3e50;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 10px;
-      cursor: pointer;
-      z-index: 1100;
-    }
-    /* Tema Grandchase */
+    /* Tema Grandchase – Visual inspirado no site oficial */
     .theme-grandchase {
-      background-color: #1e1e1e;
-      background-image: url('https://via.placeholder.com/1920x1080?text=Grandchase+Theme');
-      background-size: cover;
-      color: #fff;
+      background-color: #121212;
+      background-image: linear-gradient(135deg, #1e1e1e, #3a3a3a);
+      color: #e0e0e0;
     }
     .theme-grandchase .container {
-      background: rgba(0,0,0,0.8);
-      color: #fff;
-      box-shadow: 0 4px 6px rgba(255,255,255,0.1);
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid #333;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.7);
     }
     .theme-grandchase h2 {
-      color: #ffcc00;
-      border-color: #ffcc00;
+      color: #f5c518;
+      border-bottom-color: #f5c518;
     }
     .theme-grandchase button {
-      background: #ffcc00;
+      background: #f5c518;
       color: #000;
     }
   </style>
 </head>
 <body>
-  <!-- Botão de Menu -->
-  <button id="menuButton">☰</button>
-
   <!-- Sidebar Menu Lateral -->
   <div id="sidebar">
+    <!-- Botão de toggle (será movido para o cabeçalho do menu quando aberto) -->
+    <button id="menuToggle">☰</button>
     <h3 id="menuTitle">Menu</h3>
     <!-- Opção de Linguagem -->
     <label id="labelLanguage" for="languageSelect">Linguagem</label>
@@ -323,6 +323,7 @@
 
   <!-- Tela Principal -->
   <div class="container hidden" id="telaPrincipal">
+    <!-- O botão de menu (menuToggle) já está posicionado; ele será movido conforme o estado do menu -->
     <!-- Seção de Gerenciamento de Pergaminhos -->
     <div class="section pergaminhos-section">
       <h2 id="titlePergaminhos">Gerenciamento de Pergaminhos</h2>
@@ -336,7 +337,7 @@
           <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
         </div>
       </div>
-      <div class="pergaminhos-save" style="margin-top:10px;">
+      <div class="pergaminhos-save">
         <button id="botaoSalvarPergaminho" onclick="salvarPergaminhos()">Salvar Pergaminho</button>
       </div>
     </div>
@@ -345,7 +346,6 @@
     <div class="section" id="controleItens">
       <h2 id="titleControleItens">Controle de Itens</h2>
       <div id="controleItensGrid">
-        <!-- Linha 1: Personagem ocupa 3 colunas -->
         <div class="full-width">
           <label id="labelPersonagem" for="personagem">Personagem:</label>
           <select id="personagem">
@@ -374,7 +374,6 @@
             <option>Kallia Eldepel</option>
           </select>
         </div>
-        <!-- Linha 2: 3 células: Piercing, Brinco e Anel -->
         <div>
           <label id="labelPiercing" for="piercing">Piercing:</label>
           <select id="piercing">
@@ -411,7 +410,6 @@
             <option>Nível 3.3</option>
           </select>
         </div>
-        <!-- Linha 3: 3 células: Berkas, Vazio e Ataque Total -->
         <div>
           <label id="labelBerkas" for="berkas">Berkas:</label>
           <select id="berkas">
@@ -481,7 +479,7 @@
         <button id="botaoLimparFiltro" onclick="limparFiltro()">Limpar Filtro</button>
       </div>
       <table id="tabela_controle">
-        <!-- A tabela será gerada dinamicamente em carregarGCs() -->
+        <!-- A tabela será gerada dinamicamente na função carregarGCs() -->
       </table>
       <div id="missingBerkasPanel">Total de berkas faltantes:</div>
       <div id="ataqueTotalPanel">
@@ -515,7 +513,7 @@
     </div>
   </div>
 
-  <!-- Script com Firebase, Tradução, Tema e Funções -->
+  <!-- Script com Firebase, Tradução, Tema, Menu e Funções -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
@@ -675,7 +673,6 @@
       document.getElementById("searchInput").placeholder = t.searchPlaceholder;
       document.getElementById("botaoPesquisar").innerText = t.botaoPesquisar;
       document.getElementById("botaoLimparFiltro").innerText = t.botaoLimparFiltro;
-      // Para o painel de berkas, atualizamos apenas o prefixo
       document.getElementById("missingBerkasPanel").innerText = t.missingBerkasText;
       document.getElementById("labelAtaqueTotalSelecao").innerText = t.labelAtaqueTotalSelecao;
       document.getElementById("botaoLimparAtaqueFiltro").innerText = t.botaoLimparAtaqueFiltro;
@@ -683,7 +680,7 @@
       document.getElementById("labelLanguage").innerText = t.languageOption;
       document.getElementById("labelTheme").innerText = t.themeOption;
       document.getElementById("btnExit").innerText = t.exitOption;
-      // Recarrega a tabela para atualizar cabeçalhos se necessário
+      // Regera a tabela para atualizar cabeçalhos conforme idioma
       carregarGCs();
     }
 
@@ -694,7 +691,7 @@
       } else {
         document.body.classList.remove("theme-grandchase");
       }
-      // Re-renderiza a tabela para incluir a coluna de avatar se necessário
+      // Re-renderiza a tabela para reposicionar a coluna de avatar se necessário
       carregarGCs();
     }
 
@@ -715,10 +712,34 @@
           console.error("Erro ao sair:", error);
         });
     });
-    // Evento para abrir/fechar o menu
-    document.getElementById("menuButton").addEventListener("click", () => {
-      document.getElementById("sidebar").classList.toggle("open");
-    });
+
+    // Função para alternar o Sidebar – o botão de toggle será movido entre o container e o menu
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const menuToggle = document.getElementById("menuToggle");
+      const telaPrincipal = document.getElementById("telaPrincipal");
+      if (sidebar.classList.contains("open")) {
+        // Fechar sidebar: remove classe e move o botão de volta para o container
+        sidebar.classList.remove("open");
+        telaPrincipal.appendChild(menuToggle);
+        menuToggle.style.position = "absolute";
+        menuToggle.style.top = "10px";
+        menuToggle.style.right = "10px";
+      } else {
+        // Abrir sidebar: adiciona classe e move o botão para o topo do menu
+        sidebar.classList.add("open");
+        sidebar.insertBefore(menuToggle, sidebar.firstChild);
+        menuToggle.style.position = "static";
+      }
+    }
+
+    // Inicializa o botão de menu (substituindo o antigo botão de sair)
+    const menuToggle = document.createElement("button");
+    menuToggle.id = "menuToggle";
+    menuToggle.innerText = "☰";
+    menuToggle.addEventListener("click", toggleSidebar);
+    // Adiciona o botão no container de telaPrincipal (na posição do antigo botão de sair)
+    document.getElementById("telaPrincipal").appendChild(menuToggle);
 
     const telaLogin = document.getElementById("telaLogin");
     const telaPrincipal = document.getElementById("telaPrincipal");
@@ -881,12 +902,14 @@
       if (!usuarioAtual) return;
       gcData = {};
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
-        let tabela = document.getElementById("tabela_controle");
-        // Construção dinâmica do cabeçalho com coluna extra de Avatar se tema for Grandchase
+        const tabela = document.getElementById("tabela_controle");
         let headerHTML = "<tr>";
-        headerHTML += "<th>" + document.getElementById("labelPersonagem").innerText + "</th>";
         if (currentTheme === "grandchase") {
+          // Coluna de Avatar à esquerda e depois o Nome
           headerHTML += "<th>Avatar</th>";
+          headerHTML += "<th>" + document.getElementById("labelPersonagem").innerText + "</th>";
+        } else {
+          headerHTML += "<th>" + document.getElementById("labelPersonagem").innerText + "</th>";
         }
         headerHTML += "<th>" + document.getElementById("labelBrinco").innerText + "</th>";
         headerHTML += "<th>" + document.getElementById("labelPiercing").innerText + "</th>";
@@ -923,28 +946,45 @@
             
             let linha = tabela.insertRow();
             linha.style.cursor = "pointer";
-            let cellPersonagem = linha.insertCell();
-            cellPersonagem.textContent = personagem;
-            cellPersonagem.style.cursor = "pointer";
-            cellPersonagem.addEventListener("click", () => {
-              document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
-              document.getElementById("personagem").value = personagem.trim();
-              document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
-              document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
-              document.getElementById("brinco").value = (dados.brinco || "").trim();
-              document.getElementById("piercing").value = (dados.piercing || "").trim();
-              document.getElementById("anel").value = (dados.anel || "").trim();
-              document.getElementById("berkas").value = (dados.berkas || "").trim();
-              document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
-              document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
-            });
-            // Se o tema for Grandchase, insere célula com imagem do personagem
             if (currentTheme === "grandchase") {
+              // Célula de Avatar (lado esquerdo)
               let cellAvatar = linha.insertCell();
-              // Gera o caminho da imagem baseado no nome (removendo espaços e convertendo para minúsculo)
               let imgSrc = "img/" + personagem.replace(/\s+/g, '').toLowerCase() + ".png";
               cellAvatar.innerHTML = `<img src="${imgSrc}" alt="${personagem}" width="40" height="40" style="border-radius:50%;" onerror="this.src='https://via.placeholder.com/40'">`;
+              // Célula do Nome
+              let cellPersonagem = linha.insertCell();
+              cellPersonagem.textContent = personagem;
+              cellPersonagem.style.cursor = "pointer";
+              cellPersonagem.addEventListener("click", () => {
+                document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
+                document.getElementById("personagem").value = personagem.trim();
+                document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
+                document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
+                document.getElementById("brinco").value = (dados.brinco || "").trim();
+                document.getElementById("piercing").value = (dados.piercing || "").trim();
+                document.getElementById("anel").value = (dados.anel || "").trim();
+                document.getElementById("berkas").value = (dados.berkas || "").trim();
+                document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
+                document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
+              });
+            } else {
+              let cellPersonagem = linha.insertCell();
+              cellPersonagem.textContent = personagem;
+              cellPersonagem.style.cursor = "pointer";
+              cellPersonagem.addEventListener("click", () => {
+                document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
+                document.getElementById("personagem").value = personagem.trim();
+                document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
+                document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
+                document.getElementById("brinco").value = (dados.brinco || "").trim();
+                document.getElementById("piercing").value = (dados.piercing || "").trim();
+                document.getElementById("anel").value = (dados.anel || "").trim();
+                document.getElementById("berkas").value = (dados.berkas || "").trim();
+                document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
+                document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
+              });
             }
+            // Caso o tema seja "classic" ou se já inserimos a coluna de nome para Grandchase, as demais células seguem:
             let cellBrinco = linha.insertCell();
             cellBrinco.textContent = dados.brinco;
             let cellPiercing = linha.insertCell();
@@ -1006,7 +1046,7 @@
       const table = document.getElementById("tabela_controle");
       const tr = table.getElementsByTagName("tr");
       for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName("td")[0];
+        const td = tr[i].getElementsByTagName("td")[currentTheme === "grandchase" ? 1 : 0];
         if (td) {
           const txtValue = td.textContent || td.innerText;
           tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
@@ -1061,6 +1101,7 @@
       const tabela = document.getElementById("tabela_controle");
       const tr = tabela.getElementsByTagName("tr");
       for (let i = 1; i < tr.length; i++){
+        // Se tema grandchase, a coluna de Ataque Total é a 8ª (index 7), senão é a 7ª (index 6)
         const cellAtaque = tr[i].cells[currentTheme === "grandchase" ? 7 : 6].textContent.trim();
         if (cellAtaque === ataqueDesejado) {
           tr[i].style.display = "";
