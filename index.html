@@ -43,7 +43,7 @@
       margin-bottom: 15px;
       border: 1px solid #ddd;
       border-radius: 4px;
-      font-size: 14px;
+      font-size: 16px; /* Aumentado para melhor visibilidade */
       color: #333;
       background: #f9f9f9;
       transition: border-color 0.3s ease;
@@ -107,10 +107,6 @@
     .delete-button:hover {
       background: #c0392b;
     }
-    /* Seção de Login */
-    .login-container {
-      /* Ajuste conforme necessário */
-    }
     /* Seção de Gerenciamento de Pergaminhos */
     .pergaminhos-section {
       margin-bottom: 30px;
@@ -121,20 +117,22 @@
       gap: 10px;
     }
     .pergaminhos-row input[type="number"] {
-      /* Largura para 5 dígitos */
-      width: 6em;
+      width: 6em; /* Espaço para até 5 dígitos */
+    }
+    .pergaminhos-row button {
+      padding: 10px 15px;
     }
     /* Seção de Controle de Itens – Layout em CSS Grid */
     #controleItensGrid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      grid-gap: 20px;
+      grid-gap: 10px; /* Gap reduzido para 10px */
     }
-    /* Primeira linha: Personagem ocupa 3 colunas */
+    /* Linha 1: Personagem ocupa 3 colunas */
     .full-width {
       grid-column: 1 / -1;
     }
-    /* Tabela de Controle de Personagens */
+    /* Seção de Pesquisa em Controle de Personagens */
     .search-bar {
       display: flex;
       align-items: center;
@@ -142,11 +140,12 @@
       margin-bottom: 20px;
     }
     .search-bar input {
-      width: 45ch;  /* Aproximadamente 45 caracteres de largura */
+      width: 45ch; /* Aproximadamente 45 caracteres de largura */
     }
     .search-bar button {
       padding: 10px 15px;
     }
+    /* Tabela de Controle de Personagens */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -214,10 +213,11 @@
     #botaoLimparAtaqueFiltro:hover {
       background: #eaf7ff;
     }
-    /* Mobile Ajustes */
+    /* Mobile: Grid com 2 colunas */
     @media (max-width: 600px) {
-      h2 { font-size: 20px; }
-      .pergaminhos-row, #controleItensGrid { grid-template-columns: 1fr; }
+      #controleItensGrid {
+        grid-template-columns: repeat(2, 1fr);
+      }
       .search-bar { flex-direction: column; }
       .search-bar input, .search-bar button { width: 100%; }
       table { display: block; overflow-x: auto; white-space: nowrap; }
@@ -295,7 +295,7 @@
             <option>Kallia Eldepel</option>
           </select>
         </div>
-        <!-- Linha 2: Colunas 1 a 3: Piercing, Brinco e Anel -->
+        <!-- Linha 2: Dividida em 3 células: Piercing, Brinco, Anel -->
         <div>
           <label for="piercing">Piercing:</label>
           <select id="piercing">
@@ -332,7 +332,7 @@
             <option>Nível 3.3</option>
           </select>
         </div>
-        <!-- Linha 3: Colunas 1 a 3: Berkas, Vazio e Ataque Total -->
+        <!-- Linha 3: Dividida em 3 células: Berkas, Vazio, Ataque Total -->
         <div>
           <label for="berkas">Berkas:</label>
           <select id="berkas">
@@ -445,9 +445,8 @@
     </div>
   </div>
 
-  <!-- Script com Firebase e funções -->
+  <!-- Script com Firebase e Funções -->
   <script type="module">
-    // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
@@ -462,14 +461,12 @@
       appId: "1:3109203796:web:f8619117f915f67ceba2c1",
       measurementId: "G-3NNXXD5V2T"
     };
-
     const appFirebase = initializeApp(config);
     const database = getDatabase(appFirebase);
     const auth = getAuth(appFirebase);
     let usuarioAtual = null;
     let gcData = {};
 
-    // Elementos de tela
     const telaLogin = document.getElementById("telaLogin");
     const telaPrincipal = document.getElementById("telaPrincipal");
     const botaoLogin = document.getElementById("botaoLogin");
