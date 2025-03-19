@@ -117,9 +117,8 @@
     .delete-button:hover {
       background: #c0392b;
     }
-    /* Seção de Login */
+    /* Seções e Layout */
     .login-container { }
-    /* Seção de Gerenciamento de Pergaminhos */
     .pergaminhos-section {
       margin-bottom: 30px;
     }
@@ -132,7 +131,6 @@
     .pergaminhos-save {
       margin-top: 10px;
     }
-    /* Seção de Controle de Itens – CSS Grid */
     #controleItensGrid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -142,7 +140,6 @@
     .full-width {
       grid-column: 1 / -1;
     }
-    /* Pesquisa para Controle de Personagens */
     .search-bar {
       display: flex;
       align-items: center;
@@ -157,7 +154,6 @@
     .search-bar button {
       padding: 10px 14px;
     }
-    /* Tabela de Controle de Personagens */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -180,7 +176,6 @@
     tr:hover {
       background: #f1f1f1;
     }
-    /* Painéis */
     #missingBerkasPanel {
       margin-top: 20px;
       padding: 10px;
@@ -241,7 +236,7 @@
         white-space: nowrap;
       }
     }
-    /* Sidebar (Menu Lateral) usando transform para manter-o fora da tela */
+    /* Sidebar (Menu Lateral) – permanece totalmente fora da tela quando fechado */
     #sidebar {
       position: fixed;
       top: 0;
@@ -266,45 +261,50 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    /* Tema Grandchase – NOVO TEMA com animações e efeitos */
+    /* Tema Grandchase – Novo Design com animações e efeitos modernos */
     .theme-grandchase {
-      /* Fundo animado com gradiente em movimento */
-      background: linear-gradient(45deg, #1a001a, #330033, #1a001a, #660066);
-      background-size: 400% 400%;
-      animation: gradientAnimation 10s ease infinite;
-      color: #e0e0e0;
-    }
-    @keyframes gradientAnimation {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      /* Fundo com imagem (substitua a URL pela imagem desejada) */
+      background: url('https://via.placeholder.com/1920x1080?text=Grandchase+Background') no-repeat center center fixed;
+      background-size: cover;
     }
     .theme-grandchase .container {
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid #660066;
-      box-shadow: 0 0 15px rgba(102, 0, 102, 0.7);
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #8A2BE2;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.8);
+      animation: containerGlow 2s infinite alternate;
+    }
+    @keyframes containerGlow {
+      from { box-shadow: 0 0 10px rgba(138, 43, 226, 0.5); }
+      to { box-shadow: 0 0 20px rgba(138, 43, 226, 1); }
     }
     .theme-grandchase h2 {
-      color: #ffcc00;
-      text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
-      border-bottom-color: #ffcc00;
+      color: #FFD700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+      border-bottom-color: #FFD700;
     }
     .theme-grandchase button {
-      background: linear-gradient(45deg, #660066, #993399);
+      background: linear-gradient(45deg, #8A2BE2, #BA55D3);
       color: #fff;
-      border: 1px solid #ffcc00;
-      box-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
+      border: 1px solid #FFD700;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .theme-grandchase button:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(255, 204, 0, 1);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
     }
     .theme-grandchase img {
       transition: transform 0.3s ease;
     }
     .theme-grandchase img:hover {
       transform: scale(1.1);
+    }
+    /* Efeito de hover para as linhas da tabela no tema Grandchase */
+    .theme-grandchase table tr:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
   </style>
 </head>
@@ -342,7 +342,7 @@
 
   <!-- Tela Principal -->
   <div class="container hidden" id="telaPrincipal">
-    <!-- O botão de menu será inserido via JS (único) -->
+    <!-- O botão de menu será inserido via JS -->
     <div class="section pergaminhos-section">
       <h2 id="titlePergaminhos">Gerenciamento de Pergaminhos</h2>
       <div class="pergaminhos-row">
@@ -497,7 +497,7 @@
         <button id="botaoLimparFiltro" onclick="limparFiltro()">Limpar Filtro</button>
       </div>
       <table id="tabela_controle">
-        <!-- A tabela será gerada dinamicamente em carregarGCs() -->
+        <!-- A tabela será gerada dinamicamente -->
       </table>
       <div id="missingBerkasPanel">Total de berkas faltantes:</div>
       <div id="ataqueTotalPanel">
@@ -733,6 +733,7 @@
       sidebar.classList.toggle("open");
     }
 
+    // Cria o botão de toggle e o insere na tela principal (único)
     const menuToggle = document.createElement("button");
     menuToggle.id = "menuToggle";
     menuToggle.innerText = "☰";
