@@ -38,22 +38,24 @@
       font-weight: 500;
       color: #555;
     }
-    /* Aumentando o tamanho dos selects e inputs */
+    /* Inputs e selects – Aumentados, mas sem exagerar a altura */
     input, select {
-      padding: 12px 16px;
-      font-size: 18px;
+      padding: 10px 14px;
+      font-size: 16px;
       border: 1px solid #ddd;
       border-radius: 4px;
       background: #f9f9f9;
       margin-bottom: 15px;
+      box-sizing: border-box;
+      width: 100%;
     }
     input:focus, select:focus {
       border-color: #2c3e50;
       outline: none;
     }
     button {
-      padding: 12px 16px;
-      font-size: 18px;
+      padding: 10px 14px;
+      font-size: 16px;
       background: #2c3e50;
       color: #fff;
       border: none;
@@ -67,7 +69,7 @@
     .hidden {
       display: none;
     }
-    /* Botões Específicos */
+    /* Botões específicos */
     #botaoRecuperar {
       background: #e74c3c;
     }
@@ -109,6 +111,8 @@
     .delete-button:hover {
       background: #c0392b;
     }
+    /* Seção de Login */
+    .login-container { }
     /* Seção de Gerenciamento de Pergaminhos */
     .pergaminhos-section {
       margin-bottom: 30px;
@@ -119,12 +123,9 @@
       flex-wrap: wrap;
       align-items: center;
     }
-    .pergaminhos-row input[type="number"] {
-      width: 6em; /* Espaço para até 5 dígitos */
-    }
-    .pergaminhos-row button {
-      /* Botão na linha de baixo */
-      width: auto;
+    /* Botão "Salvar Pergaminho" ficará em uma linha separada */
+    .pergaminhos-save {
+      margin-top: 10px;
     }
     /* Seção de Controle de Itens – Layout em CSS Grid */
     #controleItensGrid {
@@ -133,7 +134,7 @@
       grid-gap: 10px;
       margin-bottom: 20px;
     }
-    /* Linha 1: Personagem ocupa 3 colunas */
+    /* Linha 1: O campo "Personagem" ocupa todas as 3 colunas */
     .full-width {
       grid-column: 1 / -1;
     }
@@ -147,9 +148,10 @@
     .search-bar input {
       width: 45ch;
       max-width: 100%;
+      box-sizing: border-box;
     }
     .search-bar button {
-      padding: 12px 16px;
+      padding: 10px 14px;
     }
     /* Tabela de Controle de Personagens */
     table {
@@ -458,7 +460,7 @@
     </div>
   </div>
 
-  <!-- Script com Firebase e funções -->
+  <!-- Script com Firebase e Funções -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
