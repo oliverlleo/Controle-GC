@@ -15,17 +15,17 @@
       color: #333;
     }
     .container {
-      position: relative;
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
-      background-color: #fff;
+      background: #fff;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
     }
     h2 {
       color: #2c3e50;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       font-size: 24px;
       font-weight: 700;
       border-bottom: 2px solid #e0e0e0;
@@ -33,19 +33,18 @@
     }
     label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       font-weight: 500;
       color: #555;
     }
     input, select, button {
-      width: 100%;
       padding: 10px;
       margin-bottom: 15px;
       border: 1px solid #ddd;
       border-radius: 4px;
       font-size: 14px;
       color: #333;
-      background-color: #f9f9f9;
+      background: #f9f9f9;
       transition: border-color 0.3s ease;
     }
     input:focus, select:focus {
@@ -53,24 +52,24 @@
       outline: none;
     }
     button {
-      background-color: #2c3e50;
+      background: #2c3e50;
       color: #fff;
-      border: none;
       cursor: pointer;
+      border: none;
       font-weight: 500;
     }
     button:hover {
-      background-color: #1a2a3a;
+      background: #1a2a3a;
     }
     .hidden {
       display: none;
     }
-    /* Botões personalizados */
+    /* Botões específicos */
     #botaoRecuperar {
-      background-color: #e74c3c;
+      background: #e74c3c;
     }
     #botaoRecuperar:hover {
-      background-color: #c0392b;
+      background: #c0392b;
     }
     #botaoSair {
       position: absolute;
@@ -83,15 +82,14 @@
       font-size: 16px;
       line-height: 30px;
       text-align: center;
-      background-color: #2c3e50;
+      background: #2c3e50;
       transition: transform 0.2s ease;
     }
     #botaoSair:hover {
       transform: scale(1.2);
     }
-    /* Botão de Exclusão */
     .delete-button {
-      background-color: #e74c3c;
+      background: #e74c3c;
       border: none;
       border-radius: 50%;
       width: 28px;
@@ -100,46 +98,83 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: background-color 0.3s;
+      transition: background 0.3s;
     }
     .delete-button:hover {
-      background-color: #c0392b;
+      background: #c0392b;
     }
     /* Seção de Gerenciamento de Pergaminhos */
     .pergaminhos-section {
       margin-bottom: 30px;
     }
     .pergaminhos-row {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
     }
-    .pergaminhos-row > div {
-      flex: 1;
-      min-width: 150px;
-    }
-    /* Para inputs de pergaminhos com espaço para 5 dígitos */
     .pergaminhos-row input[type="number"] {
+      /* Largura para até 5 dígitos */
       width: 6em;
     }
-    /* Seção de Controle de Itens - 3 Colunas */
+    /* Botão de Salvar Pergaminho na mesma linha */
+    .pergaminhos-row button {
+      padding: 10px 15px;
+    }
+    /* Seção de Controle de Itens – 3 Colunas */
     .controle-columns {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
     }
-    .controle-columns > div {
+    .controle-column {
       flex: 1;
       min-width: 150px;
     }
-    /* Seção de Itens Faltantes */
+    /* Seção de Pesquisa (Controle de Personagens) */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .search-bar input {
+      /* Aproximadamente 45 caracteres de largura */
+      width: 45ch;
+    }
+    .search-bar button {
+      padding: 10px 15px;
+    }
+    /* Tabela de Controle de Personagens */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    th {
+      background: #2c3e50;
+      color: #fff;
+      font-weight: 600;
+    }
+    tr:hover {
+      background: #f1f1f1;
+    }
+    /* Painel de Itens Faltantes */
     #missingBerkasPanel {
       margin-top: 20px;
       padding: 10px;
-      background-color: #eaf7ff;
+      background: #eaf7ff;
       border: 1px solid #bce0fd;
       border-radius: 4px;
       text-align: center;
@@ -153,7 +188,7 @@
       padding: 10px;
       margin-top: 20px;
       text-align: center;
-      background-color: #fff;
+      background: #fff;
     }
     #ataqueTotalPanel label {
       margin-bottom: 5px;
@@ -166,72 +201,32 @@
       font-weight: 500;
       color: #2c3e50;
     }
-    /* Botão para limpar filtro de Ataque Total */
     #botaoLimparAtaqueFiltro {
-      background-color: transparent;
+      background: transparent;
       border: 1px solid #2c3e50;
       border-radius: 4px;
       padding: 5px 10px;
       font-size: 12px;
       color: #2c3e50;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background 0.3s;
       margin-top: 10px;
     }
     #botaoLimparAtaqueFiltro:hover {
-      background-color: #eaf7ff;
+      background: #eaf7ff;
     }
-    /* Tabela */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    th {
-      background-color: #2c3e50;
-      color: #fff;
-      font-weight: 600;
-    }
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-    /* Ajustes Mobile */
+    /* Mobile */
     @media (max-width: 600px) {
-      h2 {
-        font-size: 20px;
-      }
-      .pergaminhos-row > div,
-      .controle-columns > div {
+      h2 { font-size: 20px; }
+      .pergaminhos-row,
+      .controle-columns > .controle-column {
+        flex-direction: column;
         min-width: 100%;
       }
-      .search-bar {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 0 10px;
-      }
-      .search-bar input {
-        flex: 1 1 100%;
-        max-width: 100%;
-      }
-      .search-bar button {
-        flex: 1 1 calc(50% - 10px);
-        max-width: calc(50% - 10px);
-      }
-      table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
+      .search-bar { flex-direction: column; }
+      .search-bar input { width: 100%; }
+      .search-bar button { width: 100%; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
     }
   </style>
 </head>
@@ -254,7 +249,7 @@
   <div class="container hidden" id="telaPrincipal">
     <button id="botaoSair">X</button>
 
-    <!-- Seção de Gerenciamento de Pergaminhos (mantida separada) -->
+    <!-- Seção de Gerenciamento de Pergaminhos -->
     <div class="section pergaminhos-section">
       <h2>Gerenciamento de Pergaminhos</h2>
       <div class="pergaminhos-row">
@@ -266,15 +261,18 @@
           <label>Pergaminho Aleatório:</label>
           <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
         </div>
+        <div>
+          <button onclick="salvarPergaminhos()">Salvar Pergaminho</button>
+        </div>
       </div>
     </div>
 
-    <!-- Seção de Controle de Itens (3 colunas) -->
+    <!-- Seção de Controle de Itens (3 Colunas) -->
     <div class="section" id="controleItens">
       <h2>Controle de Itens</h2>
       <div class="controle-columns">
         <!-- Coluna 1: Personagem -->
-        <div>
+        <div class="controle-column">
           <label>Personagem:</label>
           <select id="personagem">
             <option>Elesis</option>
@@ -303,7 +301,7 @@
           </select>
         </div>
         <!-- Coluna 2: Brinco e Vazio -->
-        <div>
+        <div class="controle-column">
           <label>Brinco:</label>
           <select id="brinco">
             <option>Nenhum</option>
@@ -324,7 +322,7 @@
           </select>
         </div>
         <!-- Coluna 3: Piercing, Anel, Berkas e Ataque Total -->
-        <div>
+        <div class="controle-column">
           <label>Piercing:</label>
           <select id="piercing">
             <option>Nenhum</option>
@@ -392,11 +390,11 @@
       <button id="botaoSalvarGC">Salvar GC</button>
     </div>
 
-    <!-- Tabela de Controle de Personagens -->
+    <!-- Seção de Controle de Personagens -->
     <div class="section">
       <h2>Controle de Personagens</h2>
       <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Pesquisar personagem...">
+        <input type="text" id="searchInput" placeholder="Pesquisar personagem..." style="width:45ch;">
         <button onclick="filtrarTabela()">Pesquisar</button>
         <button onclick="limparFiltro()">Limpar Filtro</button>
       </div>
@@ -444,8 +442,8 @@
     </div>
   </div>
 
+  <!-- Script JavaScript com Firebase e funções -->
   <script type="module">
-    // Configuração do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
@@ -466,7 +464,6 @@
     let usuarioAtual = null;
     let gcData = {};
 
-    // Elementos de tela
     const telaLogin = document.getElementById("telaLogin");
     const telaPrincipal = document.getElementById("telaPrincipal");
     const botaoLogin = document.getElementById("botaoLogin");
@@ -540,6 +537,7 @@
       telaPrincipal.classList.remove("hidden");
       carregarGCs();
       calcularAtaqueTotal();
+      carregarPergaminhos(); // Carrega os pergaminhos na inicialização
     }
 
     function mostrarTelaLogin() {
@@ -547,7 +545,7 @@
       telaPrincipal.classList.add("hidden");
     }
 
-    // Salva os pergaminhos (mantido na seção de Pergaminhos)
+    // Função para salvar os dados de Pergaminhos
     function salvarPergaminhos() {
       const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
@@ -558,7 +556,23 @@
       }).then(() => {
         console.log("Pergaminhos salvos com sucesso!");
       }).catch((error) => {
-        console.error("Erro ao salvar pergaminhos: ", error);
+        console.error("Erro ao salvar pergaminhos:", error);
+      });
+    }
+
+    // Função para carregar os pergaminhos salvos
+    function carregarPergaminhos() {
+      if (!usuarioAtual) return;
+      get(ref(database, 'users/' + usuarioAtual.uid + '/pergaminhos/')).then((snapshot) => {
+        if (snapshot.exists()) {
+          document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
+          document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "";
+          console.log("Pergaminhos carregados com sucesso!");
+        } else {
+          console.log("Nenhum valor de pergaminho salvo.");
+        }
+      }).catch((error) => {
+        console.error("Erro ao carregar pergaminhos:", error);
       });
     }
 
@@ -569,7 +583,7 @@
           callback(snapshot.exists());
         })
         .catch((error) => {
-          console.error("Erro ao verificar personagem: ", error);
+          console.error("Erro ao verificar personagem:", error);
         });
     }
 
@@ -596,7 +610,7 @@
       }
       personagemJaExiste(personagemSelecionado, (existe) => {
         if (existe) {
-          const confirmacao = confirm("Este personagem já foi salvo. Tem certeza que deseja alterar?");
+          const confirmacao = confirm("Este personagem já foi salvo. Deseja alterar?");
           if (!confirmacao) return;
         }
         set(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagemSelecionado), {
@@ -615,7 +629,7 @@
           carregarGCs();
           calcularAtaqueTotal();
         }).catch((error) => {
-          console.error("Erro ao salvar GC: ", error);
+          console.error("Erro ao salvar GC:", error);
         });
       });
     }
@@ -643,7 +657,7 @@
             let dados = childSnapshot.val();
             let personagem = childSnapshot.key;
             gcData[personagem] = dados;
-            // Processamento de Berkas
+            // Processa Berkas
             let berkasValor = dados.berkas;
             let berkasNum = 0;
             if (berkasValor === "Full") {
@@ -653,9 +667,9 @@
             } else {
               berkasNum = parseInt(berkasValor) || 0;
             }
-            // Processamento de Vazio (trata "Nenhum" como 0)
+            // Processa Vazio
             let vazioValor = (dados.vazio === "Nenhum" || !dados.vazio) ? 0 : parseInt(dados.vazio);
-            // Se houver algum valor de vazio, o requisito para Berkas é 6; caso contrário, 12.
+            // Se houver vazio, requisito para Berkas é 6; caso contrário, 12.
             let missingBerkas = (vazioValor > 0) ? Math.max(0, 6 - berkasNum) : Math.max(0, 12 - berkasNum);
             let missingVazio = (vazioValor > 0) ? Math.max(0, 6 - vazioValor) : 0;
             totalMissingBerkas += missingBerkas;
@@ -694,12 +708,12 @@
             cellAcao.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
           });
         } else {
-          console.log("Nenhum GC salvo ainda.");
+          console.log("Nenhum GC salvo.");
         }
         document.getElementById("missingBerkasPanel").textContent =
           `Total de berkas faltantes: ${totalMissingBerkas} | Total de vazio faltantes: ${totalMissingVazio}`;
       }).catch((error) => {
-        console.error("Erro ao carregar GCs: ", error);
+        console.error("Erro ao carregar GCs:", error);
       });
     }
 
@@ -728,7 +742,7 @@
             calcularAtaqueTotal();
           })
           .catch((error) => {
-            console.error("Erro ao excluir personagem: ", error);
+            console.error("Erro ao excluir personagem:", error);
           });
       }
     }
@@ -786,7 +800,7 @@
           `Exatos: ${countExact} | Acima: ${countAbove} | Abaixo: ${countBelow}`;
         filtrarAtaqueTabela(ataqueDesejado);
       }).catch((error) => {
-        console.error("Erro ao calcular ataque total: ", error);
+        console.error("Erro ao calcular ataque total:", error);
       });
     }
 
