@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Login e Controle GC</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- Estilos Gerais e de Layout -->
   <style>
     /* Estilos Gerais */
     body {
@@ -14,8 +13,8 @@
       margin: 0;
       padding: 20px;
       color: #333;
+      transition: background-color 0.3s;
     }
-    /* Container principal */
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -40,7 +39,7 @@
       font-weight: 500;
       color: #555;
     }
-    /* Inputs e selects – ajustados para maior largura e altura controlada */
+    /* Inputs e selects – Aumentados, mas sem exagerar a altura */
     input, select {
       padding: 10px 14px;
       font-size: 16px;
@@ -71,30 +70,15 @@
     .hidden {
       display: none;
     }
-    /* Botões Específicos */
+    /* Botões específicos */
     #botaoRecuperar {
       background: #e74c3c;
     }
     #botaoRecuperar:hover {
       background: #c0392b;
     }
-    #botaoSair {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      padding: 0;
-      font-size: 16px;
-      line-height: 30px;
-      text-align: center;
-      background: #2c3e50;
-      transition: transform 0.2s ease;
-    }
-    #botaoSair:hover {
-      transform: scale(1.2);
-    }
+    /* Removi o botão antigo de sair */
+    /* #botaoSair { ... } */
     .delete-button {
       background: #e74c3c;
       border: none;
@@ -113,41 +97,8 @@
     .delete-button:hover {
       background: #c0392b;
     }
-    /* Sidebar Menu */
-    #sidebarMenu {
-      position: fixed;
-      left: -250px;
-      top: 0;
-      width: 250px;
-      height: 100%;
-      background: #2c3e50;
-      color: #fff;
-      transition: left 0.3s;
-      z-index: 1000;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    #sidebarMenu h3 {
-      margin-top: 0;
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-    #sidebarMenu select, #sidebarMenu button {
-      width: 100%;
-      margin-bottom: 15px;
-    }
-    #menuToggle {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background: #2c3e50;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 10px;
-      cursor: pointer;
-      z-index: 1100;
-    }
+    /* Seção de Login */
+    .login-container { }
     /* Seção de Gerenciamento de Pergaminhos */
     .pergaminhos-section {
       margin-bottom: 30px;
@@ -158,20 +109,18 @@
       flex-wrap: wrap;
       align-items: center;
     }
-    .pergaminhos-row input[type="number"] {
-      width: 6em; /* Espaço para até 5 dígitos */
-    }
+    /* Botão "Salvar Pergaminho" ficará em uma linha separada */
     .pergaminhos-save {
       margin-top: 10px;
     }
-    /* Seção de Controle de Itens – CSS Grid */
+    /* Seção de Controle de Itens – Layout em CSS Grid */
     #controleItensGrid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-gap: 10px;
       margin-bottom: 20px;
     }
-    /* Linha 1: "Personagem" ocupa 3 colunas */
+    /* Linha 1: O campo "Personagem" ocupa todas as 3 colunas */
     .full-width {
       grid-column: 1 / -1;
     }
@@ -212,15 +161,6 @@
     }
     tr:hover {
       background: #f1f1f1;
-    }
-    /* Inserindo imagem no personagem */
-    .char-img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 8px;
-      vertical-align: middle;
-      object-fit: cover;
     }
     /* Painel de Itens Faltantes */
     #missingBerkasPanel {
@@ -266,7 +206,7 @@
     #botaoLimparAtaqueFiltro:hover {
       background: #eaf7ff;
     }
-    /* Responsividade */
+    /* Responsividade – Mobile */
     @media (max-width: 600px) {
       #controleItensGrid {
         grid-template-columns: repeat(2, 1fr);
@@ -284,78 +224,130 @@
         white-space: nowrap;
       }
     }
+    /* Sidebar (Menu Lateral) */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px; /* Oculto por padrão */
+      width: 250px;
+      height: 100%;
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 20px;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+    #sidebar.open {
+      left: 0;
+    }
+    #sidebar h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+    #sidebar select, #sidebar button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    /* Botão para abrir o menu */
+    #menuButton {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #2c3e50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 1100;
+    }
+    /* Tema Grandchase */
+    .theme-grandchase {
+      background-color: #1e1e1e;
+      background-image: url('https://via.placeholder.com/1920x1080?text=Grandchase+Theme');
+      background-size: cover;
+      color: #fff;
+    }
+    .theme-grandchase .container {
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      box-shadow: 0 4px 6px rgba(255,255,255,0.1);
+    }
+    .theme-grandchase h2 {
+      color: #ffcc00;
+      border-color: #ffcc00;
+    }
+    .theme-grandchase button {
+      background: #ffcc00;
+      color: #000;
+    }
   </style>
 </head>
 <body>
-  <!-- Botão de Menu para Sidebar -->
-  <button id="menuToggle">☰</button>
-  
-  <!-- Sidebar Menu -->
-  <div id="sidebarMenu">
-    <h3>Menu</h3>
-    <div>
-      <label for="langSelect">Linguagem:</label>
-      <select id="langSelect">
-        <option value="pt">Português</option>
-        <option value="en">English</option>
-        <option value="ko">한국어</option>
-      </select>
-    </div>
-    <div>
-      <label for="themeSelect">Tema:</label>
-      <select id="themeSelect">
-        <option value="classic">Tema Clássico</option>
-        <option value="grandchase">GrandChase</option>
-      </select>
-    </div>
-    <div style="margin-top: auto;">
-      <button id="menuLogout">Sair</button>
-    </div>
+  <!-- Botão de Menu -->
+  <button id="menuButton">☰</button>
+
+  <!-- Sidebar Menu Lateral -->
+  <div id="sidebar">
+    <h3 id="menuTitle">Menu</h3>
+    <!-- Opção de Linguagem -->
+    <label id="labelLanguage" for="languageSelect">Linguagem</label>
+    <select id="languageSelect">
+      <option value="pt">Português</option>
+      <option value="en">English</option>
+      <option value="kr">한국어</option>
+    </select>
+    <!-- Opção de Tema -->
+    <label id="labelTheme" for="themeSelect">Tema</label>
+    <select id="themeSelect">
+      <option value="classic">Tema Clássico</option>
+      <option value="grandchase">Grandchase</option>
+    </select>
+    <!-- Botão Sair -->
+    <button id="btnExit">Sair</button>
   </div>
 
   <!-- Tela de Login/Cadastro -->
   <div class="container" id="telaLogin">
-    <h2 data-i18n="loginTitle">Login / Cadastro</h2>
+    <h2 id="loginTitle">Login / Cadastro</h2>
     <div class="login-container">
-      <label for="email" data-i18n="emailLabel">E-mail:</label>
+      <label id="labelEmail" for="email">E-mail:</label>
       <input type="email" id="email" placeholder="Digite seu e-mail">
-      <label for="senha" data-i18n="passwordLabel">Senha:</label>
+      <label id="labelSenha" for="senha">Senha:</label>
       <input type="password" id="senha" placeholder="Digite sua senha">
-      <button id="botaoLogin" data-i18n="loginButton">Login</button>
-      <button id="botaoCadastro" data-i18n="signupButton">Cadastrar</button>
-      <button id="botaoRecuperar" data-i18n="recoverButton">Recuperar Senha</button>
+      <button id="botaoLogin">Login</button>
+      <button id="botaoCadastro">Cadastrar</button>
+      <button id="botaoRecuperar">Recuperar Senha</button>
     </div>
   </div>
 
   <!-- Tela Principal -->
   <div class="container hidden" id="telaPrincipal">
-    <button id="botaoSair">X</button>
-
     <!-- Seção de Gerenciamento de Pergaminhos -->
     <div class="section pergaminhos-section">
-      <h2 data-i18n="scrollScrollParchments">Gerenciamento de Pergaminhos</h2>
+      <h2 id="titlePergaminhos">Gerenciamento de Pergaminhos</h2>
       <div class="pergaminhos-row">
         <div>
-          <label for="pergaminho_unico" data-i18n="uniqueParchment">Pergaminho Único:</label>
+          <label id="labelPergaminhoUnico" for="pergaminho_unico">Pergaminho Único:</label>
           <input type="number" id="pergaminho_unico" value="0" oninput="salvarPergaminhos()">
         </div>
         <div>
-          <label for="pergaminho_aleatorio" data-i18n="randomParchment">Pergaminho Aleatório:</label>
+          <label id="labelPergaminhoAleatorio" for="pergaminho_aleatorio">Pergaminho Aleatório:</label>
           <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
         </div>
       </div>
-      <div class="pergaminhos-save">
-        <button onclick="salvarPergaminhos()" data-i18n="saveParchment">Salvar Pergaminho</button>
+      <div class="pergaminhos-save" style="margin-top:10px;">
+        <button id="botaoSalvarPergaminho" onclick="salvarPergaminhos()">Salvar Pergaminho</button>
       </div>
     </div>
 
     <!-- Seção de Controle de Itens -->
     <div class="section" id="controleItens">
-      <h2 data-i18n="itemsControl">Controle de Itens</h2>
+      <h2 id="titleControleItens">Controle de Itens</h2>
       <div id="controleItensGrid">
         <!-- Linha 1: Personagem ocupa 3 colunas -->
         <div class="full-width">
-          <label for="personagem" data-i18n="character">Personagem:</label>
+          <label id="labelPersonagem" for="personagem">Personagem:</label>
           <select id="personagem">
             <option>Elesis</option>
             <option>Lire</option>
@@ -384,9 +376,9 @@
         </div>
         <!-- Linha 2: 3 células: Piercing, Brinco e Anel -->
         <div>
-          <label for="piercing" data-i18n="piercing">Piercing:</label>
+          <label id="labelPiercing" for="piercing">Piercing:</label>
           <select id="piercing">
-            <option data-i18n="none">Nenhum</option>
+            <option>Nenhum</option>
             <option>Harkyon</option>
             <option>Normal</option>
             <option>Épico</option>
@@ -394,9 +386,9 @@
           </select>
         </div>
         <div>
-          <label for="brinco" data-i18n="earring">Brinco:</label>
+          <label id="labelBrinco" for="brinco">Brinco:</label>
           <select id="brinco">
-            <option data-i18n="none">Nenhum</option>
+            <option>Nenhum</option>
             <option>Harkyon</option>
             <option>Normal</option>
             <option>Épico</option>
@@ -404,9 +396,9 @@
           </select>
         </div>
         <div>
-          <label for="anel" data-i18n="ring">Anel:</label>
+          <label id="labelAnel" for="anel">Anel:</label>
           <select id="anel">
-            <option data-i18n="none">Nenhum</option>
+            <option>Nenhum</option>
             <option>Harkyon</option>
             <option>Nível 1.1</option>
             <option>Nível 1.2</option>
@@ -421,9 +413,9 @@
         </div>
         <!-- Linha 3: 3 células: Berkas, Vazio e Ataque Total -->
         <div>
-          <label for="berkas" data-i18n="berkas">Berkas:</label>
+          <label id="labelBerkas" for="berkas">Berkas:</label>
           <select id="berkas">
-            <option data-i18n="none">Nenhum</option>
+            <option>Nenhum</option>
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -439,9 +431,9 @@
           </select>
         </div>
         <div>
-          <label for="vazio" data-i18n="empty">Vazio:</label>
+          <label id="labelVazio" for="vazio">Vazio:</label>
           <select id="vazio">
-            <option data-i18n="none">Nenhum</option>
+            <option>Nenhum</option>
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -451,9 +443,9 @@
           </select>
         </div>
         <div>
-          <label for="ataqueTotal" data-i18n="totalAttack">Ataque Total:</label>
+          <label id="labelAtaqueTotal" for="ataqueTotal">Ataque Total:</label>
           <select id="ataqueTotal">
-            <option data-i18n="none">Nenhum</option>
+            <option>Nenhum</option>
             <option>100k</option>
             <option>200k</option>
             <option>300k</option>
@@ -477,32 +469,23 @@
           </select>
         </div>
       </div>
-      <button id="botaoSalvarGC" data-i18n="saveGC">Salvar GC</button>
+      <button id="botaoSalvarGC">Salvar GC</button>
     </div>
 
     <!-- Seção de Controle de Personagens -->
     <div class="section">
-      <h2 data-i18n="characterControl">Controle de Personagens</h2>
+      <h2 id="titleControlePersonagens">Controle de Personagens</h2>
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Pesquisar personagem..." style="width:45ch; max-width:100%;">
-        <button onclick="filtrarTabela()" data-i18n="searchButton">Pesquisar</button>
-        <button onclick="limparFiltro()" data-i18n="clearFilter">Limpar Filtro</button>
+        <button id="botaoPesquisar" onclick="filtrarTabela()">Pesquisar</button>
+        <button id="botaoLimparFiltro" onclick="limparFiltro()">Limpar Filtro</button>
       </div>
       <table id="tabela_controle">
-        <tr>
-          <th data-i18n="character">Personagem</th>
-          <th data-i18n="earring">Brinco</th>
-          <th data-i18n="piercing">Piercing</th>
-          <th data-i18n="ring">Anel</th>
-          <th data-i18n="berkas">Berkas</th>
-          <th data-i18n="empty">Vazio</th>
-          <th data-i18n="totalAttack">Ataque Total</th>
-          <th data-i18n="action">Ação</th>
-        </tr>
+        <!-- A tabela será gerada dinamicamente em carregarGCs() -->
       </table>
-      <div id="missingBerkasPanel"></div>
+      <div id="missingBerkasPanel">Total de berkas faltantes:</div>
       <div id="ataqueTotalPanel">
-        <label data-i18n="selectAttack">Selecione o valor de ataque total desejado:</label>
+        <label id="labelAtaqueTotalSelecao">Selecione o valor de ataque total desejado:</label>
         <select id="selecionarAtaqueTotal">
           <option value="Todos">Todos</option>
           <option>100k</option>
@@ -527,14 +510,13 @@
           <option>2000k</option>
         </select>
         <div id="resultadoAtaqueTotal"></div>
-        <button id="botaoLimparAtaqueFiltro" onclick="limparFiltroAtaqueTotal()" data-i18n="clearAttackFilter">Limpar Filtro Ataque</button>
+        <button id="botaoLimparAtaqueFiltro" onclick="limparFiltroAtaqueTotal()">Limpar Filtro Ataque</button>
       </div>
     </div>
   </div>
 
-  <!-- Scripts: Lateral Menu, Tradução, Tema, Firebase e funções -->
+  <!-- Script com Firebase, Tradução, Tema e Funções -->
   <script type="module">
-    // Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
@@ -549,224 +531,250 @@
       appId: "1:3109203796:web:f8619117f915f67ceba2c1",
       measurementId: "G-3NNXXD5V2T"
     };
+
     const appFirebase = initializeApp(config);
     const database = getDatabase(appFirebase);
     const auth = getAuth(appFirebase);
     let usuarioAtual = null;
     let gcData = {};
+    let currentTheme = "classic"; // "classic" ou "grandchase"
+    let currentLanguage = "pt";
 
-    // Elementos de tela
-    const telaLogin = document.getElementById("telaLogin");
-    const telaPrincipal = document.getElementById("telaPrincipal");
-    const botaoLogin = document.getElementById("botaoLogin");
-    const botaoCadastro = document.getElementById("botaoCadastro");
-    const botaoRecuperar = document.getElementById("botaoRecuperar");
-    const botaoSair = document.getElementById("botaoSair");
-
-    // Sidebar Menu
-    const menuToggle = document.getElementById("menuToggle");
-    const sidebarMenu = document.getElementById("sidebarMenu");
-    const menuLogout = document.getElementById("menuLogout");
-    const langSelect = document.getElementById("langSelect");
-    const themeSelect = document.getElementById("themeSelect");
-
-    menuToggle.addEventListener("click", () => {
-      sidebarMenu.style.left = "0";
-    });
-    // Fechar menu ao clicar fora
-    document.addEventListener("click", (e) => {
-      if (!sidebarMenu.contains(e.target) && e.target !== menuToggle) {
-        sidebarMenu.style.left = "-250px";
+    // Objeto de Tradução
+    const translations = {
+      "pt": {
+        "loginTitle": "Login / Cadastro",
+        "labelEmail": "E-mail:",
+        "labelSenha": "Senha:",
+        "botaoLogin": "Login",
+        "botaoCadastro": "Cadastrar",
+        "botaoRecuperar": "Recuperar Senha",
+        "titlePergaminhos": "Gerenciamento de Pergaminhos",
+        "labelPergaminhoUnico": "Pergaminho Único:",
+        "labelPergaminhoAleatorio": "Pergaminho Aleatório:",
+        "botaoSalvarPergaminho": "Salvar Pergaminho",
+        "titleControleItens": "Controle de Itens",
+        "labelPersonagem": "Personagem:",
+        "labelPiercing": "Piercing:",
+        "labelBrinco": "Brinco:",
+        "labelAnel": "Anel:",
+        "labelBerkas": "Berkas:",
+        "labelVazio": "Vazio:",
+        "labelAtaqueTotal": "Ataque Total:",
+        "botaoSalvarGC": "Salvar GC",
+        "titleControlePersonagens": "Controle de Personagens",
+        "searchPlaceholder": "Pesquisar personagem...",
+        "botaoPesquisar": "Pesquisar",
+        "botaoLimparFiltro": "Limpar Filtro",
+        "missingBerkasText": "Total de berkas faltantes:",
+        "labelAtaqueTotalSelecao": "Selecione o valor de ataque total desejado:",
+        "optionTodos": "Todos",
+        "botaoLimparAtaqueFiltro": "Limpar Filtro Ataque",
+        "menuTitle": "Menu",
+        "languageOption": "Linguagem",
+        "themeOption": "Tema",
+        "exitOption": "Sair",
+        "classicTheme": "Tema Clássico",
+        "grandchaseTheme": "Grandchase"
+      },
+      "en": {
+        "loginTitle": "Login / Register",
+        "labelEmail": "Email:",
+        "labelSenha": "Password:",
+        "botaoLogin": "Login",
+        "botaoCadastro": "Register",
+        "botaoRecuperar": "Recover Password",
+        "titlePergaminhos": "Scroll Management",
+        "labelPergaminhoUnico": "Unique Scroll:",
+        "labelPergaminhoAleatorio": "Random Scroll:",
+        "botaoSalvarPergaminho": "Save Scroll",
+        "titleControleItens": "Item Control",
+        "labelPersonagem": "Character:",
+        "labelPiercing": "Piercing:",
+        "labelBrinco": "Earring:",
+        "labelAnel": "Ring:",
+        "labelBerkas": "Berkas:",
+        "labelVazio": "Empty:",
+        "labelAtaqueTotal": "Total Attack:",
+        "botaoSalvarGC": "Save GC",
+        "titleControlePersonagens": "Character Control",
+        "searchPlaceholder": "Search character...",
+        "botaoPesquisar": "Search",
+        "botaoLimparFiltro": "Clear Filter",
+        "missingBerkasText": "Total missing berkas:",
+        "labelAtaqueTotalSelecao": "Select desired total attack value:",
+        "optionTodos": "All",
+        "botaoLimparAtaqueFiltro": "Clear Attack Filter",
+        "menuTitle": "Menu",
+        "languageOption": "Language",
+        "themeOption": "Theme",
+        "exitOption": "Exit",
+        "classicTheme": "Classic Theme",
+        "grandchaseTheme": "Grandchase"
+      },
+      "kr": {
+        "loginTitle": "로그인 / 등록",
+        "labelEmail": "이메일:",
+        "labelSenha": "비밀번호:",
+        "botaoLogin": "로그인",
+        "botaoCadastro": "등록",
+        "botaoRecuperar": "비밀번호 복구",
+        "titlePergaminhos": "두루마리 관리",
+        "labelPergaminhoUnico": "유일 두루마리:",
+        "labelPergaminhoAleatorio": "랜덤 두루마리:",
+        "botaoSalvarPergaminho": "두루마리 저장",
+        "titleControleItens": "아이템 제어",
+        "labelPersonagem": "캐릭터:",
+        "labelPiercing": "피어싱:",
+        "labelBrinco": "귀걸이:",
+        "labelAnel": "반지:",
+        "labelBerkas": "버카스:",
+        "labelVazio": "빈칸:",
+        "labelAtaqueTotal": "총 공격력:",
+        "botaoSalvarGC": "GC 저장",
+        "titleControlePersonagens": "캐릭터 제어",
+        "searchPlaceholder": "캐릭터 검색...",
+        "botaoPesquisar": "검색",
+        "botaoLimparFiltro": "필터 지우기",
+        "missingBerkasText": "부족한 버카스 총합:",
+        "labelAtaqueTotalSelecao": "원하는 총 공격력 선택:",
+        "optionTodos": "전체",
+        "botaoLimparAtaqueFiltro": "공격 필터 초기화",
+        "menuTitle": "메뉴",
+        "languageOption": "언어",
+        "themeOption": "테마",
+        "exitOption": "종료",
+        "classicTheme": "클래식 테마",
+        "grandchaseTheme": "그랜드체이스"
       }
+    };
+
+    function updateLanguage(lang) {
+      currentLanguage = lang;
+      const t = translations[lang];
+      document.getElementById("loginTitle").innerText = t.loginTitle;
+      document.getElementById("labelEmail").innerText = t.labelEmail;
+      document.getElementById("labelSenha").innerText = t.labelSenha;
+      document.getElementById("botaoLogin").innerText = t.botaoLogin;
+      document.getElementById("botaoCadastro").innerText = t.botaoCadastro;
+      document.getElementById("botaoRecuperar").innerText = t.botaoRecuperar;
+      document.getElementById("titlePergaminhos").innerText = t.titlePergaminhos;
+      document.getElementById("labelPergaminhoUnico").innerText = t.labelPergaminhoUnico;
+      document.getElementById("labelPergaminhoAleatorio").innerText = t.labelPergaminhoAleatorio;
+      document.getElementById("botaoSalvarPergaminho").innerText = t.botaoSalvarPergaminho;
+      document.getElementById("titleControleItens").innerText = t.titleControleItens;
+      document.getElementById("labelPersonagem").innerText = t.labelPersonagem;
+      document.getElementById("labelPiercing").innerText = t.labelPiercing;
+      document.getElementById("labelBrinco").innerText = t.labelBrinco;
+      document.getElementById("labelAnel").innerText = t.labelAnel;
+      document.getElementById("labelBerkas").innerText = t.labelBerkas;
+      document.getElementById("labelVazio").innerText = t.labelVazio;
+      document.getElementById("labelAtaqueTotal").innerText = t.labelAtaqueTotal;
+      document.getElementById("botaoSalvarGC").innerText = t.botaoSalvarGC;
+      document.getElementById("titleControlePersonagens").innerText = t.titleControlePersonagens;
+      document.getElementById("searchInput").placeholder = t.searchPlaceholder;
+      document.getElementById("botaoPesquisar").innerText = t.botaoPesquisar;
+      document.getElementById("botaoLimparFiltro").innerText = t.botaoLimparFiltro;
+      // Para o painel de berkas, atualizamos apenas o prefixo
+      document.getElementById("missingBerkasPanel").innerText = t.missingBerkasText;
+      document.getElementById("labelAtaqueTotalSelecao").innerText = t.labelAtaqueTotalSelecao;
+      document.getElementById("botaoLimparAtaqueFiltro").innerText = t.botaoLimparAtaqueFiltro;
+      document.getElementById("menuTitle").innerText = t.menuTitle;
+      document.getElementById("labelLanguage").innerText = t.languageOption;
+      document.getElementById("labelTheme").innerText = t.themeOption;
+      document.getElementById("btnExit").innerText = t.exitOption;
+      // Recarrega a tabela para atualizar cabeçalhos se necessário
+      carregarGCs();
+    }
+
+    function updateTheme(theme) {
+      currentTheme = theme;
+      if (theme === "grandchase") {
+        document.body.classList.add("theme-grandchase");
+      } else {
+        document.body.classList.remove("theme-grandchase");
+      }
+      // Re-renderiza a tabela para incluir a coluna de avatar se necessário
+      carregarGCs();
+    }
+
+    // Eventos do Sidebar
+    document.getElementById("languageSelect").addEventListener("change", (e) => {
+      updateLanguage(e.target.value);
     });
-    // Menu Logout
-    menuLogout.addEventListener("click", () => {
+    document.getElementById("themeSelect").addEventListener("change", (e) => {
+      updateTheme(e.target.value);
+    });
+    document.getElementById("btnExit").addEventListener("click", () => {
       signOut(auth)
         .then(() => {
           usuarioAtual = null;
           mostrarTelaLogin();
-          sidebarMenu.style.left = "-250px";
         })
         .catch((error) => {
           console.error("Erro ao sair:", error);
         });
     });
-
-    // Tradução simples
-    const translations = {
-      pt: {
-        loginTitle: "Login / Cadastro",
-        emailLabel: "E-mail:",
-        passwordLabel: "Senha:",
-        loginButton: "Login",
-        signupButton: "Cadastrar",
-        recoverButton: "Recuperar Senha",
-        scrollScrollParchments: "Gerenciamento de Pergaminhos",
-        uniqueParchment: "Pergaminho Único:",
-        randomParchment: "Pergaminho Aleatório:",
-        saveParchment: "Salvar Pergaminho",
-        itemsControl: "Controle de Itens",
-        character: "Personagem:",
-        piercing: "Piercing:",
-        earring: "Brinco:",
-        ring: "Anel:",
-        berkas: "Berkas:",
-        empty: "Vazio:",
-        totalAttack: "Ataque Total:",
-        saveGC: "Salvar GC",
-        characterControl: "Controle de Personagens",
-        searchButton: "Pesquisar",
-        clearFilter: "Limpar Filtro",
-        selectAttack: "Selecione o valor de ataque total desejado:",
-        clearAttackFilter: "Limpar Filtro Ataque",
-        none: "Nenhum",
-        menu: "Menu",
-        language: "Linguagem",
-        theme: "Tema",
-        logout: "Sair",
-        grandchaseTheme: "GrandChase",
-        classicTheme: "Tema Clássico"
-      },
-      en: {
-        loginTitle: "Login / Sign Up",
-        emailLabel: "Email:",
-        passwordLabel: "Password:",
-        loginButton: "Login",
-        signupButton: "Sign Up",
-        recoverButton: "Recover Password",
-        scrollScrollParchments: "Parchment Management",
-        uniqueParchment: "Unique Parchment:",
-        randomParchment: "Random Parchment:",
-        saveParchment: "Save Parchment",
-        itemsControl: "Item Control",
-        character: "Character:",
-        piercing: "Piercing:",
-        earring: "Earring:",
-        ring: "Ring:",
-        berkas: "Berkas:",
-        empty: "Empty:",
-        totalAttack: "Total Attack:",
-        saveGC: "Save GC",
-        characterControl: "Character Control",
-        searchButton: "Search",
-        clearFilter: "Clear Filter",
-        selectAttack: "Select desired total attack value:",
-        clearAttackFilter: "Clear Attack Filter",
-        none: "None",
-        menu: "Menu",
-        language: "Language",
-        theme: "Theme",
-        logout: "Logout",
-        grandchaseTheme: "GrandChase",
-        classicTheme: "Classic Theme"
-      },
-      ko: {
-        loginTitle: "로그인 / 가입",
-        emailLabel: "이메일:",
-        passwordLabel: "비밀번호:",
-        loginButton: "로그인",
-        signupButton: "가입하기",
-        recoverButton: "비밀번호 찾기",
-        scrollScrollParchments: "두루마리 관리",
-        uniqueParchment: "유니크 두루마리:",
-        randomParchment: "랜덤 두루마리:",
-        saveParchment: "두루마리 저장",
-        itemsControl: "아이템 관리",
-        character: "캐릭터:",
-        piercing: "피어싱:",
-        earring: "귀걸이:",
-        ring: "반지:",
-        berkas: "버카스:",
-        empty: "빈칸:",
-        totalAttack: "총 공격력:",
-        saveGC: "GC 저장",
-        characterControl: "캐릭터 관리",
-        searchButton: "검색",
-        clearFilter: "필터 지우기",
-        selectAttack: "원하는 총 공격력 선택:",
-        clearAttackFilter: "공격력 필터 지우기",
-        none: "없음",
-        menu: "메뉴",
-        language: "언어",
-        theme: "테마",
-        logout: "로그아웃",
-        grandchaseTheme: "그랜드체이스",
-        classicTheme: "클래식 테마"
-      }
-    };
-
-    function updateLanguage(lang) {
-      document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        if(translations[lang] && translations[lang][key]){
-          el.textContent = translations[lang][key];
-        }
-      });
-      // Atualize os placeholders se necessário
-      document.getElementById("email").placeholder = lang === "en" ? "Enter your email" : lang === "ko" ? "이메일을 입력하세요" : "Digite seu e-mail";
-      document.getElementById("senha").placeholder = lang === "en" ? "Enter your password" : lang === "ko" ? "비밀번호를 입력하세요" : "Digite sua senha";
-      document.getElementById("searchInput").placeholder = lang === "en" ? "Search character..." : lang === "ko" ? "캐릭터 검색..." : "Pesquisar personagem...";
-    }
-
-    langSelect.addEventListener("change", (e) => {
-      updateLanguage(e.target.value);
+    // Evento para abrir/fechar o menu
+    document.getElementById("menuButton").addEventListener("click", () => {
+      document.getElementById("sidebar").classList.toggle("open");
     });
-    // Inicia com Português
-    updateLanguage("pt");
 
-    // Tema
-    function updateTheme(theme) {
-      // Exemplo simples: se grandchase, altera fundo e cores
-      if(theme === "grandchase"){
-        document.body.style.backgroundColor = "#2c2f33";
-        document.body.style.color = "#eee";
-        // Altere outros elementos conforme desejado, por exemplo:
-        document.querySelectorAll("h2").forEach(el => el.style.color = "#ffcc00");
+    const telaLogin = document.getElementById("telaLogin");
+    const telaPrincipal = document.getElementById("telaPrincipal");
+    const botaoLogin = document.getElementById("botaoLogin");
+    const botaoCadastro = document.getElementById("botaoCadastro");
+    const botaoRecuperar = document.getElementById("botaoRecuperar");
+
+    botaoLogin.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      signInWithEmailAndPassword(auth, email, senha)
+        .then((userCredential) => {
+          usuarioAtual = userCredential.user;
+          mostrarTelaPrincipal();
+        })
+        .catch((error) => {
+          alert("Erro no login: " + error.message);
+        });
+    });
+
+    botaoCadastro.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      createUserWithEmailAndPassword(auth, email, senha)
+        .then((userCredential) => {
+          usuarioAtual = userCredential.user;
+          mostrarTelaPrincipal();
+        })
+        .catch((error) => {
+          alert("Erro no cadastro: " + error.message);
+        });
+    });
+
+    botaoRecuperar.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      if (!email) {
+        alert("Por favor, informe seu e-mail para recuperar a senha.");
+        return;
+      }
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          alert("E-mail de recuperação de senha enviado.");
+        })
+        .catch((error) => {
+          alert("Erro ao enviar e-mail: " + error.message);
+        });
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        usuarioAtual = user;
+        mostrarTelaPrincipal();
       } else {
-        // Retorna ao tema clássico
-        document.body.style.backgroundColor = "#f8f9fa";
-        document.body.style.color = "#333";
-        document.querySelectorAll("h2").forEach(el => el.style.color = "#2c3e50");
+        mostrarTelaLogin();
       }
-    }
-
-    themeSelect.addEventListener("change", (e) => {
-      updateTheme(e.target.value);
     });
-    // Inicia com tema clássico
-    updateTheme("classic");
-
-    // Exemplo de mapeamento de imagens de personagens
-    const characterImages = {
-      "Elesis": "images/elesis.png",
-      "Lire": "images/lire.png",
-      "Arme": "images/arme.png",
-      "Lass": "images/lass.png",
-      "Ryan": "images/ryan.png",
-      "Ronan": "images/ronan.png",
-      "Amy": "images/amy.png",
-      "Jin": "images/jin.png",
-      "Sieghart": "images/sieghart.png",
-      "Mari": "images/mari.png",
-      "Dio": "images/dio.png",
-      "Zero": "images/zero.png",
-      "Rey": "images/rey.png",
-      "Lupus": "images/lupus.png",
-      "Lin": "images/lin.png",
-      "Azin": "images/azin.png",
-      "Holy": "images/holy.png",
-      "Edel Frost": "images/edel_frost.png",
-      "Veigas": "images/veigas.png",
-      "Uno": "images/uno.png",
-      "Decane": "images/decane.png",
-      "Ai": "images/ai.png",
-      "Kallia Eldepel": "images/kallia.png"
-    };
-
-    // Firebase e funções
-    function showAlert(message) {
-      alert(message);
-    }
 
     function mostrarTelaPrincipal() {
       telaLogin.classList.add("hidden");
@@ -836,11 +844,11 @@
       let vazioNum = (vazio === "Nenhum") ? "0" : vazio;
       
       if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas || !ataqueTotal) {
-        showAlert("Preencha todos os campos obrigatórios!");
+        alert("Preencha todos os campos obrigatórios!");
         return;
       }
       if (!usuarioAtual) {
-        showAlert("Você precisa estar logado!");
+        alert("Você precisa estar logado!");
         return;
       }
       personagemJaExiste(personagemSelecionado, (existe) => {
@@ -859,7 +867,7 @@
           ataqueTotal: ataqueTotal,
           vazio: vazioNum
         }).then(() => {
-          showAlert("GC salvo com sucesso!");
+          alert("GC salvo com sucesso!");
           salvarPergaminhos();
           carregarGCs();
           calcularAtaqueTotal();
@@ -874,18 +882,21 @@
       gcData = {};
       get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
         let tabela = document.getElementById("tabela_controle");
-        tabela.innerHTML = `
-          <tr>
-            <th data-i18n="character">Personagem</th>
-            <th data-i18n="image">Imagem</th>
-            <th data-i18n="earring">Brinco</th>
-            <th data-i18n="piercing">Piercing</th>
-            <th data-i18n="ring">Anel</th>
-            <th data-i18n="berkas">Berkas</th>
-            <th data-i18n="empty">Vazio</th>
-            <th data-i18n="totalAttack">Ataque Total</th>
-            <th data-i18n="action">Ação</th>
-          </tr>`;
+        // Construção dinâmica do cabeçalho com coluna extra de Avatar se tema for Grandchase
+        let headerHTML = "<tr>";
+        headerHTML += "<th>" + document.getElementById("labelPersonagem").innerText + "</th>";
+        if (currentTheme === "grandchase") {
+          headerHTML += "<th>Avatar</th>";
+        }
+        headerHTML += "<th>" + document.getElementById("labelBrinco").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelPiercing").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelAnel").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelBerkas").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelVazio").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelAtaqueTotal").innerText + "</th>";
+        headerHTML += "<th>Ação</th>";
+        headerHTML += "</tr>";
+        tabela.innerHTML = headerHTML;
         let totalMissingBerkas = 0;
         let totalMissingVazio = 0;
         if (snapshot.exists()) {
@@ -912,11 +923,8 @@
             
             let linha = tabela.insertRow();
             linha.style.cursor = "pointer";
-            // Célula com imagem e nome do personagem
             let cellPersonagem = linha.insertCell();
-            // Se houver imagem definida no mapeamento, cria <img> e concatena com o nome
-            let imgSrc = characterImages[personagem] || "images/default.png";
-            cellPersonagem.innerHTML = `<img src="${imgSrc}" class="char-img" alt="${personagem}">` + personagem;
+            cellPersonagem.textContent = personagem;
             cellPersonagem.style.cursor = "pointer";
             cellPersonagem.addEventListener("click", () => {
               document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
@@ -930,6 +938,13 @@
               document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
               document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
             });
+            // Se o tema for Grandchase, insere célula com imagem do personagem
+            if (currentTheme === "grandchase") {
+              let cellAvatar = linha.insertCell();
+              // Gera o caminho da imagem baseado no nome (removendo espaços e convertendo para minúsculo)
+              let imgSrc = "img/" + personagem.replace(/\s+/g, '').toLowerCase() + ".png";
+              cellAvatar.innerHTML = `<img src="${imgSrc}" alt="${personagem}" width="40" height="40" style="border-radius:50%;" onerror="this.src='https://via.placeholder.com/40'">`;
+            }
             let cellBrinco = linha.insertCell();
             cellBrinco.textContent = dados.brinco;
             let cellPiercing = linha.insertCell();
@@ -949,7 +964,7 @@
           console.log("Nenhum GC salvo.");
         }
         document.getElementById("missingBerkasPanel").textContent =
-          `Total de berkas faltantes: ${totalMissingBerkas} | Total de vazio faltantes: ${totalMissingVazio}`;
+          translations[currentLanguage].missingBerkasText + " " + totalMissingBerkas + " | Total de vazio faltantes: " + totalMissingVazio;
       }).catch((error) => {
         console.error("Erro ao carregar GCs:", error);
       });
@@ -1046,7 +1061,7 @@
       const tabela = document.getElementById("tabela_controle");
       const tr = tabela.getElementsByTagName("tr");
       for (let i = 1; i < tr.length; i++){
-        const cellAtaque = tr[i].cells[6].textContent.trim();
+        const cellAtaque = tr[i].cells[currentTheme === "grandchase" ? 7 : 6].textContent.trim();
         if (cellAtaque === ataqueDesejado) {
           tr[i].style.display = "";
         } else {
@@ -1071,6 +1086,10 @@
     window.salvarPergaminhos = salvarPergaminhos;
     window.calcularAtaqueTotal = calcularAtaqueTotal;
     window.limparFiltroAtaqueTotal = limparFiltroAtaqueTotal;
+
+    // Inicializa idioma e tema padrão
+    updateLanguage(currentLanguage);
+    updateTheme(currentTheme);
   </script>
 </body>
 </html>
