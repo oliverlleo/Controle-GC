@@ -238,21 +238,22 @@
         white-space: nowrap;
       }
     }
-    /* Sidebar (Menu Lateral) */
+    /* Sidebar (Menu Lateral) usando transform para ficar totalmente fora da tela */
     #sidebar {
       position: fixed;
       top: 0;
-      right: -250px; /* Escondido inicialmente */
+      right: 0;
+      transform: translateX(100%);
       width: 250px;
       height: 100%;
       background-color: #2c3e50;
       color: #fff;
       padding: 20px;
-      transition: right 0.3s ease;
+      transition: transform 0.3s ease;
       z-index: 1000;
     }
     #sidebar.open {
-      right: 0;
+      transform: translateX(0);
     }
     #sidebar h3 {
       margin-top: 0;
@@ -284,7 +285,7 @@
   </style>
 </head>
 <body>
-  <!-- Sidebar Menu Lateral (sem botão duplicado) -->
+  <!-- Sidebar Menu Lateral -->
   <div id="sidebar">
     <h3 id="menuTitle">Menu</h3>
     <label id="labelLanguage" for="languageSelect">Linguagem</label>
@@ -317,8 +318,7 @@
 
   <!-- Tela Principal -->
   <div class="container hidden" id="telaPrincipal">
-    <!-- O botão de menu será criado via JS e inicialmente posicionado aqui -->
-    <!-- Seção de Gerenciamento de Pergaminhos -->
+    <!-- O botão de menu será criado via JS e inserido aqui -->
     <div class="section pergaminhos-section">
       <h2 id="titlePergaminhos">Gerenciamento de Pergaminhos</h2>
       <div class="pergaminhos-row">
@@ -674,7 +674,6 @@
       document.getElementById("labelLanguage").innerText = t.languageOption;
       document.getElementById("labelTheme").innerText = t.themeOption;
       document.getElementById("btnExit").innerText = t.exitOption;
-      // Regera a tabela para atualizar cabeçalhos conforme idioma
       carregarGCs();
     }
 
@@ -685,11 +684,9 @@
       } else {
         document.body.classList.remove("theme-grandchase");
       }
-      // Re-renderiza a tabela para reposicionar a coluna de avatar se necessário
       carregarGCs();
     }
 
-    // Eventos do Sidebar
     document.getElementById("languageSelect").addEventListener("change", (e) => {
       updateLanguage(e.target.value);
     });
@@ -707,17 +704,11 @@
         });
     });
 
-    // Função para alternar o Sidebar
     function toggleSidebar() {
       const sidebar = document.getElementById("sidebar");
-      if (sidebar.classList.contains("open")) {
-        sidebar.classList.remove("open");
-      } else {
-        sidebar.classList.add("open");
-      }
+      sidebar.classList.toggle("open");
     }
 
-    // Cria o botão de toggle (único) e o insere na telaPrincipal
     const menuToggle = document.createElement("button");
     menuToggle.id = "menuToggle";
     menuToggle.innerText = "☰";
@@ -793,7 +784,6 @@
       telaPrincipal.classList.add("hidden");
     }
 
-    // Funções de Pergaminhos
     function salvarPergaminhos() {
       const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
       const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
@@ -888,7 +878,6 @@
         const tabela = document.getElementById("tabela_controle");
         let headerHTML = "<tr>";
         if (currentTheme === "grandchase") {
-          // Coluna de Avatar à esquerda e depois o Nome
           headerHTML += "<th>Avatar</th>";
           headerHTML += "<th>" + document.getElementById("labelPersonagem").innerText + "</th>";
         } else {
@@ -1098,7 +1087,6 @@
     window.calcularAtaqueTotal = calcularAtaqueTotal;
     window.limparFiltroAtaqueTotal = limparFiltroAtaqueTotal;
 
-    // Inicializa idioma e tema padrão
     updateLanguage(currentLanguage);
     updateTheme(currentTheme);
   </script>
