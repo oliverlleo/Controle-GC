@@ -1,1119 +1,2372 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Login e Controle GC</title>
+  <title>Sistema de Gerenciamento de Contas Pessoais</title>
+  
+  <!-- Meta tags para evitar cache -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  
+  <!-- Google Fonts: Roboto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS do Daterangepicker -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css?v=1.0.0" />
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js?v=1.0.0"></script>
+  
+  <!-- Ícones (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1.0.0">
+  
   <style>
-    /* Estilos Gerais */
+    :root {
+      --bg-color: #e6ebf1;
+      --card-color: #f0f3f5;
+      --primary: #4caf50;
+      --text-color: #333;
+      --shadow-light: rgba(255, 255, 255, 0.7);
+      --shadow-dark: rgba(0, 0, 0, 0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Roboto', sans-serif;
-      background-color: #f8f9fa;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-      transition: background-color 0.3s;
+      background: linear-gradient(145deg, #e6ebf1, #f0f3f5);
+      color: var(--text-color);
+      display: flex;
+      min-height: 100vh;
+      overflow: hidden;
     }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
+    /* Navegação Lateral */
+    aside {
+      width: 250px;
+      background: var(--card-color);
       padding: 20px;
-      background: #fff;
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    aside h2 { text-align: center; color: var(--primary); margin-bottom: 10px; }
+    aside a {
+      text-decoration: none;
+      color: var(--text-color);
+      padding: 10px;
       border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.2s ease;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+    }
+    aside a:hover { background: var(--primary); color: #fff; }
+    /* Conteúdo Principal */
+    main { flex: 1; padding: 20px; overflow-y: auto; }
+    header { margin-bottom: 20px; }
+    header h1 { color: var(--primary); text-align: center; margin-bottom: 20px; }
+    .container {
+      background: var(--card-color);
+      padding: 20px;
       margin-bottom: 20px;
-      position: relative;
-      transition: background 0.5s ease;
-    }
-    h2 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #2c3e50;
-      margin-bottom: 15px;
-      border-bottom: 2px solid #e0e0e0;
-      padding-bottom: 10px;
-      transition: color 0.5s ease, border-color 0.5s ease;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
-      color: #555;
-    }
-    /* Inputs e selects */
-    input, select {
-      padding: 10px 14px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background: #f9f9f9;
-      margin-bottom: 15px;
-      box-sizing: border-box;
-      width: 100%;
-    }
-    input:focus, select:focus {
-      border-color: #2c3e50;
-      outline: none;
+      border-radius: 8px;
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
     }
     button {
-      padding: 10px 14px;
-      font-size: 16px;
-      background: #2c3e50;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background: #1a2a3a;
-    }
-    .hidden {
-      display: none;
-    }
-    /* Botões Específicos */
-    #botaoRecuperar {
-      background: #e74c3c;
-    }
-    #botaoRecuperar:hover {
-      background: #c0392b;
-    }
-    /* Botão de Toggle do Menu (único) */
-    #menuToggle {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      padding: 0;
-      font-size: 20px;
-      line-height: 30px;
-      text-align: center;
-      background: #2c3e50;
-      transition: transform 0.2s ease;
-      cursor: pointer;
-    }
-    #menuToggle:hover {
-      transform: scale(1.2);
-    }
-    .delete-button {
-      background: #e74c3c;
-      border: none;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      color: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s;
-    }
-    .delete-button:hover {
-      background: #c0392b;
-    }
-    /* Seções e Layout */
-    .login-container { }
-    .pergaminhos-section {
-      margin-bottom: 30px;
-    }
-    .pergaminhos-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .pergaminhos-save {
-      margin-top: 10px;
-    }
-    #controleItensGrid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-gap: 10px;
-      margin-bottom: 20px;
-    }
-    .full-width {
-      grid-column: 1 / -1;
-    }
-    .search-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .search-bar input {
-      width: 45ch;
-      max-width: 100%;
-      box-sizing: border-box;
-    }
-    .search-bar button {
-      padding: 10px 14px;
-    }
-    table {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    th {
-      background: #2c3e50;
-      color: #fff;
-      font-weight: 600;
-    }
-    tr:hover {
-      background: #f1f1f1;
-    }
-    #missingBerkasPanel {
-      margin-top: 20px;
       padding: 10px;
-      background: #eaf7ff;
-      border: 1px solid #bce0fd;
-      border-radius: 4px;
-      text-align: center;
-      font-size: 16px;
-      font-weight: 500;
-    }
-    #ataqueTotalPanel {
-      border: 1px solid #2c3e50;
-      border-radius: 4px;
-      padding: 10px;
-      text-align: center;
-      background: #fff;
-    }
-    #ataqueTotalPanel label {
-      margin-bottom: 5px;
-      font-weight: 500;
-      display: block;
-    }
-    #resultadoAtaqueTotal {
       margin-top: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      color: #2c3e50;
-    }
-    #botaoLimparAtaqueFiltro {
-      background: transparent;
-      border: 1px solid #2c3e50;
-      border-radius: 4px;
-      padding: 5px 10px;
-      font-size: 12px;
-      color: #2c3e50;
+      border: none;
+      border-radius: 6px;
+      background: var(--card-color);
+      box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+      font-size: 1rem;
+      color: var(--text-color);
       cursor: pointer;
-      transition: background 0.3s ease;
-      margin-top: 10px;
+      transition: all 0.2s ease;
     }
-    #botaoLimparAtaqueFiltro:hover {
-      background: #eaf7ff;
+    button:hover { background: var(--primary); color: #fff; box-shadow: 1px 1px 3px var(--shadow-dark), -1px -1px 3px var(--shadow-light); }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 6px;
+      background: var(--card-color);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+      font-size: 1rem;
+      color: var(--text-color);
+      outline: none;
     }
-    /* Responsividade */
-    @media (max-width: 600px) {
-      #controleItensGrid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .search-bar {
-        flex-direction: column;
-        gap: 10px;
-      }
-      .search-bar input, .search-bar button {
-        width: 100%;
-      }
-      table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-    }
-    /* Sidebar (Menu Lateral) – permanece totalmente fora da tela quando fechado */
-    #sidebar {
+    input:focus, select:focus { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
+    /* Modais */
+    .modal {
+      display: none;
       position: fixed;
-      top: 0;
-      right: 0;
-      transform: translateX(100%);
-      width: 250px;
-      height: 100%;
-      background-color: #2c3e50;
-      color: #fff;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      justify-content: center;
+      align-items: center;
       padding: 20px;
-      transition: transform 0.3s ease;
       z-index: 1000;
     }
-    #sidebar.open {
-      transform: translateX(0);
+    .modal-content {
+      background: var(--card-color);
+      padding: 25px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
     }
-    #sidebar h3 {
-      margin-top: 0;
-      margin-bottom: 15px;
+    .close { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: var(--text-color); }
+    /* Tabelas e Gráficos */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background: var(--primary); color: #fff; }
+    /* Responsividade */
+    @media (max-width: 800px) {
+      body { flex-direction: column; }
+      aside { width: 100%; flex-direction: row; overflow-x: auto; }
+      aside a { flex: 1; justify-content: center; }
+      main { padding: 10px; }
     }
-    #sidebar select, #sidebar button {
-      width: 100%;
-      margin-bottom: 10px;
+    /* Seletor do Dashboard */
+    #dashboardHeader { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    #dashboardMonthSelector { display: inline-flex; align-items: center; gap: 10px; }
+    #dashboardSection h2 { display: inline-block; margin-right: 20px; }
+    .nav-mes-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--primary); }
+    /* Painel de Despesas */
+    #painelDespesasMes {
+      width: 50%;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background: var(--card-color);
     }
-    /* Tema Grandchase – Novo Design com animações e efeitos modernos */
-    .theme-grandchase {
-      /* Fundo com imagem (substitua a URL pela imagem desejada) */
-      background: url('https://via.placeholder.com/1920x1080?text=Grandchase+Background') no-repeat center center fixed;
-      background-size: cover;
-    }
-    .theme-grandchase .container {
-      background: rgba(0, 0, 0, 0.7);
-      border: 2px solid #8A2BE2;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(138, 43, 226, 0.8);
-      animation: containerGlow 2s infinite alternate;
-    }
-    @keyframes containerGlow {
-      from { box-shadow: 0 0 10px rgba(138, 43, 226, 0.5); }
-      to { box-shadow: 0 0 20px rgba(138, 43, 226, 1); }
-    }
-    .theme-grandchase h2 {
-      color: #FFD700;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-      border-bottom-color: #FFD700;
-    }
-    .theme-grandchase button {
-      background: linear-gradient(45deg, #8A2BE2, #BA55D3);
-      color: #fff;
-      border: 1px solid #FFD700;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .theme-grandchase button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
-    }
-    .theme-grandchase img {
-      transition: transform 0.3s ease;
-    }
-    .theme-grandchase img:hover {
-      transform: scale(1.1);
-    }
-    /* Efeito de hover para as linhas da tabela no tema Grandchase */
-    .theme-grandchase table tr:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+    .grafico-painel-container { display: flex; gap: 20px; margin-top: 20px; }
+    #graficoDespesas { width: 50% !important; max-height: 300px; box-sizing: border-box; display: block; }
+    /* Alertas */
+    .toast-alerta { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 15px; border-radius: 8px; }
   </style>
 </head>
 <body>
-  <!-- Sidebar Menu Lateral -->
-  <div id="sidebar">
-    <h3 id="menuTitle">Menu</h3>
-    <label id="labelLanguage" for="languageSelect">Linguagem</label>
-    <select id="languageSelect">
-      <option value="pt">Português</option>
-      <option value="en">English</option>
-      <option value="kr">한국어</option>
-    </select>
-    <label id="labelTheme" for="themeSelect">Tema</label>
-    <select id="themeSelect">
-      <option value="classic">Tema Clássico</option>
-      <option value="grandchase">Grandchase</option>
-    </select>
-    <button id="btnExit">Sair</button>
-  </div>
-
-  <!-- Tela de Login/Cadastro -->
-  <div class="container" id="telaLogin">
-    <h2 id="loginTitle">Login / Cadastro</h2>
-    <div class="login-container">
-      <label id="labelEmail" for="email">E-mail:</label>
-      <input type="email" id="email" placeholder="Digite seu e-mail">
-      <label id="labelSenha" for="senha">Senha:</label>
-      <input type="password" id="senha" placeholder="Digite sua senha">
-      <button id="botaoLogin">Login</button>
-      <button id="botaoCadastro">Cadastrar</button>
-      <button id="botaoRecuperar">Recuperar Senha</button>
-    </div>
-  </div>
-
-  <!-- Tela Principal -->
-  <div class="container hidden" id="telaPrincipal">
-    <!-- O botão de menu será inserido via JS -->
-    <div class="section pergaminhos-section">
-      <h2 id="titlePergaminhos">Gerenciamento de Pergaminhos</h2>
-      <div class="pergaminhos-row">
-        <div>
-          <label id="labelPergaminhoUnico" for="pergaminho_unico">Pergaminho Único:</label>
-          <input type="number" id="pergaminho_unico" value="0" oninput="salvarPergaminhos()">
-        </div>
-        <div>
-          <label id="labelPergaminhoAleatorio" for="pergaminho_aleatorio">Pergaminho Aleatório:</label>
-          <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
+  <!-- Menu Lateral -->
+  <aside>
+    <h2><i class="fa-solid fa-wallet"></i> Contas</h2>
+    <a href="#" onclick="showSection('dashboardSection')"><i class="fa-solid fa-house"></i> Dashboard</a>
+    <a href="#" onclick="showSection('despesasSection')"><i class="fa-solid fa-money-bill-wave"></i> Despesas</a>
+    <a href="#" onclick="showSection('relatorioSection')"><i class="fa-solid fa-chart-line"></i> Relatórios</a>
+    <a href="#" onclick="showSection('categoriasSection')"><i class="fa-solid fa-tags"></i> Categorias</a>
+    <a href="#" onclick="showSection('cartoesSection')"><i class="fa-solid fa-credit-card"></i> Cartões</a>
+    <a href="#" onclick="showSection('rendaSection')"><i class="fa-solid fa-user"></i> Renda</a>
+    <a href="#" onclick="exportData()"><i class="fa-solid fa-file-export"></i> Exportar Dados</a>
+    <!-- Novos itens -->
+    <a href="#" onclick="showSection('previsaoSection')"><i class="fa-solid fa-chart-line"></i> Previsões</a>
+    <a href="#" onclick="showSection('alertasSection')"><i class="fa-solid fa-bell"></i> Alertas</a>
+  </aside>
+  
+  <!-- Conteúdo Principal -->
+  <main>
+    <header>
+      <h1>Sistema de Gerenciamento de Contas</h1>
+    </header>
+    
+    <!-- Dashboard Resumido -->
+    <section id="dashboardSection" class="container">
+      <div id="dashboardHeader">
+        <h2>Dashboard Resumido</h2>
+        <div id="dashboardMonthSelector">
+          <label for="dashboardMonth">Mês:</label>
+          <select id="dashboardMonth">
+            <option value="0">Janeiro</option>
+            <option value="1">Fevereiro</option>
+            <option value="2">Março</option>
+            <option value="3">Abril</option>
+            <option value="4">Maio</option>
+            <option value="5">Junho</option>
+            <option value="6">Julho</option>
+            <option value="7">Agosto</option>
+            <option value="8">Setembro</option>
+            <option value="9">Outubro</option>
+            <option value="10">Novembro</option>
+            <option value="11">Dezembro</option>
+          </select>
+          <label for="dashboardYear">Ano:</label>
+          <select id="dashboardYear">
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+          </select>
+          <button onclick="atualizarDashboard()">Atualizar Dashboard</button>
         </div>
       </div>
-      <div class="pergaminhos-save">
-        <button id="botaoSalvarPergaminho" onclick="salvarPergaminhos()">Salvar Pergaminho</button>
-      </div>
-    </div>
-
-    <!-- Seção de Controle de Itens -->
-    <div class="section" id="controleItens">
-      <h2 id="titleControleItens">Controle de Itens</h2>
-      <div id="controleItensGrid">
-        <div class="full-width">
-          <label id="labelPersonagem" for="personagem">Personagem:</label>
-          <select id="personagem">
-            <option>Elesis</option>
-            <option>Lire</option>
-            <option>Arme</option>
-            <option>Lass</option>
-            <option>Ryan</option>
-            <option>Ronan</option>
-            <option>Amy</option>
-            <option>Jin</option>
-            <option>Sieghart</option>
-            <option>Mari</option>
-            <option>Dio</option>
-            <option>Zero</option>
-            <option>Rey</option>
-            <option>Lupus</option>
-            <option>Lin</option>
-            <option>Azin</option>
-            <option>Holy</option>
-            <option>Edel Frost</option>
-            <option>Veigas</option>
-            <option>Uno</option>
-            <option>Decane</option>
-            <option>Ai</option>
-            <option>Kallia Eldepel</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelPiercing" for="piercing">Piercing:</label>
-          <select id="piercing">
-            <option>Nenhum</option>
-            <option>Harkyon</option>
-            <option>Normal</option>
-            <option>Épico</option>
-            <option>Lendário</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelBrinco" for="brinco">Brinco:</label>
-          <select id="brinco">
-            <option>Nenhum</option>
-            <option>Harkyon</option>
-            <option>Normal</option>
-            <option>Épico</option>
-            <option>Lendário</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelAnel" for="anel">Anel:</label>
-          <select id="anel">
-            <option>Nenhum</option>
-            <option>Harkyon</option>
-            <option>Nível 1.1</option>
-            <option>Nível 1.2</option>
-            <option>Nível 1.3</option>
-            <option>Nível 2.1</option>
-            <option>Nível 2.2</option>
-            <option>Nível 2.3</option>
-            <option>Nível 3.1</option>
-            <option>Nível 3.2</option>
-            <option>Nível 3.3</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelBerkas" for="berkas">Berkas:</label>
-          <select id="berkas">
-            <option>Nenhum</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
-            <option>11</option>
-            <option>Full</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelVazio" for="vazio">Vazio:</label>
-          <select id="vazio">
-            <option>Nenhum</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelAtaqueTotal" for="ataqueTotal">Ataque Total:</label>
-          <select id="ataqueTotal">
-            <option>Nenhum</option>
-            <option>100k</option>
-            <option>200k</option>
-            <option>300k</option>
-            <option>400k</option>
-            <option>500k</option>
-            <option>600k</option>
-            <option>700k</option>
-            <option>800k</option>
-            <option>900k</option>
-            <option>1000k</option>
-            <option>1100k</option>
-            <option>1200k</option>
-            <option>1300k</option>
-            <option>1400k</option>
-            <option>1500k</option>
-            <option>1600k</option>
-            <option>1700k</option>
-            <option>1800k</option>
-            <option>1900k</option>
-            <option>2000k</option>
-          </select>
+      
+      <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+        <div id="dashboardResumo" style="flex: 1; display: flex; justify-content: space-around; align-items: center;">
+          <div class="dashboard-item" style="text-align: center;">
+            <h3>Saldo Atual</h3>
+            <p id="saldoAtual">R$ 6416.60</p>
+          </div>
+          <div class="dashboard-item" style="text-align: center;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+              <button class="nav-mes-btn" onclick="prevDashboardMonth()"><i class="fa-solid fa-arrow-left"></i></button>
+              <h3 id="despesasMesTitle">Despesas de Março</h3>
+              <button class="nav-mes-btn" onclick="nextDashboardMonth()"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+            <p id="despesasMes">R$ 4440.00</p>
+          </div>
+          <div class="dashboard-item" style="text-align: center;">
+            <h3>Próximos Vencimentos</h3>
+            <p id="proximosVencimentos">27</p>
+          </div>
         </div>
       </div>
-      <button id="botaoSalvarGC">Salvar GC</button>
-    </div>
-
-    <!-- Seção de Controle de Personagens -->
-    <div class="section">
-      <h2 id="titleControlePersonagens">Controle de Personagens</h2>
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Pesquisar personagem..." style="width:45ch; max-width:100%;">
-        <button id="botaoPesquisar" onclick="filtrarTabela()">Pesquisar</button>
-        <button id="botaoLimparFiltro" onclick="limparFiltro()">Limpar Filtro</button>
+      
+      <!-- O dashboard NÃO exibe o calendário; este permanece apenas no modal -->
+      <div class="grafico-painel-container">
+        <canvas id="graficoDespesas" width="809" height="375" style="box-sizing: border-box; display: block; height: 300px; width: 647px;"></canvas>
+        <div id="painelDespesasMes">
+          <h4>Despesas do Mês</h4>
+          <div id="listaDespesasMes"></div>
+        </div>
       </div>
-      <table id="tabela_controle">
-        <!-- A tabela será gerada dinamicamente -->
-      </table>
-      <div id="missingBerkasPanel">Total de berkas faltantes:</div>
-      <div id="ataqueTotalPanel">
-        <label id="labelAtaqueTotalSelecao">Selecione o valor de ataque total desejado:</label>
-        <select id="selecionarAtaqueTotal">
-          <option value="Todos">Todos</option>
-          <option>100k</option>
-          <option>200k</option>
-          <option>300k</option>
-          <option>400k</option>
-          <option>500k</option>
-          <option>600k</option>
-          <option>700k</option>
-          <option>800k</option>
-          <option>900k</option>
-          <option>1000k</option>
-          <option>1100k</option>
-          <option>1200k</option>
-          <option>1300k</option>
-          <option>1400k</option>
-          <option>1500k</option>
-          <option>1600k</option>
-          <option>1700k</option>
-          <option>1800k</option>
-          <option>1900k</option>
-          <option>2000k</option>
+      
+      <button onclick="abrirModal('cadastroDespesaModal')">Cadastrar Nova Despesa</button>
+    </section>
+    
+    <!-- Seção de Despesas -->
+    <section id="despesasSection" class="container" style="display: none;">
+      <h2>Despesas</h2>
+      <button onclick="abrirModal('cadastroDespesaModal')">Cadastrar Despesa</button>
+      <button onclick="abrirModal('pagarDespesaModal')">Pagar Despesa</button>
+      <button onclick="abrirModal('calendarModal'); renderCalendar()">Calendário</button>
+    </section>
+    
+    <!-- Seção de Relatórios -->
+    <section id="relatorioSection" class="container" style="display: none;">
+      <h2>Relatórios</h2>
+      <div id="filtrosRelatorio" style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <label for="dataRange">Período:</label>
+        <input type="text" id="dataRange" placeholder="00/00/0000 - 00/00/0000">
+      </div>
+      <div id="relatorioMensalContainer"></div>
+    </section>
+    
+    <!-- Seção de Categorias -->
+    <section id="categoriasSection" class="container" style="display: none;">
+      <h2>Categorias</h2>
+      <button onclick="abrirModal('categoriasModal')">Gerenciar Categorias</button>
+      <div id="categoriasListaPrincipal"></div>
+    </section>
+    
+    <!-- Seção de Cartões -->
+    <section id="cartoesSection" class="container" style="display: none;">
+      <h2>Cartões</h2>
+      <button onclick="abrirModal('cartaoModal')">Gerenciar Cartões</button>
+      <div id="cartoesListaPrincipal"></div>
+    </section>
+    
+    <!-- Seção de Renda -->
+    <section id="rendaSection" class="container" style="display: none;">
+      <h2>Cadastro de Renda</h2>
+      <button onclick="abrirModal('cadastroModal')">Cadastrar Nova Renda</button>
+      <button onclick="loadRendas()">Ver Rendas Cadastradas</button>
+      <div id="usuariosListaPrincipal"></div>
+    </section>
+    
+    <!-- NOVAS SEÇÕES -->
+    <!-- Seção de Previsões -->
+    <section id="previsaoSection" class="container" style="display:none;">
+      <h2>Previsão de Gastos</h2>
+      <div class="grafico-painel-container">
+        <canvas id="novo_graficoPrevisao"></canvas>
+        <div id="novo_tabelaPrevisao">
+          <h4>Próximos 3 Meses</h4>
+        </div>
+      </div>
+      <button onclick="novo_calcularPrevisoes()">Gerar Previsões</button>
+    </section>
+    
+    <!-- Seção de Alertas -->
+    <section id="alertasSection" class="container" style="display:none;">
+      <h2>Alertas</h2>
+      <button onclick="abrirModal('novo_limitesModal')"><i class="fa-solid fa-sliders"></i> Configurar Limites</button>
+      <div id="novo_listaAlertas" style="margin-top: 20px;"></div>
+    </section>
+  </main>
+  
+  <!-- ===================== MODAIS ===================== -->
+  <!-- Modal: Cadastro de Despesa -->
+  <div id="cadastroDespesaModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal('cadastroDespesaModal')">&times;</span>
+      <h2>Cadastrar Despesa</h2>
+      <label>Descrição:</label>
+      <input type="text" id="despesaDescricao" placeholder="Descrição da despesa" required>
+      <label>Valor (R$):</label>
+      <input type="number" id="despesaValor" placeholder="Valor" step="0.01" required>
+      <label>Data da Compra:</label>
+      <input type="date" id="dataCompra" required>
+      <label>Categoria:</label>
+      <select id="categoriaDespesa">
+        <option value="">Selecione a Categoria</option>
+        <option value="-OLp0FXlAC6bjHph1w4E">Fixo</option>
+        <option value="-OLs5YvsxD2FPYqe6ATi">Casa</option>
+        <option value="-OLs5_qmZZmFqKmaSE2S">Carro</option>
+        <option value="-OLs5eHQkVx5m9JbmuVK">Alimentação</option>
+        <option value="-OLs5m5bXk2uRhNfCawq">Pet</option>
+        <option value="-OM7odu2iJfsBwYv9wyV">Lazer</option>
+      </select>
+      <label>Forma de Pagamento:</label>
+      <select id="formaPagamento" onchange="toggleParcelamento()">
+        <option value="avista">À Vista</option>
+        <option value="cartao">Cartão</option>
+      </select>
+      <div id="parcelamentoDiv" class="hidden">
+        <label>Cartão:</label>
+        <select id="cartaoDespesa" required>
+          <option value="">Selecione o Cartão</option>
         </select>
-        <div id="resultadoAtaqueTotal"></div>
-        <button id="botaoLimparAtaqueFiltro" onclick="limparFiltroAtaqueTotal()">Limpar Filtro Ataque</button>
+        <label>Número de Parcelas:</label>
+        <input type="number" id="numParcelasDespesa" min="1" max="12" required>
+      </div>
+      <button onclick="salvarDespesa()">Salvar Despesa</button>
+    </div>
+  </div>
+  
+  <!-- Modal: Pagamento de Despesa -->
+  <div id="pagarDespesaModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal('pagarDespesaModal')">&times;</span>
+      <h2>Pagar Despesa</h2>
+      <div id="pagarDespesaFilters" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center;">
+        <input type="text" id="despesaSearch" placeholder="Descrição" maxlength="25">
+        <input type="text" id="mesFiltro" placeholder="Mês (ex: JAN)" list="meses">
+        <datalist id="meses">
+          <option value="JAN"></option>
+          <option value="FEV"></option>
+          <option value="MAR"></option>
+          <option value="ABR"></option>
+          <option value="MAI"></option>
+          <option value="JUN"></option>
+          <option value="JUL"></option>
+          <option value="AGO"></option>
+          <option value="SET"></option>
+          <option value="OUT"></option>
+          <option value="NOV"></option>
+          <option value="DEZ"></option>
+        </datalist>
+        <input type="text" id="anoFiltro" placeholder="Ano (ex: 2025)" list="anos">
+        <datalist id="anos">
+          <option value="2020"></option>
+          <option value="2021"></option>
+          <option value="2022"></option>
+          <option value="2023"></option>
+          <option value="2024"></option>
+          <option value="2025"></option>
+          <option value="2026"></option>
+          <option value="2027"></option>
+        </datalist>
+        <select id="categoriaFiltro">
+          <option value="">Todas as Categorias</option>
+          <option value="-OLp0FXlAC6bjHph1w4E">Fixo</option>
+          <option value="-OLs5YvsxD2FPYqe6ATi">Casa</option>
+          <option value="-OLs5_qmZZmFqKmaSE2S">Carro</option>
+          <option value="-OLs5eHQkVx5m9JbmuVK">Alimentação</option>
+          <option value="-OLs5m5bXk2uRhNfCawq">Pet</option>
+          <option value="-OM7odu2iJfsBwYv9wyV">Lazer</option>
+        </select>
+        <label style="display: flex; align-items: center; gap: 5px;">
+          <input type="checkbox" id="contaMesFiltro">
+          Conta do Mês
+        </label>
+        <button onclick="filtrarDespesas()">Filtrar</button>
+      </div>
+      <select id="despesaSelect" size="5" style="margin-top: 10px;">
+        <option value="-OLq5V9CphPw9F7FTtje|0">brinc - Parcela 1 de 2 - Venc: 2025-04-20 - R$ 1111.00</option>
+        <option value="-OLq5V9CphPw9F7FTtje|1">brinc - Parcela 2 de 2 - Venc: 2025-05-20 - R$ 1111.00</option>
+        <option value="-OLqhbGqG0eaCM8dC_k1">cartão  R$ 4440.00 - 2025-03-21</option>
+      </select>
+      <button onclick="pagarDespesaSelecionada()">Pagar Parcela Selecionada</button>
+    </div>
+  </div>
+  
+  <!-- Modal: Calendário de Despesas (aparece apenas no modal) -->
+  <div id="calendarModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal('calendarModal')">&times;</span>
+      <h2 id="calendarTitulo">Calendário de Despesas</h2>
+      <div id="calendarHeader" style="display: flex; justify-content: space-between; align-items: center;">
+        <button onclick="prevMonth()">&#9664;</button>
+        <span id="calendarMonthYear" onclick="toggleMonthYearSelect()" style="cursor: pointer;"></span>
+        <button onclick="nextMonth()">&#9654;</button>
+      </div>
+      <div id="monthYearSelect" style="display: none; margin-bottom: 10px;">
+        <select id="selectMonth">
+          <option value="0">Janeiro</option>
+          <option value="1">Fevereiro</option>
+          <option value="2">Março</option>
+          <option value="3">Abril</option>
+          <option value="4">Maio</option>
+          <option value="5">Junho</option>
+          <option value="6">Julho</option>
+          <option value="7">Agosto</option>
+          <option value="8">Setembro</option>
+          <option value="9">Outubro</option>
+          <option value="10">Novembro</option>
+          <option value="11">Dezembro</option>
+        </select>
+        <select id="selectYear">
+          <!-- Preenchido dinamicamente -->
+        </select>
+        <button onclick="toggleMonthYearSelect()">Ok</button>
+      </div>
+      <div id="calendarGrid"></div>
+      <div id="saldoDisponivelContainer" style="text-align: right; margin-top: 10px; font-weight: bold; color: var(--primary);">
+        Saldo Atual: R$ 0,00
       </div>
     </div>
   </div>
-
-  <!-- Script com Firebase, Tradução, Tema, Menu e Funções -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-    import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-
-    const config = {
-      apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
-      authDomain: "gc-controle.firebaseapp.com",
-      databaseURL: "https://gc-controle-default-rtdb.firebaseio.com",
-      projectId: "gc-controle",
-      storageBucket: "gc-controle.firebasestorage.app",
-      messagingSenderId: "3109203796",
-      appId: "1:3109203796:web:f8619117f915f67ceba2c1",
-      measurementId: "G-3NNXXD5V2T"
+  
+  <!-- Modal: Cadastro de Renda -->
+  <div id="cadastroModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal('cadastroModal')">&times;</span>
+      <h2>Cadastrar Nova Renda</h2>
+      <div id="mensagemSucessoRenda"></div>
+      <form id="cadastroForm">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" placeholder="Nome" required>
+        <label for="parentesco">Parentesco:</label>
+        <select id="parentesco" required>
+          <option value="eu">Eu</option>
+          <option value="pai">Pai</option>
+          <option value="irma">Irmã</option>
+          <option value="esposa">Esposa</option>
+          <option value="filho">Filho</option>
+          <option value="filha">Filha</option>
+          <option value="outros">Outros</option>
+        </select>
+        <label for="saldoInicial">Saldo Inicial (R$):</label>
+        <input type="number" id="saldoInicial" placeholder="Digite o saldo inicial" step="0.01" required>
+        <div class="checkbox-group" style="display: flex; gap: 20px; margin: 15px 0; justify-content: center;">
+          <label><input type="checkbox" id="cltCheckbox" onclick="toggleClt()"> CLT</label>
+          <label><input type="checkbox" id="pjCheckbox"> PJ</label>
+        </div>
+        <div id="cltFields" style="display: none;">
+          <label for="salarioBruto">Salário Bruto (R$):</label>
+          <input type="number" id="salarioBruto" placeholder="Digite o salário bruto" step="0.01" oninput="atualizarSalarioLiquido()">
+          <label for="salarioLiquido">Salário Líquido (R$):</label>
+          <input type="number" id="salarioLiquido" placeholder="Salário líquido calculado" step="0.01">
+          <label for="numPagamentos">Número de Pagamentos no Mês:</label>
+          <input type="number" id="numPagamentos" placeholder="Digite o número de pagamentos" min="1" max="5" oninput="gerarCamposPagamentos()">
+          <div id="pagamentosContainer"></div>
+          <p id="avisoErro" style="color: red; display: none;">Os valores não somam o salário líquido!</p>
+        </div>
+        <button type="submit">Salvar</button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Modal: Fonte de Renda / Usuários -->
+  <div id="fonteModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal('fonteModal')">&times;</span>
+      <h2>Fonte de Renda</h2>
+      <div id="usuariosLista"></div>
+    </div>
+  </div>
+  
+  <!-- Modal: Gerenciar Categorias -->
+  <div id="categoriasModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal('categoriasModal')">&times;</span>
+      <h2>Gerenciar Categorias</h2>
+      <label>Nome da Categoria:</label>
+      <input type="text" id="categoriaNome" placeholder="Nome da categoria">
+      <button onclick="salvarCategoria()">Salvar Categoria</button>
+      <div id="categoriasLista"></div>
+    </div>
+  </div>
+  
+  <!-- Modal: Gerenciar Cartões -->
+  <div id="cartaoModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal('cartaoModal')">&times;</span>
+      <h2>Gerenciar Cartões</h2>
+      <label>Nome do Cartão:</label>
+      <input type="text" id="nomeCartao" placeholder="Nome do Cartão">
+      <label>Dia da Fatura:</label>
+      <input type="number" id="diaFatura" placeholder="Ex.: 20" min="1" max="31">
+      <label>Dia do Fechamento:</label>
+      <input type="number" id="diaFechamento" placeholder="Ex.: 11" min="1" max="31">
+      <label>Limite do Cartão (R$):</label>
+      <input type="number" id="limiteCartao" placeholder="Limite" step="0.01">
+      <button onclick="salvarCartao()">Salvar Cartão</button>
+      <div id="cartoesLista"></div>
+    </div>
+  </div>
+  
+  <!-- Modal NOVO: Configurar Limites (Limites por Categoria) -->
+  <div id="novo_limitesModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal('novo_limitesModal')">&times;</span>
+      <h2>Configurar Limites por Categoria</h2>
+      <div id="novo_limitesContainer"></div>
+      <button onclick="novo_salvarLimites()">Salvar Limites</button>
+    </div>
+  </div>
+  
+  <!-- ===================== SCRIPTS ===================== -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-database-compat.js"></script>
+  
+  <script>
+    'use strict';
+    
+    let rendaVisivel = false;
+    let currentCalendarMonth = new Date().getMonth();
+    let currentCalendarYear = new Date().getFullYear();
+    let rangeStart = null;
+    let rangeEnd = null;
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyAG6LktPXGe6F-vSTHV2Y3n95vSwhpXch8",
+      authDomain: "controlegasto-df3f1.firebaseapp.com",
+      databaseURL: "https://controlegasto-df3f1-default-rtdb.firebaseio.com",
+      projectId: "controlegasto-df3f1",
+      storageBucket: "controlegasto-df3f1.firebasestorage.app",
+      messagingSenderId: "1034936676414",
+      appId: "1:1034936676414:web:61c67ce39c3ab71a07a16f",
+      measurementId: "G-PTN43GZHGR"
     };
-
-    const appFirebase = initializeApp(config);
-    const database = getDatabase(appFirebase);
-    const auth = getAuth(appFirebase);
-    let usuarioAtual = null;
-    let gcData = {};
-    let currentTheme = "classic"; // "classic" ou "grandchase"
-    let currentLanguage = "pt";
-
-    // Objeto de Tradução
-    const translations = {
-      "pt": {
-        "loginTitle": "Login / Cadastro",
-        "labelEmail": "E-mail:",
-        "labelSenha": "Senha:",
-        "botaoLogin": "Login",
-        "botaoCadastro": "Cadastrar",
-        "botaoRecuperar": "Recuperar Senha",
-        "titlePergaminhos": "Gerenciamento de Pergaminhos",
-        "labelPergaminhoUnico": "Pergaminho Único:",
-        "labelPergaminhoAleatorio": "Pergaminho Aleatório:",
-        "botaoSalvarPergaminho": "Salvar Pergaminho",
-        "titleControleItens": "Controle de Itens",
-        "labelPersonagem": "Personagem:",
-        "labelPiercing": "Piercing:",
-        "labelBrinco": "Brinco:",
-        "labelAnel": "Anel:",
-        "labelBerkas": "Berkas:",
-        "labelVazio": "Vazio:",
-        "labelAtaqueTotal": "Ataque Total:",
-        "botaoSalvarGC": "Salvar GC",
-        "titleControlePersonagens": "Controle de Personagens",
-        "searchPlaceholder": "Pesquisar personagem...",
-        "botaoPesquisar": "Pesquisar",
-        "botaoLimparFiltro": "Limpar Filtro",
-        "missingBerkasText": "Total de berkas faltantes:",
-        "labelAtaqueTotalSelecao": "Selecione o valor de ataque total desejado:",
-        "optionTodos": "Todos",
-        "botaoLimparAtaqueFiltro": "Limpar Filtro Ataque",
-        "menuTitle": "Menu",
-        "languageOption": "Linguagem",
-        "themeOption": "Tema",
-        "exitOption": "Sair",
-        "classicTheme": "Tema Clássico",
-        "grandchaseTheme": "Grandchase"
-      },
-      "en": {
-        "loginTitle": "Login / Register",
-        "labelEmail": "Email:",
-        "labelSenha": "Password:",
-        "botaoLogin": "Login",
-        "botaoCadastro": "Register",
-        "botaoRecuperar": "Recover Password",
-        "titlePergaminhos": "Scroll Management",
-        "labelPergaminhoUnico": "Unique Scroll:",
-        "labelPergaminhoAleatorio": "Random Scroll:",
-        "botaoSalvarPergaminho": "Save Scroll",
-        "titleControleItens": "Item Control",
-        "labelPersonagem": "Character:",
-        "labelPiercing": "Piercing:",
-        "labelBrinco": "Earring:",
-        "labelAnel": "Ring:",
-        "labelBerkas": "Berkas:",
-        "labelVazio": "Empty:",
-        "labelAtaqueTotal": "Total Attack:",
-        "botaoSalvarGC": "Save GC",
-        "titleControlePersonagens": "Character Control",
-        "searchPlaceholder": "Search character...",
-        "botaoPesquisar": "Search",
-        "botaoLimparFiltro": "Clear Filter",
-        "missingBerkasText": "Total missing berkas:",
-        "labelAtaqueTotalSelecao": "Select desired total attack value:",
-        "optionTodos": "All",
-        "botaoLimparAtaqueFiltro": "Clear Attack Filter",
-        "menuTitle": "Menu",
-        "languageOption": "Language",
-        "themeOption": "Theme",
-        "exitOption": "Exit",
-        "classicTheme": "Classic Theme",
-        "grandchaseTheme": "Grandchase"
-      },
-      "kr": {
-        "loginTitle": "로그인 / 등록",
-        "labelEmail": "이메일:",
-        "labelSenha": "비밀번호:",
-        "botaoLogin": "로그인",
-        "botaoCadastro": "등록",
-        "botaoRecuperar": "비밀번호 복구",
-        "titlePergaminhos": "두루마리 관리",
-        "labelPergaminhoUnico": "유일 두루마리:",
-        "labelPergaminhoAleatorio": "랜덤 두루마리:",
-        "botaoSalvarPergaminho": "두루마리 저장",
-        "titleControleItens": "아이템 제어",
-        "labelPersonagem": "캐릭터:",
-        "labelPiercing": "피어싱:",
-        "labelBrinco": "귀걸이:",
-        "labelAnel": "반지:",
-        "labelBerkas": "버카스:",
-        "labelVazio": "빈칸:",
-        "labelAtaqueTotal": "총 공격력:",
-        "botaoSalvarGC": "GC 저장",
-        "titleControlePersonagens": "캐릭터 제어",
-        "searchPlaceholder": "캐릭터 검색...",
-        "botaoPesquisar": "검색",
-        "botaoLimparFiltro": "필터 지우기",
-        "missingBerkasText": "부족한 버카스 총합:",
-        "labelAtaqueTotalSelecao": "원하는 총 공격력 선택:",
-        "optionTodos": "전체",
-        "botaoLimparAtaqueFiltro": "공격 필터 초기화",
-        "menuTitle": "메뉴",
-        "languageOption": "언어",
-        "themeOption": "테마",
-        "exitOption": "종료",
-        "classicTheme": "클래식 테마",
-        "grandchaseTheme": "그랜드체이스"
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    window.novo_categoriasMap = {};
+    db.ref("categorias").once("value").then(snapshot => {
+      snapshot.forEach(child => {
+        window.novo_categoriasMap[child.key] = child.val().nome;
+      });
+    });
+    
+    $(function() {
+      $('#dataRange').mask('00/00/0000 - 00/00/0000', {
+        placeholder: "00/00/0000 - 00/00/0000",
+        clearIfNotMatch: false,
+        selectOnFocus: true
+      });
+      $('#dataRange').daterangepicker({
+        autoUpdateInput: false,
+        locale: {
+          format: 'DD/MM/YYYY',
+          applyLabel: 'Aplicar',
+          cancelLabel: 'Cancelar',
+          fromLabel: 'Data Inicial',
+          toLabel: 'Data Final',
+          customRangeLabel: 'Personalizado',
+          weekLabel: 'S',
+          daysOfWeek: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],
+          monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+          firstDay: 0
+        }
+      });
+      $('#dataRange').on('apply.daterangepicker', function(ev, picker) {
+        rangeStart = picker.startDate.toDate();
+        rangeEnd = picker.endDate.toDate();
+        $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+        loadRelatorioMensal();
+      });
+      $('#dataRange').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+        rangeStart = null;
+        rangeEnd = null;
+        loadRelatorioMensal();
+      });
+      $('#dataRange').on('show.daterangepicker', function(ev, picker) {
+        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+    
+    function preencherDashboardAno() {
+      const selectAno = document.getElementById("dashboardYear");
+      selectAno.innerHTML = "";
+      const currentYear = new Date().getFullYear();
+      for(let y = currentYear - 5; y <= currentYear + 5; y++){
+        let option = document.createElement("option");
+        option.value = y;
+        option.text = y;
+        if(y === currentYear) option.selected = true;
+        selectAno.appendChild(option);
       }
+    }
+    
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('main > section');
+      sections.forEach(sec => sec.style.display = 'none');
+      document.getElementById(sectionId).style.display = 'block';
+    }
+    
+    window.abrirModal = function(id) {
+      document.getElementById(id).style.display = "flex";
+      if(id === "fonteModal") loadUsuarios();
+      if(id === "categoriasModal") loadCategorias();
+      if(id === "cartaoModal") loadCartoes();
+      if(id === "calendarModal") {
+        document.getElementById("calendarTitulo").innerText = "Calendário de Despesas";
+        renderCalendar();
+      }
+      if(id === "pagarDespesaModal") filtrarDespesas();
+      if(id === "novo_limitesModal") novo_carregarLimites();
     };
-
-    function updateLanguage(lang) {
-      currentLanguage = lang;
-      const t = translations[lang];
-      document.getElementById("loginTitle").innerText = t.loginTitle;
-      document.getElementById("labelEmail").innerText = t.labelEmail;
-      document.getElementById("labelSenha").innerText = t.labelSenha;
-      document.getElementById("botaoLogin").innerText = t.botaoLogin;
-      document.getElementById("botaoCadastro").innerText = t.botaoCadastro;
-      document.getElementById("botaoRecuperar").innerText = t.botaoRecuperar;
-      document.getElementById("titlePergaminhos").innerText = t.titlePergaminhos;
-      document.getElementById("labelPergaminhoUnico").innerText = t.labelPergaminhoUnico;
-      document.getElementById("labelPergaminhoAleatorio").innerText = t.labelPergaminhoAleatorio;
-      document.getElementById("botaoSalvarPergaminho").innerText = t.botaoSalvarPergaminho;
-      document.getElementById("titleControleItens").innerText = t.titleControleItens;
-      document.getElementById("labelPersonagem").innerText = t.labelPersonagem;
-      document.getElementById("labelPiercing").innerText = t.labelPiercing;
-      document.getElementById("labelBrinco").innerText = t.labelBrinco;
-      document.getElementById("labelAnel").innerText = t.labelAnel;
-      document.getElementById("labelBerkas").innerText = t.labelBerkas;
-      document.getElementById("labelVazio").innerText = t.labelVazio;
-      document.getElementById("labelAtaqueTotal").innerText = t.labelAtaqueTotal;
-      document.getElementById("botaoSalvarGC").innerText = t.botaoSalvarGC;
-      document.getElementById("titleControlePersonagens").innerText = t.titleControlePersonagens;
-      document.getElementById("searchInput").placeholder = t.searchPlaceholder;
-      document.getElementById("botaoPesquisar").innerText = t.botaoPesquisar;
-      document.getElementById("botaoLimparFiltro").innerText = t.botaoLimparFiltro;
-      document.getElementById("missingBerkasPanel").innerText = t.missingBerkasText;
-      document.getElementById("labelAtaqueTotalSelecao").innerText = t.labelAtaqueTotalSelecao;
-      document.getElementById("botaoLimparAtaqueFiltro").innerText = t.botaoLimparAtaqueFiltro;
-      document.getElementById("menuTitle").innerText = t.menuTitle;
-      document.getElementById("labelLanguage").innerText = t.languageOption;
-      document.getElementById("labelTheme").innerText = t.themeOption;
-      document.getElementById("btnExit").innerText = t.exitOption;
-      carregarGCs();
-    }
-
-    function updateTheme(theme) {
-      currentTheme = theme;
-      if (theme === "grandchase") {
-        document.body.classList.add("theme-grandchase");
-      } else {
-        document.body.classList.remove("theme-grandchase");
-      }
-      carregarGCs();
-    }
-
-    document.getElementById("languageSelect").addEventListener("change", (e) => {
-      updateLanguage(e.target.value);
-    });
-    document.getElementById("themeSelect").addEventListener("change", (e) => {
-      updateTheme(e.target.value);
-    });
-    document.getElementById("btnExit").addEventListener("click", () => {
-      signOut(auth)
-        .then(() => {
-          usuarioAtual = null;
-          mostrarTelaLogin();
-        })
-        .catch((error) => {
-          console.error("Erro ao sair:", error);
+    
+    window.fecharModal = function(id) {
+      document.getElementById(id).style.display = "none";
+    };
+    
+    function exportData() {
+      db.ref("despesas").once("value").then(snapshot => {
+        let csv = "Descrição,Valor,Data,Forma de Pagamento\n";
+        snapshot.forEach(child => {
+          const despesa = child.val();
+          if(despesa.formaPagamento === "avista"){
+            csv += `${despesa.descricao},${despesa.valor},${despesa.dataCompra},${despesa.formaPagamento}\n`;
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach((parcela, index) => {
+              csv += `${despesa.descricao} - Parcela ${index+1},${parcela.valor},${parcela.vencimento},${despesa.formaPagamento}\n`;
+            });
+          }
         });
-    });
-
-    function toggleSidebar() {
-      const sidebar = document.getElementById("sidebar");
-      sidebar.classList.toggle("open");
-    }
-
-    // Cria o botão de toggle e o insere na tela principal (único)
-    const menuToggle = document.createElement("button");
-    menuToggle.id = "menuToggle";
-    menuToggle.innerText = "☰";
-    menuToggle.addEventListener("click", toggleSidebar);
-    document.getElementById("telaPrincipal").appendChild(menuToggle);
-
-    const telaLogin = document.getElementById("telaLogin");
-    const telaPrincipal = document.getElementById("telaPrincipal");
-    const botaoLogin = document.getElementById("botaoLogin");
-    const botaoCadastro = document.getElementById("botaoCadastro");
-    const botaoRecuperar = document.getElementById("botaoRecuperar");
-
-    botaoLogin.addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
-      signInWithEmailAndPassword(auth, email, senha)
-        .then((userCredential) => {
-          usuarioAtual = userCredential.user;
-          mostrarTelaPrincipal();
-        })
-        .catch((error) => {
-          alert("Erro no login: " + error.message);
-        });
-    });
-
-    botaoCadastro.addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
-      createUserWithEmailAndPassword(auth, email, senha)
-        .then((userCredential) => {
-          usuarioAtual = userCredential.user;
-          mostrarTelaPrincipal();
-        })
-        .catch((error) => {
-          alert("Erro no cadastro: " + error.message);
-        });
-    });
-
-    botaoRecuperar.addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      if (!email) {
-        alert("Por favor, informe seu e-mail para recuperar a senha.");
-        return;
-      }
-      sendPasswordResetEmail(auth, email)
-        .then(() => {
-          alert("E-mail de recuperação de senha enviado.");
-        })
-        .catch((error) => {
-          alert("Erro ao enviar e-mail: " + error.message);
-        });
-    });
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        usuarioAtual = user;
-        mostrarTelaPrincipal();
-      } else {
-        mostrarTelaLogin();
-      }
-    });
-
-    function mostrarTelaPrincipal() {
-      telaLogin.classList.add("hidden");
-      telaPrincipal.classList.remove("hidden");
-      carregarGCs();
-      calcularAtaqueTotal();
-      carregarPergaminhos();
-    }
-
-    function mostrarTelaLogin() {
-      telaLogin.classList.remove("hidden");
-      telaPrincipal.classList.add("hidden");
-    }
-
-    function salvarPergaminhos() {
-      const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
-      const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
-      if (!usuarioAtual) return;
-      set(ref(database, 'users/' + usuarioAtual.uid + '/pergaminhos/'), {
-        unico: pergaminhoUnico,
-        aleatorio: pergaminhoAleatorio
-      }).then(() => {
-        console.log("Pergaminhos salvos com sucesso!");
-      }).catch((error) => {
-        console.error("Erro ao salvar pergaminhos:", error);
+        let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement("a");
+        a.href = url;
+        a.download = "despesas.csv";
+        a.click();
       });
     }
-
-    function carregarPergaminhos() {
-      if (!usuarioAtual) return;
-      get(ref(database, 'users/' + usuarioAtual.uid + '/pergaminhos/')).then((snapshot) => {
-        if (snapshot.exists()) {
-          document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
-          document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "";
-          console.log("Pergaminhos carregados com sucesso!");
-        } else {
-          console.log("Nenhum valor de pergaminho salvo.");
-        }
-      }).catch((error) => {
-        console.error("Erro ao carregar pergaminhos:", error);
-      });
-    }
-
-    function personagemJaExiste(personagem, callback) {
-      if (!usuarioAtual) return;
-      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
-        .then((snapshot) => {
-          callback(snapshot.exists());
-        })
-        .catch((error) => {
-          console.error("Erro ao verificar personagem:", error);
-        });
-    }
-
-    function salvarGC() {
-      let personagemSelecionado = document.getElementById("personagem").value;
-      let pergaminhoUnico = document.getElementById("pergaminho_unico").value;
-      let pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
-      let brinco = document.getElementById("brinco").value;
-      let piercing = document.getElementById("piercing").value;
-      let anel = document.getElementById("anel").value;
-      let berkas = document.getElementById("berkas").value;
-      let ataqueTotal = document.getElementById("ataqueTotal").value;
-      let vazio = document.getElementById("vazio").value;
+    
+    function atualizarDashboard() {
+      const dashboardMonth = parseInt(document.getElementById("dashboardMonth").value);
+      const dashboardYear = parseInt(document.getElementById("dashboardYear").value);
+      let saldo = 0;
+      let hoje = new Date();
       
-      let vazioNum = (vazio === "Nenhum") ? "0" : vazio;
-      
-      if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas || !ataqueTotal) {
-        alert("Preencha todos os campos obrigatórios!");
-        return;
-      }
-      if (!usuarioAtual) {
-        alert("Você precisa estar logado!");
-        return;
-      }
-      personagemJaExiste(personagemSelecionado, (existe) => {
-        if (existe) {
-          const confirmacao = confirm("Este personagem já foi salvo. Deseja alterar?");
-          if (!confirmacao) return;
-        }
-        set(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagemSelecionado), {
-          personagem: personagemSelecionado,
-          pergaminho_unico: pergaminhoUnico,
-          pergaminho_aleatorio: pergaminhoAleatorio,
-          brinco: brinco,
-          piercing: piercing,
-          anel: anel,
-          berkas: berkas,
-          ataqueTotal: ataqueTotal,
-          vazio: vazioNum
-        }).then(() => {
-          alert("GC salvo com sucesso!");
-          salvarPergaminhos();
-          carregarGCs();
-          calcularAtaqueTotal();
-        }).catch((error) => {
-          console.error("Erro ao salvar GC:", error);
+      db.ref("pessoas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          let pessoa = child.val();
+          saldo += parseFloat(pessoa.saldoInicial) || 0;
+          if(pessoa.pagamentos){
+            pessoa.pagamentos.forEach(pag => { 
+              let pagamentoDia = parseInt(pag.dia);
+              if(pagamentoDia <= hoje.getDate()){
+                saldo += parseFloat(pag.valor) || 0;
+              }
+            });
+          }
         });
-      });
-    }
-
-    function carregarGCs() {
-      if (!usuarioAtual) return;
-      gcData = {};
-      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
-        const tabela = document.getElementById("tabela_controle");
-        let headerHTML = "<tr>";
-        if (currentTheme === "grandchase") {
-          headerHTML += "<th>Avatar</th>";
-          headerHTML += "<th>" + document.getElementById("labelPersonagem").innerText + "</th>";
-        } else {
-          headerHTML += "<th>" + document.getElementById("labelPersonagem").innerText + "</th>";
-        }
-        headerHTML += "<th>" + document.getElementById("labelBrinco").innerText + "</th>";
-        headerHTML += "<th>" + document.getElementById("labelPiercing").innerText + "</th>";
-        headerHTML += "<th>" + document.getElementById("labelAnel").innerText + "</th>";
-        headerHTML += "<th>" + document.getElementById("labelBerkas").innerText + "</th>";
-        headerHTML += "<th>" + document.getElementById("labelVazio").innerText + "</th>";
-        headerHTML += "<th>" + document.getElementById("labelAtaqueTotal").innerText + "</th>";
-        headerHTML += "<th>Ação</th>";
-        headerHTML += "</tr>";
-        tabela.innerHTML = headerHTML;
-        let totalMissingBerkas = 0;
-        let totalMissingVazio = 0;
-        if (snapshot.exists()) {
-          snapshot.forEach((childSnapshot) => {
-            let dados = childSnapshot.val();
-            let personagem = childSnapshot.key;
-            gcData[personagem] = dados;
-            let berkasValor = dados.berkas;
-            let berkasNum = (berkasValor === "Full") ? 12 : ((berkasValor === "Nenhum") ? 0 : parseInt(berkasValor) || 0);
-            let vazioValor = (dados.vazio === "Nenhum" || !dados.vazio) ? 0 : parseInt(dados.vazio);
-            let missingBerkas = (vazioValor > 0) ? Math.max(0, 6 - berkasNum) : Math.max(0, 12 - berkasNum);
-            let missingVazio = (vazioValor > 0) ? Math.max(0, 6 - vazioValor) : 0;
-            totalMissingBerkas += missingBerkas;
-            totalMissingVazio += missingVazio;
-            
-            let linha = tabela.insertRow();
-            linha.style.cursor = "pointer";
-            if (currentTheme === "grandchase") {
-              let cellAvatar = linha.insertCell();
-              let imgSrc = "img/" + personagem.replace(/\s+/g, '').toLowerCase() + ".png";
-              cellAvatar.innerHTML = `<img src="${imgSrc}" alt="${personagem}" width="40" height="40" style="border-radius:50%;" onerror="this.src='https://via.placeholder.com/40'">`;
-              let cellPersonagem = linha.insertCell();
-              cellPersonagem.textContent = personagem;
-              cellPersonagem.style.cursor = "pointer";
-              cellPersonagem.addEventListener("click", () => {
-                document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
-                document.getElementById("personagem").value = personagem.trim();
-                document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
-                document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
-                document.getElementById("brinco").value = (dados.brinco || "").trim();
-                document.getElementById("piercing").value = (dados.piercing || "").trim();
-                document.getElementById("anel").value = (dados.anel || "").trim();
-                document.getElementById("berkas").value = (dados.berkas || "").trim();
-                document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
-                document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
-              });
-            } else {
-              let cellPersonagem = linha.insertCell();
-              cellPersonagem.textContent = personagem;
-              cellPersonagem.style.cursor = "pointer";
-              cellPersonagem.addEventListener("click", () => {
-                document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
-                document.getElementById("personagem").value = personagem.trim();
-                document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
-                document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
-                document.getElementById("brinco").value = (dados.brinco || "").trim();
-                document.getElementById("piercing").value = (dados.piercing || "").trim();
-                document.getElementById("anel").value = (dados.anel || "").trim();
-                document.getElementById("berkas").value = (dados.berkas || "").trim();
-                document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
-                document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
-              });
+        db.ref("despesas").once("value").then(snapshot2 => {
+          snapshot2.forEach(child => {
+            let despesa = child.val();
+            if(despesa.pago){
+              if(despesa.formaPagamento === "avista"){
+                saldo -= parseFloat(despesa.valor) || 0;
+              } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+                despesa.parcelas.forEach(parcela => {
+                  if(parcela.pago){
+                    saldo -= parseFloat(parcela.valor) || 0;
+                  }
+                });
+              }
             }
-            let cellBrinco = linha.insertCell();
-            cellBrinco.textContent = dados.brinco;
-            let cellPiercing = linha.insertCell();
-            cellPiercing.textContent = dados.piercing;
-            let cellAnel = linha.insertCell();
-            cellAnel.textContent = dados.anel;
-            let cellBerkas = linha.insertCell();
-            cellBerkas.textContent = dados.berkas;
-            let cellVazio = linha.insertCell();
-            cellVazio.textContent = dados.vazio || "Nenhum";
-            let cellAtaqueTotal = linha.insertCell();
-            cellAtaqueTotal.textContent = dados.ataqueTotal;
-            let cellAcao = linha.insertCell();
-            cellAcao.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
           });
-        } else {
-          console.log("Nenhum GC salvo.");
-        }
-        document.getElementById("missingBerkasPanel").textContent =
-          translations[currentLanguage].missingBerkasText + " " + totalMissingBerkas + " | Total de vazio faltantes: " + totalMissingVazio;
-      }).catch((error) => {
-        console.error("Erro ao carregar GCs:", error);
+          document.getElementById("saldoAtual").innerText = "R$ " + saldo.toFixed(2);
+          atualizarDespesasMes();
+          currentCalendarMonth = dashboardMonth;
+          currentCalendarYear = dashboardYear;
+          atualizarGrafico();
+          updateProximosVencimentos();
+        });
       });
     }
-
-    document.getElementById("personagem").addEventListener("change", (event) => {
-      const personagemSelecionado = event.target.value;
-      if (gcData[personagemSelecionado]) {
-        const dados = gcData[personagemSelecionado];
-        document.getElementById("brinco").value = (dados.brinco || "").trim();
-        document.getElementById("piercing").value = (dados.piercing || "").trim();
-        document.getElementById("anel").value = (dados.anel || "").trim();
-        document.getElementById("berkas").value = (dados.berkas || "").trim();
-        document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
-        document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
-        document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
-        document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
+    
+    function updateProximosVencimentos() {
+      const hoje = new Date();
+      let proximoVencimento = null;
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          if(despesa.formaPagamento === "avista" && !despesa.pago && despesa.dataCompra){
+            let dataCompra = new Date(despesa.dataCompra);
+            if(dataCompra >= hoje){
+              if(proximoVencimento === null || dataCompra < proximoVencimento){
+                proximoVencimento = dataCompra;
+              }
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              if(!parcela.pago){
+                let venc = new Date(parcela.vencimento);
+                if(venc >= hoje){
+                  if(proximoVencimento === null || venc < proximoVencimento){
+                    proximoVencimento = venc;
+                  }
+                }
+              }
+            });
+          }
+        });
+        if(proximoVencimento){
+          const diffTime = proximoVencimento - hoje;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          document.getElementById("proximosVencimentos").innerText = diffDays;
+        } else {
+          document.getElementById("proximosVencimentos").innerText = 0;
+        }
+      });
+    }
+    
+    function atualizarDespesasMes() {
+      const dashboardMonth = parseInt(document.getElementById("dashboardMonth").value);
+      const dashboardYear = parseInt(document.getElementById("dashboardYear").value);
+      let despesasMes = 0;
+      db.ref("despesas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          if(despesa.pago) return;
+          if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+            let dt = new Date(despesa.dataCompra);
+            if(dt.getMonth() === dashboardMonth && dt.getFullYear() === dashboardYear){
+              despesasMes += parseFloat(despesa.valor) || 0;
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              let dt = new Date(parcela.vencimento);
+              if(dt.getMonth() === dashboardMonth && dt.getFullYear() === dashboardYear){
+                despesasMes += parseFloat(parcela.valor) || 0;
+              }
+            });
+          }
+        });
+        document.getElementById("despesasMes").innerText = "R$ " + despesasMes.toFixed(2);
+      });
+    }
+    
+    function carregarPainelDespesasMes() {
+      const dashboardMonth = parseInt(document.getElementById("dashboardMonth").value);
+      const dashboardYear = parseInt(document.getElementById("dashboardYear").value);
+      const listaContainer = document.getElementById("listaDespesasMes");
+      listaContainer.innerHTML = "";
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          if(despesa.pago) return;
+          if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+            let dt = new Date(despesa.dataCompra);
+            if(dt.getMonth() === dashboardMonth && dt.getFullYear() === dashboardYear){
+              let divDespesa = document.createElement("div");
+              divDespesa.style.borderBottom = "1px solid rgb(204, 204, 204)";
+              divDespesa.style.padding = "5px 0px";
+              divDespesa.innerHTML = `<strong>${despesa.descricao}</strong> - À Vista - R$ ${parseFloat(despesa.valor).toFixed(2)}<br><small>${dt.toLocaleDateString()}</small>`;
+              listaContainer.appendChild(divDespesa);
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            let totalParcelas = despesa.parcelas.length;
+            despesa.parcelas.forEach((parcela, index) => {
+              let dt = new Date(parcela.vencimento);
+              if(dt.getMonth() === dashboardMonth && dt.getFullYear() === dashboardYear){
+                let divDespesa = document.createElement("div");
+                divDespesa.style.borderBottom = "1px solid rgb(204, 204, 204)";
+                divDespesa.style.padding = "5px 0px";
+                divDespesa.innerHTML = `<strong>${despesa.descricao}</strong> - Parcela ${index+1} de ${totalParcelas} - Cartão - R$ ${parseFloat(parcela.valor).toFixed(2)}<br><small>${dt.toLocaleDateString()}</small>`;
+                listaContainer.appendChild(divDespesa);
+              }
+            });
+          }
+        });
+        novo_verificarDespesasVencidas();
+      });
+    }
+    
+    /* Função filtrarDespesas para aplicar os filtros */
+    function filtrarDespesas() {
+      const searchText = document.getElementById("despesaSearch").value.toLowerCase();
+      const mesFiltro = document.getElementById("mesFiltro").value.toUpperCase();
+      const anoFiltro = document.getElementById("anoFiltro").value;
+      const categoriaFiltro = document.getElementById("categoriaFiltro").value;
+      const contaMes = document.getElementById("contaMesFiltro").checked;
+      const despesaSelect = document.getElementById("despesaSelect");
+      despesaSelect.innerHTML = "";
+      
+      const mesesAbreviados = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const despesa = child.val();
+          if(despesa.pago) return;
+          if(searchText && !despesa.descricao.toLowerCase().includes(searchText)) return;
+          
+          let data = null;
+          if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+            data = new Date(despesa.dataCompra);
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas && despesa.parcelas.length > 0){
+            data = new Date(despesa.parcelas[0].vencimento);
+          }
+          if(mesFiltro && data){
+            const mesAbrev = mesesAbreviados[data.getMonth()];
+            if(mesAbrev !== mesFiltro) return;
+          }
+          if(anoFiltro && data){
+            if(data.getFullYear().toString() !== anoFiltro) return;
+          }
+          if(categoriaFiltro && despesa.categoria !== categoriaFiltro) return;
+          if(contaMes && !despesa.contaMes) return;
+          
+          if(despesa.formaPagamento === "avista"){
+            const option = document.createElement("option");
+            option.value = child.key;
+            const dataExibicao = despesa.dataCompra;
+            const valorExibido = despesa.valor ? "R$ " + parseFloat(despesa.valor).toFixed(2) : "";
+            option.text = despesa.descricao + " " + valorExibido + " - " + dataExibicao;
+            despesaSelect.appendChild(option);
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach((parcela, index) => {
+              if(!parcela.pago){
+                const option = document.createElement("option");
+                option.value = child.key + "|" + index;
+                option.text = `${despesa.descricao} - Parcela ${index+1} de ${despesa.parcelas.length} - Venc: ${parcela.vencimento} - R$ ${parseFloat(parcela.valor).toFixed(2)}`;
+                despesaSelect.appendChild(option);
+              }
+            });
+          }
+        });
+      });
+    }
+    
+    /* Gráfico de Despesas por Categoria – exibe "Pago" e "A Pagar" */
+    let grafico;
+    function atualizarGrafico() {
+      const dashboardMonth = parseInt(document.getElementById("dashboardMonth").value);
+      const dashboardYear = parseInt(document.getElementById("dashboardYear").value);
+      
+      let pagos = {};
+      let aPagar = {};
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+            let dt = new Date(despesa.dataCompra);
+            if(dt.getMonth() === dashboardMonth && dt.getFullYear() === dashboardYear){
+              if(despesa.pago){
+                pagos[despesa.categoria] = (pagos[despesa.categoria] || 0) + parseFloat(despesa.valor);
+              } else {
+                aPagar[despesa.categoria] = (aPagar[despesa.categoria] || 0) + parseFloat(despesa.valor);
+              }
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              let dt = new Date(parcela.vencimento);
+              if(dt.getMonth() === dashboardMonth && dt.getFullYear() === dashboardYear){
+                if(parcela.pago){
+                  pagos[despesa.categoria] = (pagos[despesa.categoria] || 0) + parseFloat(parcela.valor);
+                } else {
+                  aPagar[despesa.categoria] = (aPagar[despesa.categoria] || 0) + parseFloat(parcela.valor);
+                }
+              }
+            });
+          }
+        });
+        
+        const categoriasUnicas = Array.from(new Set([...Object.keys(pagos), ...Object.keys(aPagar)]));
+        const labels = categoriasUnicas.map(id => window.novo_categoriasMap[id] || id);
+        const dataPagos = categoriasUnicas.map(id => pagos[id] || 0);
+        const dataAPagar = categoriasUnicas.map(id => aPagar[id] || 0);
+        
+        const ctx = document.getElementById("graficoDespesas").getContext("2d");
+        if(grafico) grafico.destroy();
+        grafico = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: 'Pago',
+                data: dataPagos,
+                backgroundColor: 'rgba(76, 175, 80, 0.6)',
+                borderColor: 'rgba(76, 175, 80, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'A Pagar',
+                data: dataAPagar,
+                backgroundColor: 'rgba(244,67,54,0.6)',
+                borderColor: 'rgba(244,67,54,1)',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: { scales: { y: { beginAtZero: true } } }
+        });
+      });
+    }
+    
+    function updateCategoriaSelect() {
+      const select = document.getElementById("categoriaDespesa");
+      select.innerHTML = '<option value="">Selecione a Categoria</option>';
+      db.ref("categorias").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const categoria = child.val();
+          const option = document.createElement("option");
+          option.value = child.key;
+          option.text = categoria.nome;
+          select.appendChild(option);
+        });
+      });
+    }
+    
+    function salvarCategoria() {
+      const nomeCategoria = document.getElementById("categoriaNome").value;
+      if(!nomeCategoria.trim()){
+        alert("Digite o nome da categoria.");
+        return;
       }
-    });
-
-    function excluirGC(personagem) {
-      if (!usuarioAtual) return;
-      if (confirm("Você tem certeza que deseja excluir o personagem?")) {
-        remove(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
+      db.ref("categorias").push({ nome: nomeCategoria.trim(), timestamp: new Date().toISOString() })
+        .then(() => {
+          alert("Categoria salva com sucesso!");
+          document.getElementById("categoriaNome").value = "";
+          loadCategorias();
+          updateCategoriaSelect();
+          loadCategoriasFiltro();
+        })
+        .catch(err => alert("Erro ao salvar categoria: " + err));
+    }
+    
+    function loadCategorias() {
+      const categoriasLista = document.getElementById("categoriasLista");
+      categoriasLista.innerHTML = "";
+      db.ref("categorias").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const categoria = child.val();
+          const div = document.createElement("div");
+          div.innerHTML = `<strong>${categoria.nome}</strong>`;
+          categoriasLista.appendChild(div);
+        });
+      });
+    }
+    
+    function loadCategoriasFiltro() {
+      const select = document.getElementById("categoriaFiltro");
+      select.innerHTML = '<option value="">Todas as Categorias</option>';
+      db.ref("categorias").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const categoria = child.val();
+          const option = document.createElement("option");
+          option.value = child.key;
+          option.text = categoria.nome;
+          select.appendChild(option);
+        });
+      });
+    }
+    
+    function updateCartaoSelect() {
+      const select = document.getElementById("cartaoDespesa");
+      select.innerHTML = '<option value="">Selecione o Cartão</option>';
+      db.ref("cartoes").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const cartao = child.val();
+          const option = document.createElement("option");
+          option.value = child.key;
+          option.text = cartao.nome;
+          option.setAttribute("data-fatura", cartao.diaFatura);
+          option.setAttribute("data-fechamento", cartao.diaFechamento);
+          select.appendChild(option);
+        });
+      });
+    }
+    
+    function loadCartoes() {
+      const cartoesLista = document.getElementById("cartoesLista");
+      cartoesLista.innerHTML = "";
+      db.ref("cartoes").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const cartao = child.val();
+          const div = document.createElement("div");
+          div.innerHTML = `<strong>${cartao.nome}</strong> - Limite: R$ ${parseFloat(cartao.limite).toFixed(2)}`;
+          cartoesLista.appendChild(div);
+        });
+      });
+    }
+    
+    function salvarDespesa() {
+      const descricao = document.getElementById("despesaDescricao").value;
+      const valor = parseFloat(document.getElementById("despesaValor").value);
+      const dataCompra = document.getElementById("dataCompra").value;
+      const categoria = document.getElementById("categoriaDespesa").value;
+      const formaPagamento = document.getElementById("formaPagamento").value;
+      const despesasRef = db.ref("despesas");
+      if(isNaN(valor)){
+        alert("O valor da despesa deve ser um número válido.");
+        return;
+      }
+      if(formaPagamento === "cartao"){
+        const selectCartao = document.getElementById("cartaoDespesa");
+        if(!selectCartao.value){
+          alert("Selecione um cartão para despesas no cartão.");
+          return;
+        }
+        const numParcelas = parseInt(document.getElementById("numParcelasDespesa").value);
+        const cardOption = selectCartao.selectedOptions[0];
+        const diaFatura = parseInt(cardOption.getAttribute("data-fatura"));
+        const diaFechamento = parseInt(cardOption.getAttribute("data-fechamento"));
+        let parcelas = [];
+        const purchaseDate = new Date(dataCompra);
+        let firstDueDate = new Date(purchaseDate);
+        if(purchaseDate.getDate() > diaFechamento){
+          firstDueDate.setMonth(firstDueDate.getMonth() + 1);
+          firstDueDate.setDate(diaFatura);
+        } else {
+          firstDueDate.setDate(diaFatura);
+        }
+        const valorParcela = parseFloat((valor / numParcelas).toFixed(2));
+        for(let i = 0; i < numParcelas; i++){
+          let parcelaDate = new Date(firstDueDate);
+          parcelaDate.setMonth(parcelaDate.getMonth() + i);
+          parcelas.push({
+            valor: valorParcela,
+            vencimento: parcelaDate.toISOString().split("T")[0],
+            pago: false
+          });
+        }
+        const despesaData = {
+          descricao,
+          formaPagamento,
+          dataCompra,
+          categoria,
+          parcelas,
+          cartao: {
+            id: selectCartao.value,
+            nome: selectCartao.selectedOptions[0].text,
+            diaFatura,
+            diaFechamento
+          },
+          pago: false,
+          timestamp: new Date().toISOString()
+        };
+        despesasRef.push(despesaData)
           .then(() => {
-            alert("Personagem excluído com sucesso!");
-            carregarGCs();
-            calcularAtaqueTotal();
+            alert("Despesa com cartão cadastrada com sucesso!");
+            toggleParcelamento();
+            filtrarDespesas();
+            renderCalendar();
+            updateCartaoSelect();
+            atualizarDashboard();
+            window.location.reload();
           })
-          .catch((error) => {
-            console.error("Erro ao excluir personagem:", error);
-          });
+          .catch(err => alert("Erro: " + err));
+      } else {
+        const despesaData = {
+          descricao,
+          valor,
+          dataCompra,
+          formaPagamento,
+          categoria,
+          pago: false,
+          timestamp: new Date().toISOString()
+        };
+        despesasRef.push(despesaData)
+          .then(() => {
+            alert("Despesa à vista cadastrada com sucesso!");
+            filtrarDespesas();
+            renderCalendar();
+            atualizarDashboard();
+            window.location.reload();
+          })
+          .catch(err => alert("Erro: " + err));
       }
     }
-
-    function filtrarTabela() {
-      const input = document.getElementById("searchInput");
-      const filter = input.value.toUpperCase();
-      const table = document.getElementById("tabela_controle");
-      const tr = table.getElementsByTagName("tr");
-      for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName("td")[currentTheme === "grandchase" ? 1 : 0];
-        if (td) {
-          const txtValue = td.textContent || td.innerText;
-          tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
-        }
-      }
+    
+    function toggleParcelamento() {
+      const forma = document.getElementById("formaPagamento").value;
+      document.getElementById("parcelamentoDiv").classList.toggle("hidden", forma !== "cartao");
     }
-
-    function limparFiltro() {
-      document.getElementById("searchInput").value = "";
-      filtrarTabela();
-    }
-
-    function calcularAtaqueTotal() {
-      const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
-      if (ataqueDesejado === "Todos" || ataqueDesejado === "Nenhum") {
-        document.getElementById("resultadoAtaqueTotal").textContent = "";
-        limparFiltroAtaqueTotal();
+    
+    function pagarDespesaSelecionada() {
+      const despesaSelect = document.getElementById("despesaSelect");
+      const selectedValue = despesaSelect.value;
+      if(!selectedValue){
+        alert("Selecione uma despesa/parcela!");
         return;
       }
-      const ataqueDesejadoNum = parseInt(ataqueDesejado.replace("k", "")) * 1000;
-      if (!usuarioAtual) return;
-      let countExact = 0;
-      let countAbove = 0;
-      let countBelow = 0;
-      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
-        if (snapshot.exists()) {
-          snapshot.forEach((childSnapshot) => {
-            let dados = childSnapshot.val();
-            let atk = dados.ataqueTotal;
-            if (!atk || typeof atk !== "string" || !atk.includes("k")) {
-              atk = "0k";
-            }
-            let atkNum = parseInt(atk.replace("k", "")) * 1000;
-            if (atkNum === ataqueDesejadoNum) {
-              countExact++;
-            } else if (atkNum > ataqueDesejadoNum) {
-              countAbove++;
-            } else {
-              countBelow++;
-            }
-          });
+      const saldoAtualText = document.getElementById("saldoAtual").innerText;
+      const saldoAtual = parseFloat(saldoAtualText.replace("R$", "").replace(",", ".").trim());
+      const optionText = despesaSelect.options[despesaSelect.selectedIndex].text;
+      const match = optionText.match(/R\$\s*([\d.,]+)/);
+      if(match){
+        const despesaValor = parseFloat(match[1].replace(",", "."));
+        if(saldoAtual < despesaValor){
+          alert("Saldo insuficiente");
+          return;
         }
-        document.getElementById("resultadoAtaqueTotal").textContent =
-          `Exatos: ${countExact} | Acima: ${countAbove} | Abaixo: ${countBelow}`;
-        filtrarAtaqueTabela(ataqueDesejado);
-      }).catch((error) => {
-        console.error("Erro ao calcular ataque total:", error);
+      }
+      if(selectedValue.indexOf("|") === -1){
+        db.ref("despesas").child(selectedValue).update({ pago: true })
+          .then(() => {
+            alert("Despesa paga com sucesso!");
+            filtrarDespesas();
+            renderCalendar();
+            atualizarDashboard();
+            window.location.reload();
+          })
+          .catch(err => alert("Erro ao pagar a despesa: " + err));
+      } else {
+        const [expenseKey, parcelIndex] = selectedValue.split("|");
+        const parcelaRef = db.ref("despesas/" + expenseKey + "/parcelas/" + parcelIndex);
+        parcelaRef.update({ pago: true })
+          .then(() => {
+            db.ref("despesas/" + expenseKey + "/parcelas").once("value").then(snapshot => {
+              let allPaid = true;
+              snapshot.forEach(child => { if(!child.val().pago){ allPaid = false; } });
+              if(allPaid){ db.ref("despesas").child(expenseKey).update({ pago: true }); }
+            });
+            alert("Parcela paga com sucesso!");
+            filtrarDespesas();
+            renderCalendar();
+            atualizarDashboard();
+            window.location.reload();
+          })
+          .catch(err => alert("Erro ao pagar a parcela: " + err));
+      }
+    }
+    
+    function loadRelatorioMensal() {
+      let dataInicial = rangeStart ? rangeStart.toISOString().split("T")[0] : "";
+      let dataFinal = rangeEnd ? rangeEnd.toISOString().split("T")[0] : "";
+      const container = document.getElementById("relatorioMensalContainer");
+      container.innerHTML = "";
+      db.ref("despesas").once("value").then(snapshot => {
+        let rows = [];
+        snapshot.forEach(child => {
+          const despesa = child.val();
+          function getTime(dateStr){ return new Date(dateStr).getTime(); }
+          if(despesa.formaPagamento === "avista" && despesa.pago){
+            let dt = despesa.dataCompra;
+            if((!dataInicial || getTime(dt) >= getTime(dataInicial)) && (!dataFinal || getTime(dt) <= getTime(dataFinal))){
+              rows.push({ descricao: despesa.descricao, data: dt, valor: despesa.valor, forma: "À Vista" });
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach((parcela, index) => {
+              if(parcela.pago){
+                let dt = parcela.vencimento;
+                if((!dataInicial || getTime(dt) >= getTime(dataInicial)) && (!dataFinal || getTime(dt) <= getTime(dataFinal))){
+                  rows.push({ descricao: `${despesa.descricao} - Parcela ${index+1}`, data: dt, valor: parcela.valor, forma: "Cartão" });
+                }
+              }
+            });
+          }
+        });
+        if(rows.length > 0){
+          let table = document.createElement("table");
+          let header = document.createElement("tr");
+          ["Descrição", "Data", "Valor", "Forma"].forEach(col => {
+            let th = document.createElement("th");
+            th.innerText = col;
+            header.appendChild(th);
+          });
+          table.appendChild(header);
+          rows.forEach(r => {
+            let tr = document.createElement("tr");
+            let tdDesc = document.createElement("td");
+            tdDesc.innerText = r.descricao;
+            let tdData = document.createElement("td");
+            tdData.innerText = new Date(r.data).toLocaleDateString();
+            let tdValor = document.createElement("td");
+            tdValor.innerText = "R$ " + parseFloat(r.valor).toFixed(2);
+            let tdForma = document.createElement("td");
+            tdForma.innerText = r.forma;
+            tr.appendChild(tdDesc);
+            tr.appendChild(tdData);
+            tr.appendChild(tdValor);
+            tr.appendChild(tdForma);
+            table.appendChild(tr);
+          });
+          container.appendChild(table);
+        } else {
+          container.innerHTML = "<p>Nenhum registro encontrado para o período selecionado.</p>";
+        }
       });
     }
-
-    function filtrarAtaqueTabela(ataqueDesejado) {
-      const tabela = document.getElementById("tabela_controle");
-      const tr = tabela.getElementsByTagName("tr");
-      for (let i = 1; i < tr.length; i++){
-        const cellAtaque = tr[i].cells[currentTheme === "grandchase" ? 7 : 6].textContent.trim();
-        if (cellAtaque === ataqueDesejado) {
-          tr[i].style.display = "";
-        } else {
-          tr[i].style.display = "none";
+    
+    /* renderCalendar() utilizada somente no modal "Calendário" – os valores cadastrados em "Cadastrar Despesa" são exibidos no dia correspondente */
+    function renderCalendar() {
+      const calendarGrid = document.getElementById("calendarGrid");
+      calendarGrid.innerHTML = "";
+      const monthYearElem = document.getElementById("calendarMonthYear");
+      const date = new Date(currentCalendarYear, currentCalendarMonth, 1);
+      const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
+      monthYearElem.innerText = `${date.toLocaleString('pt-BR', { month: 'long' })} ${currentCalendarYear}`;
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        let expensesPerDay = {};
+        snapshot.forEach(child => {
+          const despesa = child.val();
+          if(despesa.pago) return;
+          if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+            const d = new Date(despesa.dataCompra);
+            if(d.getMonth() === currentCalendarMonth && d.getFullYear() === currentCalendarYear){
+              const day = d.getDate();
+              expensesPerDay[day] = (expensesPerDay[day] || 0) + parseFloat(despesa.valor);
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              if(!parcela.pago){
+                const d = new Date(parcela.vencimento);
+                if(d.getMonth() === currentCalendarMonth && d.getFullYear() === currentCalendarYear){
+                  const day = d.getDate();
+                  expensesPerDay[day] = (expensesPerDay[day] || 0) + parseFloat(parcela.valor);
+                }
+              }
+            });
+          }
+        });
+        
+        let table = document.createElement("table");
+        let headerRow = document.createElement("tr");
+        const weekDays = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+        weekDays.forEach(weekday => {
+          let th = document.createElement("th");
+          th.innerText = weekday;
+          headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
+        
+        let row = document.createElement("tr");
+        for(let i = 0; i < date.getDay(); i++){
+          let cell = document.createElement("td");
+          cell.innerText = "";
+          row.appendChild(cell);
+        }
+        
+        for(let day = 1; day <= daysInMonth; day++){
+          if(row.children.length === 7){
+            table.appendChild(row);
+            row = document.createElement("tr");
+          }
+          let cell = document.createElement("td");
+          let totalDia = expensesPerDay[day] ? expensesPerDay[day].toFixed(2) : "0.00";
+          cell.innerHTML = day + "<br>R$ " + totalDia;
+          cell.classList.add("calendar-cell");
+          cell.addEventListener("click", function(){ showBalanceForDate(day); });
+          row.appendChild(cell);
+        }
+        table.appendChild(row);
+        calendarGrid.appendChild(table);
+      });
+    }
+    
+    function showBalanceForDate(day) {
+      let selectedDate = new Date(currentCalendarYear, currentCalendarMonth, day);
+      db.ref("pessoas").once("value").then(snapshot => {
+        let totalIncome = 0;
+        snapshot.forEach(child => {
+          let pessoa = child.val();
+          if(pessoa.pagamentos){
+            pessoa.pagamentos.forEach(pag => {
+              let pagamentoDia = parseInt(pag.dia);
+              if(pagamentoDia <= day) totalIncome += parseFloat(pag.valor) || 0;
+            });
+          }
+        });
+        db.ref("despesas").once("value").then(snapshot2 => {
+          let totalExpenses = 0;
+          snapshot2.forEach(child => {
+            let despesa = child.val();
+            if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+              let d = new Date(despesa.dataCompra);
+              if(d.getDate() <= day && d.getMonth() === currentCalendarMonth && d.getFullYear() === currentCalendarYear)
+                totalExpenses += parseFloat(despesa.valor) || 0;
+            }
+            if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+              despesa.parcelas.forEach(parcela => {
+                let d = new Date(parcela.vencimento);
+                if(d.getDate() <= day && d.getMonth() === currentCalendarMonth && d.getFullYear() === currentCalendarYear)
+                  totalExpenses += parseFloat(parcela.valor);
+              });
+            }
+          });
+          let availableBalance = totalIncome - totalExpenses;
+          document.getElementById("saldoDisponivelContainer").innerText =
+            `Saldo em ${selectedDate.toLocaleDateString()}: R$ ${availableBalance.toFixed(2)}`;
+        });
+      });
+    }
+    
+    function prevMonth() {
+      currentCalendarMonth--;
+      if(currentCalendarMonth < 0){ currentCalendarMonth = 11; currentCalendarYear--; }
+      renderCalendar();
+    }
+    
+    function nextMonth() {
+      currentCalendarMonth++;
+      if(currentCalendarMonth > 11){ currentCalendarMonth = 0; currentCalendarYear++; }
+      renderCalendar();
+    }
+    
+    function toggleMonthYearSelect() {
+      let selectDiv = document.getElementById("monthYearSelect");
+      selectDiv.style.display = (selectDiv.style.display === "none" || selectDiv.style.display === "") ? "block" : "none";
+      if(selectDiv.style.display === "block"){
+        let selectYear = document.getElementById("selectYear");
+        if(selectYear.options.length === 0){
+          for(let y = currentCalendarYear - 5; y <= currentCalendarYear + 5; y++){
+            let option = document.createElement("option");
+            option.value = y;
+            option.text = y;
+            if(y === currentCalendarYear) option.selected = true;
+            selectYear.appendChild(option);
+          }
+        }
+        document.getElementById("selectMonth").value = currentCalendarMonth;
+      }
+    }
+    
+    function updateCalendarFromSelect() {
+      let selectMonth = document.getElementById("selectMonth").value;
+      let selectYear = document.getElementById("selectYear").value;
+      currentCalendarMonth = parseInt(selectMonth);
+      currentCalendarYear = parseInt(selectYear);
+      toggleMonthYearSelect();
+      renderCalendar();
+    }
+    
+    function toggleClt() {
+      document.getElementById("cltFields").style.display =
+        document.getElementById("cltCheckbox").checked ? "block" : "none";
+    }
+    
+    function atualizarSalarioLiquido() {
+      let salarioBruto = parseFloat(document.getElementById("salarioBruto").value) || 0;
+      let inss = calcularINSS(salarioBruto);
+      let irrf = calcularIRRF(salarioBruto - inss);
+      let salarioLiquido = salarioBruto - inss - irrf;
+      document.getElementById("salarioLiquido").value = salarioLiquido.toFixed(2);
+    }
+    
+    function calcularINSS(salario) {
+      if(salario <= 1320.00) return salario * 0.075;
+      else if(salario <= 2571.29) return (1320 * 0.075) + ((salario - 1320) * 0.09);
+      else if(salario <= 3856.94) return (1320 * 0.075) + (1251.29 * 0.09) + ((salario - 2571.29) * 0.12);
+      else if(salario <= 7507.49) return (1320 * 0.075) + (1251.29 * 0.09) + (1285.65 * 0.12) + ((salario - 3856.94) * 0.14);
+      return 876.97;
+    }
+    
+    function calcularIRRF(base) {
+      if(base <= 2112.00) return 0;
+      else if(base <= 2826.65) return (base * 0.075) - 158.40;
+      else if(base <= 3751.05) return (base * 0.15) - 370.40;
+      else if(base <= 4664.68) return (base * 0.225) - 651.73;
+      return (base * 0.275) - 884.96;
+    }
+    
+    function gerarCamposPagamentos() {
+      let container = document.getElementById("pagamentosContainer");
+      container.innerHTML = "";
+      let numPagamentos = parseInt(document.getElementById("numPagamentos").value) || 0;
+      let salarioLiquido = parseFloat(document.getElementById("salarioLiquido").value) || 0;
+      if(numPagamentos > 1){
+        for(let i = 1; i <= numPagamentos; i++){
+          let div = document.createElement("div");
+          div.className = "pagamento-item";
+          div.innerHTML = `<label>Dia do Pagamento ${i}:</label>
+                           <input type="number" placeholder="Dia" min="1" max="31" required>
+                           <label>Valor (R$):</label>
+                           <input type="number" class="valoresPagamento" placeholder="Valor R$" step="0.01" oninput="verificarSomaPagamentos()" required>`;
+          container.appendChild(div);
+        }
+      } else if(numPagamentos === 1){
+        let div = document.createElement("div");
+        div.className = "pagamento-item";
+        div.innerHTML = `<label>Dia do Pagamento:</label>
+                         <input type="number" placeholder="Dia" min="1" max="31" required>`;
+        container.appendChild(div);
+        let inputValor = document.createElement("input");
+        inputValor.type = "number";
+        inputValor.className = "valoresPagamento";
+        inputValor.placeholder = "Valor (R$)";
+        inputValor.step = "0.01";
+        inputValor.value = salarioLiquido.toFixed(2);
+        inputValor.readOnly = true;
+        container.appendChild(inputValor);
+      }
+    }
+    
+    function verificarSomaPagamentos() {
+      let salarioLiquido = parseFloat(document.getElementById("salarioLiquido").value) || 0;
+      let valores = document.querySelectorAll(".valoresPagamento");
+      let soma = 0;
+      valores.forEach(input => { soma += parseFloat(input.value) || 0; });
+      soma = Math.round(soma * 100) / 100;
+      salarioLiquido = Math.round(salarioLiquido * 100) / 100;
+      document.getElementById("avisoErro").style.display = soma !== salarioLiquido ? "block" : "none";
+    }
+    
+    document.getElementById("cadastroForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      let nome = document.getElementById("nome").value;
+      let parentesco = document.getElementById("parentesco").value;
+      let saldoInicial = parseFloat(document.getElementById("saldoInicial").value) || 0;
+      let salarioBruto = parseFloat(document.getElementById("salarioBruto").value) || 0;
+      let salarioLiquido = parseFloat(document.getElementById("salarioLiquido").value) || 0;
+      let numPagamentos = parseInt(document.getElementById("numPagamentos").value) || 0;
+      let pagamentos = [];
+      if(document.getElementById("cltCheckbox").checked){
+        let itens = document.getElementById("pagamentosContainer").getElementsByClassName("pagamento-item");
+        for(let item of itens){
+          let dia = item.querySelector("input[type=number]").value;
+          let valor = item.querySelector(".valoresPagamento") ? item.querySelector(".valoresPagamento").value : "";
+          pagamentos.push({ dia, valor });
         }
       }
+      let dados = {
+        nome,
+        parentesco,
+        saldoInicial,
+        salarioBruto,
+        salarioLiquido,
+        numPagamentos,
+        pagamentos,
+        timestamp: new Date().toISOString()
+      };
+      db.ref("pessoas").push(dados)
+        .then(() => {
+          let msg = document.getElementById("mensagemSucessoRenda");
+          msg.innerText = "Dados salvos com sucesso!";
+          msg.style.display = "block";
+          setTimeout(() => {
+            msg.style.display = "none";
+            document.getElementById("cadastroForm").reset();
+            document.getElementById("cltFields").style.display = "none";
+            document.getElementById("pagamentosContainer").innerHTML = "";
+          }, 3000);
+        })
+        .catch(err => alert("Erro ao salvar os dados de renda: " + err));
+    });
+    
+    function loadRendas() {
+      const rendaList = document.getElementById("usuariosListaPrincipal");
+      if(rendaVisivel){
+        rendaList.innerHTML = "";
+        rendaVisivel = false;
+        return;
+      }
+      db.ref("pessoas").once("value").then(snapshot => {
+        rendaList.innerHTML = "";
+        snapshot.forEach(child => {
+          const pessoa = child.val();
+          const key = child.key;
+          const div = document.createElement("div");
+          div.style.padding = "10px";
+          div.style.marginBottom = "10px";
+          div.style.borderRadius = "8px";
+          div.style.boxShadow = "3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light)";
+          let pagamentosInfo = "";
+          if(pessoa.pagamentos){
+            pagamentosInfo = "<br><strong>Pagamentos:</strong> ";
+            pessoa.pagamentos.forEach(pag => {
+              pagamentosInfo += `Dia: ${pag.dia}, Valor: R$ ${parseFloat(pag.valor).toFixed(2)}; `;
+            });
+          }
+          div.innerHTML = `<strong>Nome:</strong> ${pessoa.nome} - <strong>Saldo Inicial:</strong> R$ ${parseFloat(pessoa.saldoInicial).toFixed(2)} - <strong>Salário Líquido:</strong> R$ ${parseFloat(pessoa.salarioLiquido).toFixed(2)} ${pagamentosInfo}
+                           <button onclick="deleteRenda('${key}')" style="margin-left: 10px; background: red; color: white; border: none; border-radius: 50%; cursor: pointer;">X</button>`;
+          rendaList.appendChild(div);
+        });
+        rendaVisivel = true;
+      });
     }
-
-    function limparFiltroAtaqueTotal() {
-      const tabela = document.getElementById("tabela_controle");
-      const tr = tabela.getElementsByTagName("tr");
-      for (let i = 1; i < tr.length; i++){
-        tr[i].style.display = "";
+    
+    function deleteRenda(key) {
+      if(confirm("Tem certeza que deseja excluir esta renda?")){
+        db.ref("pessoas").child(key).remove()
+          .then(() => {
+            alert("Renda excluída com sucesso!");
+            loadRendas();
+            atualizarDashboard();
+          })
+          .catch(err => alert("Erro ao excluir renda: " + err));
       }
     }
-
-    document.getElementById("selecionarAtaqueTotal").addEventListener("change", calcularAtaqueTotal);
-    document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
-    window.excluirGC = excluirGC;
-    window.filtrarTabela = filtrarTabela;
-    window.limparFiltro = limparFiltro;
-    window.salvarPergaminhos = salvarPergaminhos;
-    window.calcularAtaqueTotal = calcularAtaqueTotal;
-    window.limparFiltroAtaqueTotal = limparFiltroAtaqueTotal;
-
-    updateLanguage(currentLanguage);
-    updateTheme(currentTheme);
+    
+    function loadDespesasNaoPagasSelect() {
+      const despesaSelect = document.getElementById("despesaSelect");
+      despesaSelect.innerHTML = "";
+      db.ref("despesas").orderByChild("pago").equalTo(false).once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const despesa = child.val();
+          if(despesa.formaPagamento === "avista"){
+            const option = document.createElement("option");
+            option.value = child.key;
+            const dataExibicao = despesa.dataCompra;
+            const valorExibido = despesa.valor ? "R$ " + parseFloat(despesa.valor).toFixed(2) : "";
+            option.text = despesa.descricao + " " + valorExibido + " - " + dataExibicao;
+            despesaSelect.appendChild(option);
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach((parcela, index) => {
+              if(!parcela.pago){
+                const option = document.createElement("option");
+                option.value = child.key + "|" + index;
+                option.text = `${despesa.descricao} - Parcela ${index+1} de ${despesa.parcelas.length} - Venc: ${parcela.vencimento} - R$ ${parseFloat(parcela.valor).toFixed(2)}`;
+                despesaSelect.appendChild(option);
+              }
+            });
+          }
+        });
+      });
+    }
+    
+    function prevDashboardMonth() {
+      let selectMonth = document.getElementById("dashboardMonth");
+      let selectYear = document.getElementById("dashboardYear");
+      let currentMonth = parseInt(selectMonth.value);
+      if(currentMonth === 0){
+        currentMonth = 11;
+        selectYear.value = parseInt(selectYear.value) - 1;
+      } else {
+        currentMonth--;
+      }
+      selectMonth.value = currentMonth;
+      atualizarDashboard();
+      updateDespesasMesTitle();
+      carregarPainelDespesasMes();
+    }
+    
+    function nextDashboardMonth() {
+      let selectMonth = document.getElementById("dashboardMonth");
+      let selectYear = document.getElementById("dashboardYear");
+      let currentMonth = parseInt(selectMonth.value);
+      if(currentMonth === 11){
+        currentMonth = 0;
+        selectYear.value = parseInt(selectYear.value) + 1;
+      } else {
+        currentMonth++;
+      }
+      selectMonth.value = currentMonth;
+      atualizarDashboard();
+      updateDespesasMesTitle();
+      carregarPainelDespesasMes();
+    }
+    
+    function updateDespesasMesTitle() {
+      let selectMonth = document.getElementById("dashboardMonth");
+      let monthIndex = parseInt(selectMonth.value);
+      let monthName = new Date(2020, monthIndex).toLocaleString('pt-BR', { month: 'long' });
+      document.getElementById("despesasMesTitle").innerText = "Despesas de " + monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    }
+    
+    /* ================= NOVAS FUNCIONALIDADES ================= */
+    
+    function novo_carregarLimites() {
+      const container = document.getElementById("novo_limitesContainer");
+      container.innerHTML = "";
+      db.ref("categorias").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const categoria = child.val();
+          const div = document.createElement("div");
+          div.style.marginBottom = "10px";
+          div.innerHTML = `<label>${categoria.nome}:</label>
+                           <input type="number" id="novo_limite_${child.key}" placeholder="Limite para ${categoria.nome}" step="0.01">`;
+          container.appendChild(div);
+        });
+      });
+    }
+    
+    function novo_salvarLimites() {
+      db.ref("categorias").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const input = document.getElementById("novo_limite_" + child.key);
+          if(input && input.value){
+            const limite = parseFloat(input.value);
+            db.ref("limites_categorias").child(child.key).set({
+              categoriaId: child.key,
+              limite: limite,
+              userId: "default"
+            });
+          }
+        });
+        alert("Limites salvos com sucesso!");
+        fecharModal("novo_limitesModal");
+      });
+    }
+    
+    function novo_calcularPrevisoes() {
+      const hoje = new Date();
+      const seisMesesAtras = new Date(hoje.getFullYear(), hoje.getMonth() - 5, 1);
+      let despesasMes = {};
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          let dt;
+          if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+            dt = new Date(despesa.dataCompra);
+            if(dt >= seisMesesAtras && dt <= hoje){
+              let key = dt.getFullYear() + "-" + (dt.getMonth()+1);
+              despesasMes[key] = (despesasMes[key] || 0) + parseFloat(despesa.valor);
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              dt = new Date(parcela.vencimento);
+              if(dt >= seisMesesAtras && dt <= hoje){
+                let key = dt.getFullYear() + "-" + (dt.getMonth()+1);
+                despesasMes[key] = (despesasMes[key] || 0) + parseFloat(parcela.valor);
+              }
+            });
+          }
+        });
+        
+        const keys = Object.keys(despesasMes).sort();
+        let x = [];
+        let y = [];
+        keys.forEach((k, index) => {
+          x.push(index + 1);
+          y.push(despesasMes[k]);
+        });
+        
+        function regressaoLinear(x, y) {
+          let n = x.length;
+          let sumX = x.reduce((a, b) => a + b, 0);
+          let sumY = y.reduce((a, b) => a + b, 0);
+          let sumXY = x.reduce((acc, val, i) => acc + val * y[i], 0);
+          let sumX2 = x.reduce((acc, val) => acc + val * val, 0);
+          let m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+          let b = (sumY - m * sumX) / n;
+          return { m, b };
+        }
+        
+        const { m, b } = regressaoLinear(x, y);
+        let previsoes = [];
+        for(let i = x.length + 1; i <= x.length + 3; i++){
+          previsoes.push(b + m * i);
+        }
+        
+        const ctxPrev = document.getElementById("novo_graficoPrevisao").getContext("2d");
+        if(window.novoGraficoPrevisao) window.novoGraficoPrevisao.destroy();
+        window.novoGraficoPrevisao = new Chart(ctxPrev, {
+          type: 'line',
+          data: {
+            labels: ['Mês 1', 'Mês 2', 'Mês 3'],
+            datasets: [{
+              label: 'Previsão de Despesas',
+              data: previsoes,
+              backgroundColor: 'rgba(76, 175, 80, 0.6)',
+              borderColor: 'rgba(76, 175, 80, 1)',
+              fill: false,
+              tension: 0.1
+            }]
+          },
+          options: {
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+        
+        const tabela = document.getElementById("novo_tabelaPrevisao");
+        tabela.innerHTML = "<h4>Próximos 3 Meses</h4>";
+        previsoes.forEach((prev, i) => {
+          const p = document.createElement("p");
+          p.innerText = `Mês ${i+1}: R$ ${prev.toFixed(2)}`;
+          tabela.appendChild(p);
+        });
+      });
+    }
+    
+    function novo_verificarAlertas() {
+      const hoje = new Date();
+      const alertaLista = document.getElementById("novo_listaAlertas");
+      alertaLista.innerHTML = "";
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          if(despesa.formaPagamento === "avista" && !despesa.pago && despesa.dataCompra){
+            let dataCompra = new Date(despesa.dataCompra);
+            let diffDays = Math.ceil((dataCompra - hoje) / (1000 * 60 * 60 * 24));
+            if(diffDays === 3){
+              novo_mostrarAlerta(`Despesa "${despesa.descricao}" vence em 3 dias.`);
+              db.ref("alertas_historico").push({
+                tipo: "vencimento",
+                mensagem: `Despesa "${despesa.descricao}" vence em 3 dias.`,
+                data: hoje.toISOString().split("T")[0]
+              });
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              if(!parcela.pago){
+                let venc = new Date(parcela.vencimento);
+                let diffDays = Math.ceil((venc - hoje) / (1000 * 60 * 60 * 24));
+                if(diffDays === 3){
+                  novo_mostrarAlerta(`Parcela de "${despesa.descricao}" vence em 3 dias.`);
+                  db.ref("alertas_historico").push({
+                    tipo: "vencimento",
+                    mensagem: `Parcela de "${despesa.descricao}" vence em 3 dias.`,
+                    data: hoje.toISOString().split("T")[0]
+                  });
+                }
+              }
+            });
+          }
+        });
+      });
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        let gastosCategoria = {};
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          if(despesa.pago || (despesa.formaPagamento === "cartao" && despesa.parcelas.every(p => p.pago))) return;
+          let cat = despesa.categoria;
+          let valor = 0;
+          if(despesa.formaPagamento === "avista"){
+            valor = parseFloat(despesa.valor) || 0;
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              if(!parcela.pago){ valor += parseFloat(parcela.valor) || 0; }
+            });
+          }
+          gastosCategoria[cat] = (gastosCategoria[cat] || 0) + valor;
+        });
+        
+        db.ref("limites_categorias").once("value").then(snapshotLimites => {
+          snapshotLimites.forEach(child => {
+            let limiteData = child.val();
+            let gasto = gastosCategoria[child.key] || 0;
+            if(gasto >= 0.8 * limiteData.limite){
+              novo_mostrarAlerta(`Alerta: Categoria "${child.key}" atingiu ${((gasto/limiteData.limite)*100).toFixed(0)}% do limite.`);
+              db.ref("alertas_historico").push({
+                tipo: "limite_excedido",
+                mensagem: `Categoria "${child.key}" atingiu ${((gasto/limiteData.limite)*100).toFixed(0)}% do limite.`,
+                data: hoje.toISOString().split("T")[0]
+              });
+            }
+          });
+        });
+      });
+    }
+    
+    function novo_mostrarAlerta(mensagem) {
+      const toast = document.createElement("div");
+      toast.className = "toast-alerta";
+      toast.innerText = mensagem;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 5000);
+    }
+    
+    setInterval(novo_verificarAlertas, 86400000);
+    
+    // A função renderCalendar() é utilizada somente no modal "Calendário"
+    function renderCalendar() {
+      const calendarGrid = document.getElementById("calendarGrid");
+      calendarGrid.innerHTML = "";
+      const monthYearElem = document.getElementById("calendarMonthYear");
+      const date = new Date(currentCalendarYear, currentCalendarMonth, 1);
+      const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
+      monthYearElem.innerText = `${date.toLocaleString('pt-BR', { month: 'long' })} ${currentCalendarYear}`;
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        let expensesPerDay = {};
+        snapshot.forEach(child => {
+          const despesa = child.val();
+          if(despesa.pago) return;
+          if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+            const d = new Date(despesa.dataCompra);
+            if(d.getMonth() === currentCalendarMonth && d.getFullYear() === currentCalendarYear){
+              const day = d.getDate();
+              expensesPerDay[day] = (expensesPerDay[day] || 0) + parseFloat(despesa.valor);
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              if(!parcela.pago){
+                const d = new Date(parcela.vencimento);
+                if(d.getMonth() === currentCalendarMonth && d.getFullYear() === currentCalendarYear){
+                  const day = d.getDate();
+                  expensesPerDay[day] = (expensesPerDay[day] || 0) + parseFloat(parcela.valor);
+                }
+              }
+            });
+          }
+        });
+        
+        let table = document.createElement("table");
+        let headerRow = document.createElement("tr");
+        const weekDays = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+        weekDays.forEach(weekday => {
+          let th = document.createElement("th");
+          th.innerText = weekday;
+          headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
+        
+        let row = document.createElement("tr");
+        for(let i = 0; i < date.getDay(); i++){
+          let cell = document.createElement("td");
+          cell.innerText = "";
+          row.appendChild(cell);
+        }
+        
+        for(let day = 1; day <= daysInMonth; day++){
+          if(row.children.length === 7){
+            table.appendChild(row);
+            row = document.createElement("tr");
+          }
+          let cell = document.createElement("td");
+          let totalDia = expensesPerDay[day] ? expensesPerDay[day].toFixed(2) : "0.00";
+          cell.innerHTML = day + "<br>R$ " + totalDia;
+          cell.classList.add("calendar-cell");
+          cell.addEventListener("click", function(){ showBalanceForDate(day); });
+          row.appendChild(cell);
+        }
+        table.appendChild(row);
+        calendarGrid.appendChild(table);
+      });
+    }
+    
+    function showBalanceForDate(day) {
+      let selectedDate = new Date(currentCalendarYear, currentCalendarMonth, day);
+      db.ref("pessoas").once("value").then(snapshot => {
+        let totalIncome = 0;
+        snapshot.forEach(child => {
+          let pessoa = child.val();
+          if(pessoa.pagamentos){
+            pessoa.pagamentos.forEach(pag => {
+              let pagamentoDia = parseInt(pag.dia);
+              if(pagamentoDia <= day) totalIncome += parseFloat(pag.valor) || 0;
+            });
+          }
+        });
+        db.ref("despesas").once("value").then(snapshot2 => {
+          let totalExpenses = 0;
+          snapshot2.forEach(child => {
+            let despesa = child.val();
+            if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+              let d = new Date(despesa.dataCompra);
+              if(d.getDate() <= day && d.getMonth() === currentCalendarMonth && d.getFullYear() === currentCalendarYear)
+                totalExpenses += parseFloat(despesa.valor) || 0;
+            }
+            if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+              despesa.parcelas.forEach(parcela => {
+                let d = new Date(parcela.vencimento);
+                if(d.getDate() <= day && d.getMonth() === currentCalendarMonth && d.getFullYear() === currentCalendarYear)
+                  totalExpenses += parseFloat(parcela.valor);
+              });
+            }
+          });
+          let availableBalance = totalIncome - totalExpenses;
+          document.getElementById("saldoDisponivelContainer").innerText =
+            `Saldo em ${selectedDate.toLocaleDateString()}: R$ ${availableBalance.toFixed(2)}`;
+        });
+      });
+    }
+    
+    function prevMonth() {
+      currentCalendarMonth--;
+      if(currentCalendarMonth < 0){ currentCalendarMonth = 11; currentCalendarYear--; }
+      renderCalendar();
+    }
+    
+    function nextMonth() {
+      currentCalendarMonth++;
+      if(currentCalendarMonth > 11){ currentCalendarMonth = 0; currentCalendarYear++; }
+      renderCalendar();
+    }
+    
+    function toggleMonthYearSelect() {
+      let selectDiv = document.getElementById("monthYearSelect");
+      selectDiv.style.display = (selectDiv.style.display === "none" || selectDiv.style.display === "") ? "block" : "none";
+      if(selectDiv.style.display === "block"){
+        let selectYear = document.getElementById("selectYear");
+        if(selectYear.options.length === 0){
+          for(let y = currentCalendarYear - 5; y <= currentCalendarYear + 5; y++){
+            let option = document.createElement("option");
+            option.value = y;
+            option.text = y;
+            if(y === currentCalendarYear) option.selected = true;
+            selectYear.appendChild(option);
+          }
+        }
+        document.getElementById("selectMonth").value = currentCalendarMonth;
+      }
+    }
+    
+    function updateCalendarFromSelect() {
+      let selectMonth = document.getElementById("selectMonth").value;
+      let selectYear = document.getElementById("selectYear").value;
+      currentCalendarMonth = parseInt(selectMonth);
+      currentCalendarYear = parseInt(selectYear);
+      toggleMonthYearSelect();
+      renderCalendar();
+    }
+    
+    function toggleClt() {
+      document.getElementById("cltFields").style.display =
+        document.getElementById("cltCheckbox").checked ? "block" : "none";
+    }
+    
+    function atualizarSalarioLiquido() {
+      let salarioBruto = parseFloat(document.getElementById("salarioBruto").value) || 0;
+      let inss = calcularINSS(salarioBruto);
+      let irrf = calcularIRRF(salarioBruto - inss);
+      let salarioLiquido = salarioBruto - inss - irrf;
+      document.getElementById("salarioLiquido").value = salarioLiquido.toFixed(2);
+    }
+    
+    function calcularINSS(salario) {
+      if(salario <= 1320.00) return salario * 0.075;
+      else if(salario <= 2571.29) return (1320 * 0.075) + ((salario - 1320) * 0.09);
+      else if(salario <= 3856.94) return (1320 * 0.075) + (1251.29 * 0.09) + ((salario - 2571.29) * 0.12);
+      else if(salario <= 7507.49) return (1320 * 0.075) + (1251.29 * 0.09) + (1285.65 * 0.12) + ((salario - 3856.94) * 0.14);
+      return 876.97;
+    }
+    
+    function calcularIRRF(base) {
+      if(base <= 2112.00) return 0;
+      else if(base <= 2826.65) return (base * 0.075) - 158.40;
+      else if(base <= 3751.05) return (base * 0.15) - 370.40;
+      else if(base <= 4664.68) return (base * 0.225) - 651.73;
+      return (base * 0.275) - 884.96;
+    }
+    
+    function gerarCamposPagamentos() {
+      let container = document.getElementById("pagamentosContainer");
+      container.innerHTML = "";
+      let numPagamentos = parseInt(document.getElementById("numPagamentos").value) || 0;
+      let salarioLiquido = parseFloat(document.getElementById("salarioLiquido").value) || 0;
+      if(numPagamentos > 1){
+        for(let i = 1; i <= numPagamentos; i++){
+          let div = document.createElement("div");
+          div.className = "pagamento-item";
+          div.innerHTML = `<label>Dia do Pagamento ${i}:</label>
+                           <input type="number" placeholder="Dia" min="1" max="31" required>
+                           <label>Valor (R$):</label>
+                           <input type="number" class="valoresPagamento" placeholder="Valor R$" step="0.01" oninput="verificarSomaPagamentos()" required>`;
+          container.appendChild(div);
+        }
+      } else if(numPagamentos === 1){
+        let div = document.createElement("div");
+        div.className = "pagamento-item";
+        div.innerHTML = `<label>Dia do Pagamento:</label>
+                         <input type="number" placeholder="Dia" min="1" max="31" required>`;
+        container.appendChild(div);
+        let inputValor = document.createElement("input");
+        inputValor.type = "number";
+        inputValor.className = "valoresPagamento";
+        inputValor.placeholder = "Valor (R$)";
+        inputValor.step = "0.01";
+        inputValor.value = salarioLiquido.toFixed(2);
+        inputValor.readOnly = true;
+        container.appendChild(inputValor);
+      }
+    }
+    
+    function verificarSomaPagamentos() {
+      let salarioLiquido = parseFloat(document.getElementById("salarioLiquido").value) || 0;
+      let valores = document.querySelectorAll(".valoresPagamento");
+      let soma = 0;
+      valores.forEach(input => { soma += parseFloat(input.value) || 0; });
+      soma = Math.round(soma * 100) / 100;
+      salarioLiquido = Math.round(salarioLiquido * 100) / 100;
+      document.getElementById("avisoErro").style.display = soma !== salarioLiquido ? "block" : "none";
+    }
+    
+    document.getElementById("cadastroForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      let nome = document.getElementById("nome").value;
+      let parentesco = document.getElementById("parentesco").value;
+      let saldoInicial = parseFloat(document.getElementById("saldoInicial").value) || 0;
+      let salarioBruto = parseFloat(document.getElementById("salarioBruto").value) || 0;
+      let salarioLiquido = parseFloat(document.getElementById("salarioLiquido").value) || 0;
+      let numPagamentos = parseInt(document.getElementById("numPagamentos").value) || 0;
+      let pagamentos = [];
+      if(document.getElementById("cltCheckbox").checked){
+        let itens = document.getElementById("pagamentosContainer").getElementsByClassName("pagamento-item");
+        for(let item of itens){
+          let dia = item.querySelector("input[type=number]").value;
+          let valor = item.querySelector(".valoresPagamento") ? item.querySelector(".valoresPagamento").value : "";
+          pagamentos.push({ dia, valor });
+        }
+      }
+      let dados = {
+        nome,
+        parentesco,
+        saldoInicial,
+        salarioBruto,
+        salarioLiquido,
+        numPagamentos,
+        pagamentos,
+        timestamp: new Date().toISOString()
+      };
+      db.ref("pessoas").push(dados)
+        .then(() => {
+          let msg = document.getElementById("mensagemSucessoRenda");
+          msg.innerText = "Dados salvos com sucesso!";
+          msg.style.display = "block";
+          setTimeout(() => {
+            msg.style.display = "none";
+            document.getElementById("cadastroForm").reset();
+            document.getElementById("cltFields").style.display = "none";
+            document.getElementById("pagamentosContainer").innerHTML = "";
+          }, 3000);
+        })
+        .catch(err => alert("Erro ao salvar os dados de renda: " + err));
+    });
+    
+    function loadRendas() {
+      const rendaList = document.getElementById("usuariosListaPrincipal");
+      if(rendaVisivel){
+        rendaList.innerHTML = "";
+        rendaVisivel = false;
+        return;
+      }
+      db.ref("pessoas").once("value").then(snapshot => {
+        rendaList.innerHTML = "";
+        snapshot.forEach(child => {
+          const pessoa = child.val();
+          const key = child.key;
+          const div = document.createElement("div");
+          div.style.padding = "10px";
+          div.style.marginBottom = "10px";
+          div.style.borderRadius = "8px";
+          div.style.boxShadow = "3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light)";
+          let pagamentosInfo = "";
+          if(pessoa.pagamentos){
+            pagamentosInfo = "<br><strong>Pagamentos:</strong> ";
+            pessoa.pagamentos.forEach(pag => {
+              pagamentosInfo += `Dia: ${pag.dia}, Valor: R$ ${parseFloat(pag.valor).toFixed(2)}; `;
+            });
+          }
+          div.innerHTML = `<strong>Nome:</strong> ${pessoa.nome} - <strong>Saldo Inicial:</strong> R$ ${parseFloat(pessoa.saldoInicial).toFixed(2)} - <strong>Salário Líquido:</strong> R$ ${parseFloat(pessoa.salarioLiquido).toFixed(2)} ${pagamentosInfo}
+                           <button onclick="deleteRenda('${key}')" style="margin-left: 10px; background: red; color: white; border: none; border-radius: 50%; cursor: pointer;">X</button>`;
+          rendaList.appendChild(div);
+        });
+        rendaVisivel = true;
+      });
+    }
+    
+    function deleteRenda(key) {
+      if(confirm("Tem certeza que deseja excluir esta renda?")){
+        db.ref("pessoas").child(key).remove()
+          .then(() => {
+            alert("Renda excluída com sucesso!");
+            loadRendas();
+            atualizarDashboard();
+          })
+          .catch(err => alert("Erro ao excluir renda: " + err));
+      }
+    }
+    
+    function loadDespesasNaoPagasSelect() {
+      const despesaSelect = document.getElementById("despesaSelect");
+      despesaSelect.innerHTML = "";
+      db.ref("despesas").orderByChild("pago").equalTo(false).once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const despesa = child.val();
+          if(despesa.formaPagamento === "avista"){
+            const option = document.createElement("option");
+            option.value = child.key;
+            const dataExibicao = despesa.dataCompra;
+            const valorExibido = despesa.valor ? "R$ " + parseFloat(despesa.valor).toFixed(2) : "";
+            option.text = despesa.descricao + " " + valorExibido + " - " + dataExibicao;
+            despesaSelect.appendChild(option);
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach((parcela, index) => {
+              if(!parcela.pago){
+                const option = document.createElement("option");
+                option.value = child.key + "|" + index;
+                option.text = `${despesa.descricao} - Parcela ${index+1} de ${despesa.parcelas.length} - Venc: ${parcela.vencimento} - R$ ${parseFloat(parcela.valor).toFixed(2)}`;
+                despesaSelect.appendChild(option);
+              }
+            });
+          }
+        });
+      });
+    }
+    
+    function prevDashboardMonth() {
+      let selectMonth = document.getElementById("dashboardMonth");
+      let selectYear = document.getElementById("dashboardYear");
+      let currentMonth = parseInt(selectMonth.value);
+      if(currentMonth === 0){
+        currentMonth = 11;
+        selectYear.value = parseInt(selectYear.value) - 1;
+      } else {
+        currentMonth--;
+      }
+      selectMonth.value = currentMonth;
+      atualizarDashboard();
+      updateDespesasMesTitle();
+      carregarPainelDespesasMes();
+    }
+    
+    function nextDashboardMonth() {
+      let selectMonth = document.getElementById("dashboardMonth");
+      let selectYear = document.getElementById("dashboardYear");
+      let currentMonth = parseInt(selectMonth.value);
+      if(currentMonth === 11){
+        currentMonth = 0;
+        selectYear.value = parseInt(selectYear.value) + 1;
+      } else {
+        currentMonth++;
+      }
+      selectMonth.value = currentMonth;
+      atualizarDashboard();
+      updateDespesasMesTitle();
+      carregarPainelDespesasMes();
+    }
+    
+    function updateDespesasMesTitle() {
+      let selectMonth = document.getElementById("dashboardMonth");
+      let monthIndex = parseInt(selectMonth.value);
+      let monthName = new Date(2020, monthIndex).toLocaleString('pt-BR', { month: 'long' });
+      document.getElementById("despesasMesTitle").innerText = "Despesas de " + monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    }
+    
+    /* ================= NOVAS FUNCIONALIDADES ================= */
+    
+    function novo_carregarLimites() {
+      const container = document.getElementById("novo_limitesContainer");
+      container.innerHTML = "";
+      db.ref("categorias").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const categoria = child.val();
+          const div = document.createElement("div");
+          div.style.marginBottom = "10px";
+          div.innerHTML = `<label>${categoria.nome}:</label>
+                           <input type="number" id="novo_limite_${child.key}" placeholder="Limite para ${categoria.nome}" step="0.01">`;
+          container.appendChild(div);
+        });
+      });
+    }
+    
+    function novo_salvarLimites() {
+      db.ref("categorias").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          const input = document.getElementById("novo_limite_" + child.key);
+          if(input && input.value){
+            const limite = parseFloat(input.value);
+            db.ref("limites_categorias").child(child.key).set({
+              categoriaId: child.key,
+              limite: limite,
+              userId: "default"
+            });
+          }
+        });
+        alert("Limites salvos com sucesso!");
+        fecharModal("novo_limitesModal");
+      });
+    }
+    
+    function novo_calcularPrevisoes() {
+      const hoje = new Date();
+      const seisMesesAtras = new Date(hoje.getFullYear(), hoje.getMonth() - 5, 1);
+      let despesasMes = {};
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          let dt;
+          if(despesa.formaPagamento === "avista" && despesa.dataCompra){
+            dt = new Date(despesa.dataCompra);
+            if(dt >= seisMesesAtras && dt <= hoje){
+              let key = dt.getFullYear() + "-" + (dt.getMonth()+1);
+              despesasMes[key] = (despesasMes[key] || 0) + parseFloat(despesa.valor);
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              dt = new Date(parcela.vencimento);
+              if(dt >= seisMesesAtras && dt <= hoje){
+                let key = dt.getFullYear() + "-" + (dt.getMonth()+1);
+                despesasMes[key] = (despesasMes[key] || 0) + parseFloat(parcela.valor);
+              }
+            });
+          }
+        });
+        
+        const keys = Object.keys(despesasMes).sort();
+        let x = [];
+        let y = [];
+        keys.forEach((k, index) => {
+          x.push(index + 1);
+          y.push(despesasMes[k]);
+        });
+        
+        function regressaoLinear(x, y) {
+          let n = x.length;
+          let sumX = x.reduce((a, b) => a + b, 0);
+          let sumY = y.reduce((a, b) => a + b, 0);
+          let sumXY = x.reduce((acc, val, i) => acc + val * y[i], 0);
+          let sumX2 = x.reduce((acc, val) => acc + val * val, 0);
+          let m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+          let b = (sumY - m * sumX) / n;
+          return { m, b };
+        }
+        
+        const { m, b } = regressaoLinear(x, y);
+        let previsoes = [];
+        for(let i = x.length + 1; i <= x.length + 3; i++){
+          previsoes.push(b + m * i);
+        }
+        
+        const ctxPrev = document.getElementById("novo_graficoPrevisao").getContext("2d");
+        if(window.novoGraficoPrevisao) window.novoGraficoPrevisao.destroy();
+        window.novoGraficoPrevisao = new Chart(ctxPrev, {
+          type: 'line',
+          data: {
+            labels: ['Mês 1', 'Mês 2', 'Mês 3'],
+            datasets: [{
+              label: 'Previsão de Despesas',
+              data: previsoes,
+              backgroundColor: 'rgba(76, 175, 80, 0.6)',
+              borderColor: 'rgba(76, 175, 80, 1)',
+              fill: false,
+              tension: 0.1
+            }]
+          },
+          options: {
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+        
+        const tabela = document.getElementById("novo_tabelaPrevisao");
+        tabela.innerHTML = "<h4>Próximos 3 Meses</h4>";
+        previsoes.forEach((prev, i) => {
+          const p = document.createElement("p");
+          p.innerText = `Mês ${i+1}: R$ ${prev.toFixed(2)}`;
+          tabela.appendChild(p);
+        });
+      });
+    }
+    
+    function novo_verificarAlertas() {
+      const hoje = new Date();
+      const alertaLista = document.getElementById("novo_listaAlertas");
+      alertaLista.innerHTML = "";
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          if(despesa.formaPagamento === "avista" && !despesa.pago && despesa.dataCompra){
+            let dataCompra = new Date(despesa.dataCompra);
+            let diffDays = Math.ceil((dataCompra - hoje) / (1000 * 60 * 60 * 24));
+            if(diffDays === 3){
+              novo_mostrarAlerta(`Despesa "${despesa.descricao}" vence em 3 dias.`);
+              db.ref("alertas_historico").push({
+                tipo: "vencimento",
+                mensagem: `Despesa "${despesa.descricao}" vence em 3 dias.`,
+                data: hoje.toISOString().split("T")[0]
+              });
+            }
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              if(!parcela.pago){
+                let venc = new Date(parcela.vencimento);
+                let diffDays = Math.ceil((venc - hoje) / (1000 * 60 * 60 * 24));
+                if(diffDays === 3){
+                  novo_mostrarAlerta(`Parcela de "${despesa.descricao}" vence em 3 dias.`);
+                  db.ref("alertas_historico").push({
+                    tipo: "vencimento",
+                    mensagem: `Parcela de "${despesa.descricao}" vence em 3 dias.`,
+                    data: hoje.toISOString().split("T")[0]
+                  });
+                }
+              }
+            });
+          }
+        });
+      });
+      
+      db.ref("despesas").once("value").then(snapshot => {
+        let gastosCategoria = {};
+        snapshot.forEach(child => {
+          let despesa = child.val();
+          if(despesa.pago || (despesa.formaPagamento === "cartao" && despesa.parcelas.every(p => p.pago))) return;
+          let cat = despesa.categoria;
+          let valor = 0;
+          if(despesa.formaPagamento === "avista"){
+            valor = parseFloat(despesa.valor) || 0;
+          } else if(despesa.formaPagamento === "cartao" && despesa.parcelas){
+            despesa.parcelas.forEach(parcela => {
+              if(!parcela.pago){ valor += parseFloat(parcela.valor) || 0; }
+            });
+          }
+          gastosCategoria[cat] = (gastosCategoria[cat] || 0) + valor;
+        });
+        
+        db.ref("limites_categorias").once("value").then(snapshotLimites => {
+          snapshotLimites.forEach(child => {
+            let limiteData = child.val();
+            let gasto = gastosCategoria[child.key] || 0;
+            if(gasto >= 0.8 * limiteData.limite){
+              novo_mostrarAlerta(`Alerta: Categoria "${child.key}" atingiu ${((gasto/limiteData.limite)*100).toFixed(0)}% do limite.`);
+              db.ref("alertas_historico").push({
+                tipo: "limite_excedido",
+                mensagem: `Categoria "${child.key}" atingiu ${((gasto/limiteData.limite)*100).toFixed(0)}% do limite.`,
+                data: hoje.toISOString().split("T")[0]
+              });
+            }
+          });
+        });
+      });
+    }
+    
+    function novo_mostrarAlerta(mensagem) {
+      const toast = document.createElement("div");
+      toast.className = "toast-alerta";
+      toast.innerText = mensagem;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 5000);
+    }
+    
+    setInterval(novo_verificarAlertas, 86400000);
+    
+    window.onload = () => {
+      document.getElementById("dataCompra").value = new Date().toISOString().split("T")[0];
+      updateCategoriaSelect();
+      updateCartaoSelect();
+      loadDespesasNaoPagasSelect();
+      loadCategorias();
+      loadCartoes();
+      loadCategoriasFiltro();
+      preencherDashboardAno();
+      document.getElementById("dashboardMonth").value = new Date().getMonth();
+      atualizarDashboard();
+      updateDespesasMesTitle();
+      carregarPainelDespesasMes();
+    };
+    
+    document.getElementById("dashboardMonth").addEventListener("change", carregarPainelDespesasMes);
+    document.getElementById("dashboardYear").addEventListener("change", carregarPainelDespesasMes);
+    document.querySelector("button[onclick='atualizarDashboard()']").addEventListener("click", function() {
+      setTimeout(carregarPainelDespesasMes, 500);
+    });
   </script>
 </body>
 </html>
