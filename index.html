@@ -1,431 +1,1119 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Processador de CSV</title>
-  <!-- Biblioteca PapaParse para ler CSV -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Login e Controle GC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h2 { margin-top: 30px; }
-    table { border-collapse: collapse; margin-top: 10px; width: 80%; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background-color: #f4f4f4; }
-    .container { margin-bottom: 30px; }
-    button { margin-top: 10px; margin-right: 10px; }
-    .update-panel { border: 1px solid #ccc; padding: 10px; width: 80%; margin-bottom: 30px; }
+    /* Estilos Gerais */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      transition: background-color 0.3s;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      position: relative;
+      transition: background 0.5s ease;
+    }
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 10px;
+      transition: color 0.5s ease, border-color 0.5s ease;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
+    }
+    /* Inputs e selects */
+    input, select {
+      padding: 10px 14px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    input:focus, select:focus {
+      border-color: #2c3e50;
+      outline: none;
+    }
+    button {
+      padding: 10px 14px;
+      font-size: 16px;
+      background: #2c3e50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #1a2a3a;
+    }
+    .hidden {
+      display: none;
+    }
+    /* Botões Específicos */
+    #botaoRecuperar {
+      background: #e74c3c;
+    }
+    #botaoRecuperar:hover {
+      background: #c0392b;
+    }
+    /* Botão de Toggle do Menu (único) */
+    #menuToggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 20px;
+      line-height: 30px;
+      text-align: center;
+      background: #2c3e50;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+    #menuToggle:hover {
+      transform: scale(1.2);
+    }
+    .delete-button {
+      background: #e74c3c;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+    .delete-button:hover {
+      background: #c0392b;
+    }
+    /* Seções e Layout */
+    .login-container { }
+    .pergaminhos-section {
+      margin-bottom: 30px;
+    }
+    .pergaminhos-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .pergaminhos-save {
+      margin-top: 10px;
+    }
+    #controleItensGrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      margin-bottom: 20px;
+    }
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .search-bar input {
+      width: 45ch;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .search-bar button {
+      padding: 10px 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    th {
+      background: #2c3e50;
+      color: #fff;
+      font-weight: 600;
+    }
+    tr:hover {
+      background: #f1f1f1;
+    }
+    #missingBerkasPanel {
+      margin-top: 20px;
+      padding: 10px;
+      background: #eaf7ff;
+      border: 1px solid #bce0fd;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    #ataqueTotalPanel {
+      border: 1px solid #2c3e50;
+      border-radius: 4px;
+      padding: 10px;
+      text-align: center;
+      background: #fff;
+    }
+    #ataqueTotalPanel label {
+      margin-bottom: 5px;
+      font-weight: 500;
+      display: block;
+    }
+    #resultadoAtaqueTotal {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #2c3e50;
+    }
+    #botaoLimparAtaqueFiltro {
+      background: transparent;
+      border: 1px solid #2c3e50;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: #2c3e50;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+    }
+    #botaoLimparAtaqueFiltro:hover {
+      background: #eaf7ff;
+    }
+    /* Responsividade */
+    @media (max-width: 600px) {
+      #controleItensGrid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .search-bar {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .search-bar input, .search-bar button {
+        width: 100%;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+    /* Sidebar (Menu Lateral) – permanece totalmente fora da tela quando fechado */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      width: 250px;
+      height: 100%;
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 20px;
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+    #sidebar.open {
+      transform: translateX(0);
+    }
+    #sidebar h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+    #sidebar select, #sidebar button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    /* Tema Grandchase – Novo Design com animações e efeitos modernos */
+    .theme-grandchase {
+      /* Fundo com imagem (substitua a URL pela imagem desejada) */
+      background: url('https://via.placeholder.com/1920x1080?text=Grandchase+Background') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .theme-grandchase .container {
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #8A2BE2;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.8);
+      animation: containerGlow 2s infinite alternate;
+    }
+    @keyframes containerGlow {
+      from { box-shadow: 0 0 10px rgba(138, 43, 226, 0.5); }
+      to { box-shadow: 0 0 20px rgba(138, 43, 226, 1); }
+    }
+    .theme-grandchase h2 {
+      color: #FFD700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+      border-bottom-color: #FFD700;
+    }
+    .theme-grandchase button {
+      background: linear-gradient(45deg, #8A2BE2, #BA55D3);
+      color: #fff;
+      border: 1px solid #FFD700;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .theme-grandchase button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    }
+    .theme-grandchase img {
+      transition: transform 0.3s ease;
+    }
+    .theme-grandchase img:hover {
+      transform: scale(1.1);
+    }
+    /* Efeito de hover para as linhas da tabela no tema Grandchase */
+    .theme-grandchase table tr:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
   </style>
 </head>
 <body>
-
-  <h1>Leitor e Processador de CSV</h1>
-  <div class="container">
-    <input type="file" id="csvFile" accept=".csv">
-    <br>
-    <!-- Botões para exportar Planilha 1 -->
-    <button onclick="exportCSV()">Exportar CSV (Planilha 1)</button>
-    <button onclick="exportXLS()">Exportar XLS (Planilha 1)</button>
-    <button onclick="copyProcessedTable()">Copiar Planilha 1 (para Notion)</button>
-  </div>
-
-  <h2>Tabela Processada</h2>
-  <table id="resultTable">
-    <thead>
-      <tr>
-        <th>Coluna 1</th>
-        <th>Coluna 2</th>
-        <th>Coluna 3</th>
-        <th>Coluna 4</th>
-        <th>Coluna 5</th>
-        <th>Coluna 9</th>
-        <th>Novo Código</th>
-        <th>Novo Código 2</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <!-- Painel para atualizar a Coluna 9 -->
-  <div class="update-panel">
-    <h3>Atualizar Coluna 9</h3>
-    <label for="col9Option">Selecione a opção: </label>
-    <select id="col9Option">
-      <option value="MAR - CEY - CEY">MAR - CEY - CEY</option>
-      <option value="MAR - ROB - ROB">MAR - ROB - ROB</option>
+  <!-- Sidebar Menu Lateral -->
+  <div id="sidebar">
+    <h3 id="menuTitle">Menu</h3>
+    <label id="labelLanguage" for="languageSelect">Linguagem</label>
+    <select id="languageSelect">
+      <option value="pt">Português</option>
+      <option value="en">English</option>
+      <option value="kr">한국어</option>
     </select>
-    &nbsp;&nbsp;
-    <label for="col9Color">Cor (HEX ou nome): </label>
-    <input type="text" id="col9Color" placeholder="#ff0000 ou red">
-    &nbsp;&nbsp;
-    <button onclick="updateCol9()">Confirmar Atualização</button>
+    <label id="labelTheme" for="themeSelect">Tema</label>
+    <select id="themeSelect">
+      <option value="classic">Tema Clássico</option>
+      <option value="grandchase">Grandchase</option>
+    </select>
+    <button id="btnExit">Sair</button>
   </div>
 
-  <!-- Botões para exportar a Tabela Resumo (Planilha 1 – contagem dos códigos da coluna 4) -->
-  <div class="container">
-    <button onclick="exportCSVSummary()">Exportar CSV (Resumo 1)</button>
-    <button onclick="exportXLSSummary()">Exportar XLS (Resumo 1)</button>
-    <button onclick="copySummaryTable()">Copiar Resumo 1 (para Notion)</button>
+  <!-- Tela de Login/Cadastro -->
+  <div class="container" id="telaLogin">
+    <h2 id="loginTitle">Login / Cadastro</h2>
+    <div class="login-container">
+      <label id="labelEmail" for="email">E-mail:</label>
+      <input type="email" id="email" placeholder="Digite seu e-mail">
+      <label id="labelSenha" for="senha">Senha:</label>
+      <input type="password" id="senha" placeholder="Digite sua senha">
+      <button id="botaoLogin">Login</button>
+      <button id="botaoCadastro">Cadastrar</button>
+      <button id="botaoRecuperar">Recuperar Senha</button>
+    </div>
   </div>
 
-  <h2>Resumo de Códigos (Coluna 4)</h2>
-  <table id="summaryTable">
-    <thead>
-      <tr>
-        <th>Código</th>
-        <th>Quantidade</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <!-- Tela Principal -->
+  <div class="container hidden" id="telaPrincipal">
+    <!-- O botão de menu será inserido via JS -->
+    <div class="section pergaminhos-section">
+      <h2 id="titlePergaminhos">Gerenciamento de Pergaminhos</h2>
+      <div class="pergaminhos-row">
+        <div>
+          <label id="labelPergaminhoUnico" for="pergaminho_unico">Pergaminho Único:</label>
+          <input type="number" id="pergaminho_unico" value="0" oninput="salvarPergaminhos()">
+        </div>
+        <div>
+          <label id="labelPergaminhoAleatorio" for="pergaminho_aleatorio">Pergaminho Aleatório:</label>
+          <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
+        </div>
+      </div>
+      <div class="pergaminhos-save">
+        <button id="botaoSalvarPergaminho" onclick="salvarPergaminhos()">Salvar Pergaminho</button>
+      </div>
+    </div>
 
-  <!-- Botões para exportar a Tabela Resumo 2 (Planilha 2 – contagem dos códigos gerados da coluna 3) -->
-  <div class="container">
-    <button onclick="exportCSVSummary2()">Exportar CSV (Resumo 2)</button>
-    <button onclick="exportXLSSummary2()">Exportar XLS (Resumo 2)</button>
-    <button onclick="copySummaryTable2()">Copiar Resumo 2 (para Notion)</button>
+    <!-- Seção de Controle de Itens -->
+    <div class="section" id="controleItens">
+      <h2 id="titleControleItens">Controle de Itens</h2>
+      <div id="controleItensGrid">
+        <div class="full-width">
+          <label id="labelPersonagem" for="personagem">Personagem:</label>
+          <select id="personagem">
+            <option>Elesis</option>
+            <option>Lire</option>
+            <option>Arme</option>
+            <option>Lass</option>
+            <option>Ryan</option>
+            <option>Ronan</option>
+            <option>Amy</option>
+            <option>Jin</option>
+            <option>Sieghart</option>
+            <option>Mari</option>
+            <option>Dio</option>
+            <option>Zero</option>
+            <option>Rey</option>
+            <option>Lupus</option>
+            <option>Lin</option>
+            <option>Azin</option>
+            <option>Holy</option>
+            <option>Edel Frost</option>
+            <option>Veigas</option>
+            <option>Uno</option>
+            <option>Decane</option>
+            <option>Ai</option>
+            <option>Kallia Eldepel</option>
+          </select>
+        </div>
+        <div>
+          <label id="labelPiercing" for="piercing">Piercing:</label>
+          <select id="piercing">
+            <option>Nenhum</option>
+            <option>Harkyon</option>
+            <option>Normal</option>
+            <option>Épico</option>
+            <option>Lendário</option>
+          </select>
+        </div>
+        <div>
+          <label id="labelBrinco" for="brinco">Brinco:</label>
+          <select id="brinco">
+            <option>Nenhum</option>
+            <option>Harkyon</option>
+            <option>Normal</option>
+            <option>Épico</option>
+            <option>Lendário</option>
+          </select>
+        </div>
+        <div>
+          <label id="labelAnel" for="anel">Anel:</label>
+          <select id="anel">
+            <option>Nenhum</option>
+            <option>Harkyon</option>
+            <option>Nível 1.1</option>
+            <option>Nível 1.2</option>
+            <option>Nível 1.3</option>
+            <option>Nível 2.1</option>
+            <option>Nível 2.2</option>
+            <option>Nível 2.3</option>
+            <option>Nível 3.1</option>
+            <option>Nível 3.2</option>
+            <option>Nível 3.3</option>
+          </select>
+        </div>
+        <div>
+          <label id="labelBerkas" for="berkas">Berkas:</label>
+          <select id="berkas">
+            <option>Nenhum</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+            <option>11</option>
+            <option>Full</option>
+          </select>
+        </div>
+        <div>
+          <label id="labelVazio" for="vazio">Vazio:</label>
+          <select id="vazio">
+            <option>Nenhum</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+          </select>
+        </div>
+        <div>
+          <label id="labelAtaqueTotal" for="ataqueTotal">Ataque Total:</label>
+          <select id="ataqueTotal">
+            <option>Nenhum</option>
+            <option>100k</option>
+            <option>200k</option>
+            <option>300k</option>
+            <option>400k</option>
+            <option>500k</option>
+            <option>600k</option>
+            <option>700k</option>
+            <option>800k</option>
+            <option>900k</option>
+            <option>1000k</option>
+            <option>1100k</option>
+            <option>1200k</option>
+            <option>1300k</option>
+            <option>1400k</option>
+            <option>1500k</option>
+            <option>1600k</option>
+            <option>1700k</option>
+            <option>1800k</option>
+            <option>1900k</option>
+            <option>2000k</option>
+          </select>
+        </div>
+      </div>
+      <button id="botaoSalvarGC">Salvar GC</button>
+    </div>
+
+    <!-- Seção de Controle de Personagens -->
+    <div class="section">
+      <h2 id="titleControlePersonagens">Controle de Personagens</h2>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Pesquisar personagem..." style="width:45ch; max-width:100%;">
+        <button id="botaoPesquisar" onclick="filtrarTabela()">Pesquisar</button>
+        <button id="botaoLimparFiltro" onclick="limparFiltro()">Limpar Filtro</button>
+      </div>
+      <table id="tabela_controle">
+        <!-- A tabela será gerada dinamicamente -->
+      </table>
+      <div id="missingBerkasPanel">Total de berkas faltantes:</div>
+      <div id="ataqueTotalPanel">
+        <label id="labelAtaqueTotalSelecao">Selecione o valor de ataque total desejado:</label>
+        <select id="selecionarAtaqueTotal">
+          <option value="Todos">Todos</option>
+          <option>100k</option>
+          <option>200k</option>
+          <option>300k</option>
+          <option>400k</option>
+          <option>500k</option>
+          <option>600k</option>
+          <option>700k</option>
+          <option>800k</option>
+          <option>900k</option>
+          <option>1000k</option>
+          <option>1100k</option>
+          <option>1200k</option>
+          <option>1300k</option>
+          <option>1400k</option>
+          <option>1500k</option>
+          <option>1600k</option>
+          <option>1700k</option>
+          <option>1800k</option>
+          <option>1900k</option>
+          <option>2000k</option>
+        </select>
+        <div id="resultadoAtaqueTotal"></div>
+        <button id="botaoLimparAtaqueFiltro" onclick="limparFiltroAtaqueTotal()">Limpar Filtro Ataque</button>
+      </div>
+    </div>
   </div>
 
-  <h2>Resumo de Códigos (Coluna 3 - Novo Código 2)</h2>
-  <table id="summaryTable2">
-    <thead>
-      <tr>
-        <th>Tipo</th>
-        <th>Quantidade</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <!-- Script com Firebase, Tradução, Tema, Menu e Funções -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-  <script>
-    let processedData = []; // Dados da Planilha 1
-    const summaryCounts = {}; // Contagem dos códigos derivados da coluna 4 (Novo Código)
-    const summaryCounts2 = {}; // Contagem dos códigos derivados da coluna 3 (Novo Código 2)
-    let totalItens = 0;     // Soma dos valores da 8ª coluna (índice 7 do CSV)
+    const config = {
+      apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
+      authDomain: "gc-controle.firebaseapp.com",
+      databaseURL: "https://gc-controle-default-rtdb.firebaseio.com",
+      projectId: "gc-controle",
+      storageBucket: "gc-controle.firebasestorage.app",
+      messagingSenderId: "3109203796",
+      appId: "1:3109203796:web:f8619117f915f67ceba2c1",
+      measurementId: "G-3NNXXD5V2T"
+    };
 
-    // Função para determinar o Novo Código (a partir da Coluna 4)
-    function getCodigo(texto) {
-      const str = texto.toLowerCase();
-      if (str.includes("fixo")) {
-        return "Fixo";
-      } else if (str.includes("porta de correr") && str.includes("persiana")) {
-        return "PCR Integrada";
-      } else if (str.includes("janela de correr") && str.includes("persiana")) {
-        return "JCR Integrada";
-      } else if (str.includes("porta de correr")) {
-        return "PCR";
-      } else if (str.includes("janela de correr")) {
-        return "JCR";
-      } else if (str.includes("persiana")) {
-        return "Integrada";
-      } else if (str.includes("acm")) {
-        return "ACM";
-      } else if (str.includes("maxim-ar") || str.includes("maxim") || str.includes("max")) {
-        return "Maxim-ar";
-      } else if (str.includes("porta de giro")) {
-        return "PGR";
-      } else if (str.includes("pivotante")) {
-        return "Pivotante";
-      } else if (str.includes("brise")) {
-        return "Brise";
-      } else if (str.includes("ripado")) {
-        return "Ripado";
+    const appFirebase = initializeApp(config);
+    const database = getDatabase(appFirebase);
+    const auth = getAuth(appFirebase);
+    let usuarioAtual = null;
+    let gcData = {};
+    let currentTheme = "classic"; // "classic" ou "grandchase"
+    let currentLanguage = "pt";
+
+    // Objeto de Tradução
+    const translations = {
+      "pt": {
+        "loginTitle": "Login / Cadastro",
+        "labelEmail": "E-mail:",
+        "labelSenha": "Senha:",
+        "botaoLogin": "Login",
+        "botaoCadastro": "Cadastrar",
+        "botaoRecuperar": "Recuperar Senha",
+        "titlePergaminhos": "Gerenciamento de Pergaminhos",
+        "labelPergaminhoUnico": "Pergaminho Único:",
+        "labelPergaminhoAleatorio": "Pergaminho Aleatório:",
+        "botaoSalvarPergaminho": "Salvar Pergaminho",
+        "titleControleItens": "Controle de Itens",
+        "labelPersonagem": "Personagem:",
+        "labelPiercing": "Piercing:",
+        "labelBrinco": "Brinco:",
+        "labelAnel": "Anel:",
+        "labelBerkas": "Berkas:",
+        "labelVazio": "Vazio:",
+        "labelAtaqueTotal": "Ataque Total:",
+        "botaoSalvarGC": "Salvar GC",
+        "titleControlePersonagens": "Controle de Personagens",
+        "searchPlaceholder": "Pesquisar personagem...",
+        "botaoPesquisar": "Pesquisar",
+        "botaoLimparFiltro": "Limpar Filtro",
+        "missingBerkasText": "Total de berkas faltantes:",
+        "labelAtaqueTotalSelecao": "Selecione o valor de ataque total desejado:",
+        "optionTodos": "Todos",
+        "botaoLimparAtaqueFiltro": "Limpar Filtro Ataque",
+        "menuTitle": "Menu",
+        "languageOption": "Linguagem",
+        "themeOption": "Tema",
+        "exitOption": "Sair",
+        "classicTheme": "Tema Clássico",
+        "grandchaseTheme": "Grandchase"
+      },
+      "en": {
+        "loginTitle": "Login / Register",
+        "labelEmail": "Email:",
+        "labelSenha": "Password:",
+        "botaoLogin": "Login",
+        "botaoCadastro": "Register",
+        "botaoRecuperar": "Recover Password",
+        "titlePergaminhos": "Scroll Management",
+        "labelPergaminhoUnico": "Unique Scroll:",
+        "labelPergaminhoAleatorio": "Random Scroll:",
+        "botaoSalvarPergaminho": "Save Scroll",
+        "titleControleItens": "Item Control",
+        "labelPersonagem": "Character:",
+        "labelPiercing": "Piercing:",
+        "labelBrinco": "Earring:",
+        "labelAnel": "Ring:",
+        "labelBerkas": "Berkas:",
+        "labelVazio": "Empty:",
+        "labelAtaqueTotal": "Total Attack:",
+        "botaoSalvarGC": "Save GC",
+        "titleControlePersonagens": "Character Control",
+        "searchPlaceholder": "Search character...",
+        "botaoPesquisar": "Search",
+        "botaoLimparFiltro": "Clear Filter",
+        "missingBerkasText": "Total missing berkas:",
+        "labelAtaqueTotalSelecao": "Select desired total attack value:",
+        "optionTodos": "All",
+        "botaoLimparAtaqueFiltro": "Clear Attack Filter",
+        "menuTitle": "Menu",
+        "languageOption": "Language",
+        "themeOption": "Theme",
+        "exitOption": "Exit",
+        "classicTheme": "Classic Theme",
+        "grandchaseTheme": "Grandchase"
+      },
+      "kr": {
+        "loginTitle": "로그인 / 등록",
+        "labelEmail": "이메일:",
+        "labelSenha": "비밀번호:",
+        "botaoLogin": "로그인",
+        "botaoCadastro": "등록",
+        "botaoRecuperar": "비밀번호 복구",
+        "titlePergaminhos": "두루마리 관리",
+        "labelPergaminhoUnico": "유일 두루마리:",
+        "labelPergaminhoAleatorio": "랜덤 두루마리:",
+        "botaoSalvarPergaminho": "두루마리 저장",
+        "titleControleItens": "아이템 제어",
+        "labelPersonagem": "캐릭터:",
+        "labelPiercing": "피어싱:",
+        "labelBrinco": "귀걸이:",
+        "labelAnel": "반지:",
+        "labelBerkas": "버카스:",
+        "labelVazio": "빈칸:",
+        "labelAtaqueTotal": "총 공격력:",
+        "botaoSalvarGC": "GC 저장",
+        "titleControlePersonagens": "캐릭터 제어",
+        "searchPlaceholder": "캐릭터 검색...",
+        "botaoPesquisar": "검색",
+        "botaoLimparFiltro": "필터 지우기",
+        "missingBerkasText": "부족한 버카스 총합:",
+        "labelAtaqueTotalSelecao": "원하는 총 공격력 선택:",
+        "optionTodos": "전체",
+        "botaoLimparAtaqueFiltro": "공격 필터 초기화",
+        "menuTitle": "메뉴",
+        "languageOption": "언어",
+        "themeOption": "테마",
+        "exitOption": "종료",
+        "classicTheme": "클래식 테마",
+        "grandchaseTheme": "그랜드체이스"
       }
-      return "";
+    };
+
+    function updateLanguage(lang) {
+      currentLanguage = lang;
+      const t = translations[lang];
+      document.getElementById("loginTitle").innerText = t.loginTitle;
+      document.getElementById("labelEmail").innerText = t.labelEmail;
+      document.getElementById("labelSenha").innerText = t.labelSenha;
+      document.getElementById("botaoLogin").innerText = t.botaoLogin;
+      document.getElementById("botaoCadastro").innerText = t.botaoCadastro;
+      document.getElementById("botaoRecuperar").innerText = t.botaoRecuperar;
+      document.getElementById("titlePergaminhos").innerText = t.titlePergaminhos;
+      document.getElementById("labelPergaminhoUnico").innerText = t.labelPergaminhoUnico;
+      document.getElementById("labelPergaminhoAleatorio").innerText = t.labelPergaminhoAleatorio;
+      document.getElementById("botaoSalvarPergaminho").innerText = t.botaoSalvarPergaminho;
+      document.getElementById("titleControleItens").innerText = t.titleControleItens;
+      document.getElementById("labelPersonagem").innerText = t.labelPersonagem;
+      document.getElementById("labelPiercing").innerText = t.labelPiercing;
+      document.getElementById("labelBrinco").innerText = t.labelBrinco;
+      document.getElementById("labelAnel").innerText = t.labelAnel;
+      document.getElementById("labelBerkas").innerText = t.labelBerkas;
+      document.getElementById("labelVazio").innerText = t.labelVazio;
+      document.getElementById("labelAtaqueTotal").innerText = t.labelAtaqueTotal;
+      document.getElementById("botaoSalvarGC").innerText = t.botaoSalvarGC;
+      document.getElementById("titleControlePersonagens").innerText = t.titleControlePersonagens;
+      document.getElementById("searchInput").placeholder = t.searchPlaceholder;
+      document.getElementById("botaoPesquisar").innerText = t.botaoPesquisar;
+      document.getElementById("botaoLimparFiltro").innerText = t.botaoLimparFiltro;
+      document.getElementById("missingBerkasPanel").innerText = t.missingBerkasText;
+      document.getElementById("labelAtaqueTotalSelecao").innerText = t.labelAtaqueTotalSelecao;
+      document.getElementById("botaoLimparAtaqueFiltro").innerText = t.botaoLimparAtaqueFiltro;
+      document.getElementById("menuTitle").innerText = t.menuTitle;
+      document.getElementById("labelLanguage").innerText = t.languageOption;
+      document.getElementById("labelTheme").innerText = t.themeOption;
+      document.getElementById("btnExit").innerText = t.exitOption;
+      carregarGCs();
     }
 
-    // Função para determinar o Novo Código 2 (a partir da Coluna 3)
-    function getCodigo2(texto) {
-      const str = texto.toLowerCase();
-      if (str.includes("gol")) {
-        return "Aluminio";
-      } else if (str.includes("rip")) {
-        return "Ripado";
-      } else if (str.includes("brise")) {
-        return "Brise";
-      } else if (str.includes("acm") || str.includes("layer")) {
-        return "Layer";
+    function updateTheme(theme) {
+      currentTheme = theme;
+      if (theme === "grandchase") {
+        document.body.classList.add("theme-grandchase");
+      } else {
+        document.body.classList.remove("theme-grandchase");
       }
-      return "PVC";
+      carregarGCs();
     }
 
-    // Ao selecionar o arquivo CSV
-    document.getElementById('csvFile').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      Papa.parse(file, {
-        complete: function(results) {
-          processedData = [];
-          // Reinicia as contagens
-          for (let key in summaryCounts) { delete summaryCounts[key]; }
-          for (let key in summaryCounts2) { delete summaryCounts2[key]; }
-          totalItens = 0;
-          const rows = results.data;
-          // Processar cada linha (pular linhas com poucos dados)
-          rows.forEach(row => {
-            if (!row || row.length < 9) return;
-            // Mantém as colunas: 1,2,3,4,5,9 (índices: 0,1,2,3,4,8)
-            const selected = [row[0], row[1], row[2], row[3], row[4], row[8]];
-            const codigo = getCodigo(row[3] || "");
-            const codigo2 = getCodigo2(row[2] || "");
-            const newRow = selected.concat(codigo, codigo2);
-            processedData.push(newRow);
-            // Atualiza contagem do Novo Código (coluna 4)
-            if (codigo) { summaryCounts[codigo] = (summaryCounts[codigo] || 0) + 1; }
-            // Atualiza contagem do Novo Código 2 (coluna 3)
-            summaryCounts2[codigo2] = (summaryCounts2[codigo2] || 0) + 1;
-            // Soma a quantidade total usando a 8ª coluna (índice 7)
-            let quantidade = Number(row[7].replace(",","."));
-            if (!isNaN(quantidade)) { totalItens += quantidade; }
-          });
-          renderResultTable();
-          renderSummaryTable();
-          renderSummaryTable2();
-        },
-        error: function(err) { alert("Erro ao ler o CSV: " + err.message); }
-      });
+    document.getElementById("languageSelect").addEventListener("change", (e) => {
+      updateLanguage(e.target.value);
+    });
+    document.getElementById("themeSelect").addEventListener("change", (e) => {
+      updateTheme(e.target.value);
+    });
+    document.getElementById("btnExit").addEventListener("click", () => {
+      signOut(auth)
+        .then(() => {
+          usuarioAtual = null;
+          mostrarTelaLogin();
+        })
+        .catch((error) => {
+          console.error("Erro ao sair:", error);
+        });
     });
 
-    // Renderiza a Planilha 1
-    function renderResultTable() {
-      const tbody = document.querySelector("#resultTable tbody");
-      tbody.innerHTML = "";
-      processedData.forEach(row => {
-        const tr = document.createElement("tr");
-        row.forEach(col => {
-          const td = document.createElement("td");
-          td.textContent = col;
-          tr.appendChild(td);
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("open");
+    }
+
+    // Cria o botão de toggle e o insere na tela principal (único)
+    const menuToggle = document.createElement("button");
+    menuToggle.id = "menuToggle";
+    menuToggle.innerText = "☰";
+    menuToggle.addEventListener("click", toggleSidebar);
+    document.getElementById("telaPrincipal").appendChild(menuToggle);
+
+    const telaLogin = document.getElementById("telaLogin");
+    const telaPrincipal = document.getElementById("telaPrincipal");
+    const botaoLogin = document.getElementById("botaoLogin");
+    const botaoCadastro = document.getElementById("botaoCadastro");
+    const botaoRecuperar = document.getElementById("botaoRecuperar");
+
+    botaoLogin.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      signInWithEmailAndPassword(auth, email, senha)
+        .then((userCredential) => {
+          usuarioAtual = userCredential.user;
+          mostrarTelaPrincipal();
+        })
+        .catch((error) => {
+          alert("Erro no login: " + error.message);
         });
-        tbody.appendChild(tr);
-      });
-    }
+    });
 
-    // Renderiza a Tabela Resumo (Novo Código – coluna 4)
-    function renderSummaryTable() {
-      const tbody = document.querySelector("#summaryTable tbody");
-      tbody.innerHTML = "";
-      Object.keys(summaryCounts).sort().forEach(key => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${key}</td><td>${summaryCounts[key]}</td>`;
-        tbody.appendChild(tr);
-      });
-      // Linha para total de itens
-      const trTotal = document.createElement("tr");
-      trTotal.innerHTML = `<td><strong>Total de Itens</strong></td><td><strong>${totalItens}</strong></td>`;
-      tbody.appendChild(trTotal);
-    }
+    botaoCadastro.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      createUserWithEmailAndPassword(auth, email, senha)
+        .then((userCredential) => {
+          usuarioAtual = userCredential.user;
+          mostrarTelaPrincipal();
+        })
+        .catch((error) => {
+          alert("Erro no cadastro: " + error.message);
+        });
+    });
 
-    // Renderiza a Tabela Resumo 2 (Novo Código 2 – coluna 3)
-    function renderSummaryTable2() {
-      const tbody = document.querySelector("#summaryTable2 tbody");
-      tbody.innerHTML = "";
-      Object.keys(summaryCounts2).sort().forEach(key => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${key}</td><td>${summaryCounts2[key]}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // Função para converter tabela em texto tab-delimitado (para copiar ao Notion)
-    function copyTableText(tableId) {
-      const table = document.getElementById(tableId);
-      let text = "";
-      for (let row of table.rows) {
-        let rowText = [];
-        for (let cell of row.cells) {
-          rowText.push(cell.innerText);
-        }
-        text += rowText.join("\t") + "\n";
+    botaoRecuperar.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      if (!email) {
+        alert("Por favor, informe seu e-mail para recuperar a senha.");
+        return;
       }
-      return text;
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          alert("E-mail de recuperação de senha enviado.");
+        })
+        .catch((error) => {
+          alert("Erro ao enviar e-mail: " + error.message);
+        });
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        usuarioAtual = user;
+        mostrarTelaPrincipal();
+      } else {
+        mostrarTelaLogin();
+      }
+    });
+
+    function mostrarTelaPrincipal() {
+      telaLogin.classList.add("hidden");
+      telaPrincipal.classList.remove("hidden");
+      carregarGCs();
+      calcularAtaqueTotal();
+      carregarPergaminhos();
     }
 
-    // Copia Planilha 1 para a área de transferência
-    function copyProcessedTable() {
-      const text = copyTableText("resultTable");
-      navigator.clipboard.writeText(text).then(() => { alert("Planilha 1 copiada para a área de transferência!"); });
+    function mostrarTelaLogin() {
+      telaLogin.classList.remove("hidden");
+      telaPrincipal.classList.add("hidden");
     }
 
-    // Copia Resumo 1 para o clipboard
-    function copySummaryTable() {
-      const text = copyTableText("summaryTable");
-      navigator.clipboard.writeText(text).then(() => { alert("Resumo 1 copiado para a área de transferência!"); });
-    }
-
-    // Copia Resumo 2 para o clipboard
-    function copySummaryTable2() {
-      const text = copyTableText("summaryTable2");
-      navigator.clipboard.writeText(text).then(() => { alert("Resumo 2 copiado para a área de transferência!"); });
-    }
-
-    // Exporta Planilha 1 para CSV
-    function exportCSV() {
-      const header = ["Coluna 1", "Coluna 2", "Coluna 3", "Coluna 4", "Coluna 5", "Coluna 9", "Novo Código", "Novo Código 2"];
-      let csvContent = header.join(",") + "\n";
-      processedData.forEach(row => {
-        const line = row.map(item => `"${item}"`).join(",");
-        csvContent += line + "\n";
+    function salvarPergaminhos() {
+      const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
+      const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
+      if (!usuarioAtual) return;
+      set(ref(database, 'users/' + usuarioAtual.uid + '/pergaminhos/'), {
+        unico: pergaminhoUnico,
+        aleatorio: pergaminhoAleatorio
+      }).then(() => {
+        console.log("Pergaminhos salvos com sucesso!");
+      }).catch((error) => {
+        console.error("Erro ao salvar pergaminhos:", error);
       });
-      const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "dados_processados.csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
     }
 
-    // Exporta Planilha 1 para XLS
-    function exportXLS() {
-      let tableHTML = `
-        <table border="1">
-          <thead>
-            <tr>
-              <th>Coluna 1</th>
-              <th>Coluna 2</th>
-              <th>Coluna 3</th>
-              <th>Coluna 4</th>
-              <th>Coluna 5</th>
-              <th>Coluna 9</th>
-              <th>Novo Código</th>
-              <th>Novo Código 2</th>
-            </tr>
-          </thead>
-          <tbody>`;
-      processedData.forEach(row => {
-        tableHTML += "<tr>";
-        row.forEach(item => { tableHTML += "<td>" + item + "</td>"; });
-        tableHTML += "</tr>";
+    function carregarPergaminhos() {
+      if (!usuarioAtual) return;
+      get(ref(database, 'users/' + usuarioAtual.uid + '/pergaminhos/')).then((snapshot) => {
+        if (snapshot.exists()) {
+          document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
+          document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "";
+          console.log("Pergaminhos carregados com sucesso!");
+        } else {
+          console.log("Nenhum valor de pergaminho salvo.");
+        }
+      }).catch((error) => {
+        console.error("Erro ao carregar pergaminhos:", error);
       });
-      tableHTML += `</tbody></table>`;
-      const blob = new Blob([tableHTML], { type: "application/vnd.ms-excel;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "dados_processados.xls";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
     }
 
-    // Exporta Resumo 1 para CSV
-    function exportCSVSummary() {
-      const header = ["Código", "Quantidade"];
-      let csvContent = header.join(",") + "\n";
-      const rows = document.querySelectorAll("#summaryTable tbody tr");
-      rows.forEach(row => {
-        const cols = row.querySelectorAll("td");
-        let arr = [];
-        cols.forEach(td => arr.push(`"${td.innerText}"`));
-        csvContent += arr.join(",") + "\n";
+    function personagemJaExiste(personagem, callback) {
+      if (!usuarioAtual) return;
+      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
+        .then((snapshot) => {
+          callback(snapshot.exists());
+        })
+        .catch((error) => {
+          console.error("Erro ao verificar personagem:", error);
+        });
+    }
+
+    function salvarGC() {
+      let personagemSelecionado = document.getElementById("personagem").value;
+      let pergaminhoUnico = document.getElementById("pergaminho_unico").value;
+      let pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
+      let brinco = document.getElementById("brinco").value;
+      let piercing = document.getElementById("piercing").value;
+      let anel = document.getElementById("anel").value;
+      let berkas = document.getElementById("berkas").value;
+      let ataqueTotal = document.getElementById("ataqueTotal").value;
+      let vazio = document.getElementById("vazio").value;
+      
+      let vazioNum = (vazio === "Nenhum") ? "0" : vazio;
+      
+      if (!personagemSelecionado || !brinco || !piercing || !anel || !berkas || !ataqueTotal) {
+        alert("Preencha todos os campos obrigatórios!");
+        return;
+      }
+      if (!usuarioAtual) {
+        alert("Você precisa estar logado!");
+        return;
+      }
+      personagemJaExiste(personagemSelecionado, (existe) => {
+        if (existe) {
+          const confirmacao = confirm("Este personagem já foi salvo. Deseja alterar?");
+          if (!confirmacao) return;
+        }
+        set(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagemSelecionado), {
+          personagem: personagemSelecionado,
+          pergaminho_unico: pergaminhoUnico,
+          pergaminho_aleatorio: pergaminhoAleatorio,
+          brinco: brinco,
+          piercing: piercing,
+          anel: anel,
+          berkas: berkas,
+          ataqueTotal: ataqueTotal,
+          vazio: vazioNum
+        }).then(() => {
+          alert("GC salvo com sucesso!");
+          salvarPergaminhos();
+          carregarGCs();
+          calcularAtaqueTotal();
+        }).catch((error) => {
+          console.error("Erro ao salvar GC:", error);
+        });
       });
-      const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "resumo_dados.csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
     }
 
-    // Exporta Resumo 1 para XLS
-    function exportXLSSummary() {
-      let tableHTML = `
-        <table border="1">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Quantidade</th>
-            </tr>
-          </thead>
-          <tbody>`;
-      const rows = document.querySelectorAll("#summaryTable tbody tr");
-      rows.forEach(row => {
-        tableHTML += "<tr>";
-        const cells = row.querySelectorAll("td");
-        cells.forEach(cell => { tableHTML += "<td>" + cell.innerText + "</td>"; });
-        tableHTML += "</tr>";
+    function carregarGCs() {
+      if (!usuarioAtual) return;
+      gcData = {};
+      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
+        const tabela = document.getElementById("tabela_controle");
+        let headerHTML = "<tr>";
+        if (currentTheme === "grandchase") {
+          headerHTML += "<th>Avatar</th>";
+          headerHTML += "<th>" + document.getElementById("labelPersonagem").innerText + "</th>";
+        } else {
+          headerHTML += "<th>" + document.getElementById("labelPersonagem").innerText + "</th>";
+        }
+        headerHTML += "<th>" + document.getElementById("labelBrinco").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelPiercing").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelAnel").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelBerkas").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelVazio").innerText + "</th>";
+        headerHTML += "<th>" + document.getElementById("labelAtaqueTotal").innerText + "</th>";
+        headerHTML += "<th>Ação</th>";
+        headerHTML += "</tr>";
+        tabela.innerHTML = headerHTML;
+        let totalMissingBerkas = 0;
+        let totalMissingVazio = 0;
+        if (snapshot.exists()) {
+          snapshot.forEach((childSnapshot) => {
+            let dados = childSnapshot.val();
+            let personagem = childSnapshot.key;
+            gcData[personagem] = dados;
+            let berkasValor = dados.berkas;
+            let berkasNum = (berkasValor === "Full") ? 12 : ((berkasValor === "Nenhum") ? 0 : parseInt(berkasValor) || 0);
+            let vazioValor = (dados.vazio === "Nenhum" || !dados.vazio) ? 0 : parseInt(dados.vazio);
+            let missingBerkas = (vazioValor > 0) ? Math.max(0, 6 - berkasNum) : Math.max(0, 12 - berkasNum);
+            let missingVazio = (vazioValor > 0) ? Math.max(0, 6 - vazioValor) : 0;
+            totalMissingBerkas += missingBerkas;
+            totalMissingVazio += missingVazio;
+            
+            let linha = tabela.insertRow();
+            linha.style.cursor = "pointer";
+            if (currentTheme === "grandchase") {
+              let cellAvatar = linha.insertCell();
+              let imgSrc = "img/" + personagem.replace(/\s+/g, '').toLowerCase() + ".png";
+              cellAvatar.innerHTML = `<img src="${imgSrc}" alt="${personagem}" width="40" height="40" style="border-radius:50%;" onerror="this.src='https://via.placeholder.com/40'">`;
+              let cellPersonagem = linha.insertCell();
+              cellPersonagem.textContent = personagem;
+              cellPersonagem.style.cursor = "pointer";
+              cellPersonagem.addEventListener("click", () => {
+                document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
+                document.getElementById("personagem").value = personagem.trim();
+                document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
+                document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
+                document.getElementById("brinco").value = (dados.brinco || "").trim();
+                document.getElementById("piercing").value = (dados.piercing || "").trim();
+                document.getElementById("anel").value = (dados.anel || "").trim();
+                document.getElementById("berkas").value = (dados.berkas || "").trim();
+                document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
+                document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
+              });
+            } else {
+              let cellPersonagem = linha.insertCell();
+              cellPersonagem.textContent = personagem;
+              cellPersonagem.style.cursor = "pointer";
+              cellPersonagem.addEventListener("click", () => {
+                document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
+                document.getElementById("personagem").value = personagem.trim();
+                document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
+                document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
+                document.getElementById("brinco").value = (dados.brinco || "").trim();
+                document.getElementById("piercing").value = (dados.piercing || "").trim();
+                document.getElementById("anel").value = (dados.anel || "").trim();
+                document.getElementById("berkas").value = (dados.berkas || "").trim();
+                document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
+                document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
+              });
+            }
+            let cellBrinco = linha.insertCell();
+            cellBrinco.textContent = dados.brinco;
+            let cellPiercing = linha.insertCell();
+            cellPiercing.textContent = dados.piercing;
+            let cellAnel = linha.insertCell();
+            cellAnel.textContent = dados.anel;
+            let cellBerkas = linha.insertCell();
+            cellBerkas.textContent = dados.berkas;
+            let cellVazio = linha.insertCell();
+            cellVazio.textContent = dados.vazio || "Nenhum";
+            let cellAtaqueTotal = linha.insertCell();
+            cellAtaqueTotal.textContent = dados.ataqueTotal;
+            let cellAcao = linha.insertCell();
+            cellAcao.innerHTML = `<button class="delete-button" onclick="excluirGC('${personagem}')">X</button>`;
+          });
+        } else {
+          console.log("Nenhum GC salvo.");
+        }
+        document.getElementById("missingBerkasPanel").textContent =
+          translations[currentLanguage].missingBerkasText + " " + totalMissingBerkas + " | Total de vazio faltantes: " + totalMissingVazio;
+      }).catch((error) => {
+        console.error("Erro ao carregar GCs:", error);
       });
-      tableHTML += `</tbody></table>`;
-      const blob = new Blob([tableHTML], { type: "application/vnd.ms-excel;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "resumo_dados.xls";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
     }
 
-    // Exporta Resumo 2 para CSV
-    function exportCSVSummary2() {
-      const header = ["Tipo", "Quantidade"];
-      let csvContent = header.join(",") + "\n";
-      const rows = document.querySelectorAll("#summaryTable2 tbody tr");
-      rows.forEach(row => {
-        const cols = row.querySelectorAll("td");
-        let arr = [];
-        cols.forEach(td => arr.push(`"${td.innerText}"`));
-        csvContent += arr.join(",") + "\n";
-      });
-      const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "resumo_dados2.csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    document.getElementById("personagem").addEventListener("change", (event) => {
+      const personagemSelecionado = event.target.value;
+      if (gcData[personagemSelecionado]) {
+        const dados = gcData[personagemSelecionado];
+        document.getElementById("brinco").value = (dados.brinco || "").trim();
+        document.getElementById("piercing").value = (dados.piercing || "").trim();
+        document.getElementById("anel").value = (dados.anel || "").trim();
+        document.getElementById("berkas").value = (dados.berkas || "").trim();
+        document.getElementById("ataqueTotal").value = (dados.ataqueTotal || "").trim();
+        document.getElementById("vazio").value = (dados.vazio || "Nenhum").trim();
+        document.getElementById("pergaminho_unico").value = (dados.pergaminho_unico || "0").trim();
+        document.getElementById("pergaminho_aleatorio").value = (dados.pergaminho_aleatorio || "").trim();
+      }
+    });
+
+    function excluirGC(personagem) {
+      if (!usuarioAtual) return;
+      if (confirm("Você tem certeza que deseja excluir o personagem?")) {
+        remove(ref(database, 'users/' + usuarioAtual.uid + '/gc/' + personagem))
+          .then(() => {
+            alert("Personagem excluído com sucesso!");
+            carregarGCs();
+            calcularAtaqueTotal();
+          })
+          .catch((error) => {
+            console.error("Erro ao excluir personagem:", error);
+          });
+      }
     }
 
-    // Exporta Resumo 2 para XLS
-    function exportXLSSummary2() {
-      let tableHTML = `
-        <table border="1">
-          <thead>
-            <tr>
-              <th>Tipo</th>
-              <th>Quantidade</th>
-            </tr>
-          </thead>
-          <tbody>`;
-      const rows = document.querySelectorAll("#summaryTable2 tbody tr");
-      rows.forEach(row => {
-        tableHTML += "<tr>";
-        const cells = row.querySelectorAll("td");
-        cells.forEach(cell => { tableHTML += "<td>" + cell.innerText + "</td>"; });
-        tableHTML += "</tr>";
-      });
-      tableHTML += `</tbody></table>`;
-      const blob = new Blob([tableHTML], { type: "application/vnd.ms-excel;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "resumo_dados2.xls";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
-    // Atualiza a Coluna 9 (índice 5 na Planilha 1) conforme seleção e aplica a cor escolhida
-    function updateCol9() {
-      const selectedOption = document.getElementById("col9Option").value;
-      const color = document.getElementById("col9Color").value || "yellow"; // cor padrão se vazio
-      // Itera sobre as linhas da tabela processada
-      const tbody = document.querySelector("#resultTable tbody");
-      for (let row of tbody.rows) {
-        let cell = row.cells[5]; // Coluna 9 (índice 5)
-        if (cell.textContent.toUpperCase().includes(selectedOption.toUpperCase())) {
-          // Atualiza o conteúdo e cor de fundo
-          cell.textContent = selectedOption;
-          cell.style.backgroundColor = color;
+    function filtrarTabela() {
+      const input = document.getElementById("searchInput");
+      const filter = input.value.toUpperCase();
+      const table = document.getElementById("tabela_controle");
+      const tr = table.getElementsByTagName("tr");
+      for (let i = 1; i < tr.length; i++) {
+        const td = tr[i].getElementsByTagName("td")[currentTheme === "grandchase" ? 1 : 0];
+        if (td) {
+          const txtValue = td.textContent || td.innerText;
+          tr[i].style.display = (filter === "" || txtValue.toUpperCase().includes(filter)) ? "" : "none";
         }
       }
-      alert("Coluna 9 atualizada!");
     }
+
+    function limparFiltro() {
+      document.getElementById("searchInput").value = "";
+      filtrarTabela();
+    }
+
+    function calcularAtaqueTotal() {
+      const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
+      if (ataqueDesejado === "Todos" || ataqueDesejado === "Nenhum") {
+        document.getElementById("resultadoAtaqueTotal").textContent = "";
+        limparFiltroAtaqueTotal();
+        return;
+      }
+      const ataqueDesejadoNum = parseInt(ataqueDesejado.replace("k", "")) * 1000;
+      if (!usuarioAtual) return;
+      let countExact = 0;
+      let countAbove = 0;
+      let countBelow = 0;
+      get(ref(database, 'users/' + usuarioAtual.uid + '/gc/')).then((snapshot) => {
+        if (snapshot.exists()) {
+          snapshot.forEach((childSnapshot) => {
+            let dados = childSnapshot.val();
+            let atk = dados.ataqueTotal;
+            if (!atk || typeof atk !== "string" || !atk.includes("k")) {
+              atk = "0k";
+            }
+            let atkNum = parseInt(atk.replace("k", "")) * 1000;
+            if (atkNum === ataqueDesejadoNum) {
+              countExact++;
+            } else if (atkNum > ataqueDesejadoNum) {
+              countAbove++;
+            } else {
+              countBelow++;
+            }
+          });
+        }
+        document.getElementById("resultadoAtaqueTotal").textContent =
+          `Exatos: ${countExact} | Acima: ${countAbove} | Abaixo: ${countBelow}`;
+        filtrarAtaqueTabela(ataqueDesejado);
+      }).catch((error) => {
+        console.error("Erro ao calcular ataque total:", error);
+      });
+    }
+
+    function filtrarAtaqueTabela(ataqueDesejado) {
+      const tabela = document.getElementById("tabela_controle");
+      const tr = tabela.getElementsByTagName("tr");
+      for (let i = 1; i < tr.length; i++){
+        const cellAtaque = tr[i].cells[currentTheme === "grandchase" ? 7 : 6].textContent.trim();
+        if (cellAtaque === ataqueDesejado) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+
+    function limparFiltroAtaqueTotal() {
+      const tabela = document.getElementById("tabela_controle");
+      const tr = tabela.getElementsByTagName("tr");
+      for (let i = 1; i < tr.length; i++){
+        tr[i].style.display = "";
+      }
+    }
+
+    document.getElementById("selecionarAtaqueTotal").addEventListener("change", calcularAtaqueTotal);
+    document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
+    window.excluirGC = excluirGC;
+    window.filtrarTabela = filtrarTabela;
+    window.limparFiltro = limparFiltro;
+    window.salvarPergaminhos = salvarPergaminhos;
+    window.calcularAtaqueTotal = calcularAtaqueTotal;
+    window.limparFiltroAtaqueTotal = limparFiltroAtaqueTotal;
+
+    updateLanguage(currentLanguage);
+    updateTheme(currentTheme);
   </script>
 </body>
 </html>
