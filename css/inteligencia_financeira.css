@@ -1,0 +1,572 @@
+/* Estilos para o Sistema de Inteligência Financeira */
+
+/* Suporte ao modo escuro */
+[data-theme="dark"] .inteligencia-icon {
+  background-color: var(--card-color);
+}
+
+[data-theme="dark"] .inteligencia-card {
+  background-color: var(--card-color);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .meta-card {
+  background-color: var(--card-color);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .meta-header {
+  border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .summary-card {
+  background-color: var(--card-color);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .relatorio-tab-content {
+  background-color: var(--card-color);
+}
+
+[data-theme="dark"] .relatorio-tabs {
+  border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .progress-bar-container {
+  background-color: var(--border-color);
+}
+
+/* Correções para textos dos gráficos no modo escuro */
+@media (max-width: 768px) {
+  [data-theme="dark"] .apexcharts-legend-text {
+    color: #e0e0e0 !important;
+    fill: #e0e0e0 !important;
+  }
+
+  [data-theme="dark"] .apexcharts-text {
+    color: #e0e0e0 !important;
+    fill: #e0e0e0 !important;
+  }
+
+  [data-theme="dark"] .apexcharts-datalabel-label,
+  [data-theme="dark"] .apexcharts-datalabel-value {
+    color: #e0e0e0 !important;
+    fill: #e0e0e0 !important;
+  }
+
+  [data-theme="dark"] .apexcharts-xaxis-label,
+  [data-theme="dark"] .apexcharts-yaxis-label {
+    color: #e0e0e0 !important;
+    fill: #e0e0e0 !important;
+  }
+}
+
+/* Painel de Inteligência Financeira */
+.inteligencia-header {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1.5rem;
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.inteligencia-header.excelente {
+  background-color: rgba(76, 201, 240, 0.1);
+}
+
+.inteligencia-header.boa {
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.inteligencia-header.regular {
+  background-color: rgba(248, 150, 30, 0.1);
+}
+
+.inteligencia-header.preocupante {
+  background-color: rgba(247, 37, 133, 0.1);
+}
+
+.inteligencia-icon {
+  font-size: 2.5rem;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+}
+
+.inteligencia-header.excelente .inteligencia-icon {
+  color: var(--success);
+}
+
+.inteligencia-header.boa .inteligencia-icon {
+  color: var(--primary);
+}
+
+.inteligencia-header.regular .inteligencia-icon {
+  color: var(--warning);
+}
+
+.inteligencia-header.preocupante .inteligencia-icon {
+  color: var(--danger);
+}
+
+.inteligencia-title {
+  flex: 1;
+}
+
+.inteligencia-title h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.inteligencia-section {
+  margin-bottom: 2rem;
+}
+
+.inteligencia-section h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inteligencia-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.inteligencia-card {
+  background-color: var(--card-color);
+  padding: 1.5rem;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-speed);
+  color: var(--text-color);
+}
+
+.inteligencia-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.inteligencia-card-title {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.inteligencia-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.inteligencia-card.positive .inteligencia-card-value {
+  color: var(--success);
+}
+
+.inteligencia-card.negative .inteligencia-card-value {
+  color: var(--danger);
+}
+
+.inteligencia-chart {
+  height: 350px;
+  margin-top: 1.5rem;
+}
+
+.inteligencia-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.inteligencia-list li {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--primary);
+  background-color: rgba(67, 97, 238, 0.05);
+  margin-bottom: 0.75rem;
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+}
+
+.inteligencia-insights {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: rgba(67, 97, 238, 0.05);
+  border-radius: var(--border-radius-md);
+  display: none; /* Ocultando a div de insights conforme solicitado */
+}
+
+.inteligencia-insights h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.insight-critical {
+  color: var(--danger);
+}
+
+.insight-warning {
+  color: var(--warning);
+}
+
+.insight-info {
+  color: var(--primary);
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+.loading-spinner i {
+  font-size: 2rem;
+  color: var(--primary);
+}
+
+.loading-container {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+  color: var(--danger);
+}
+
+.error-message i {
+  font-size: 2rem;
+}
+
+/* Painel de Metas Financeiras */
+.metas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.meta-card {
+  background-color: var(--card-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+  color: var(--text-color);
+}
+
+.meta-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.meta-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.meta-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.meta-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.meta-body {
+  padding: 1.5rem;
+}
+
+.meta-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.meta-value, .meta-date {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.meta-progress {
+  margin-bottom: 1rem;
+}
+
+.progress-bar-container {
+  height: 0.5rem;
+  background-color: var(--border-color);
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 1rem;
+}
+
+.progress-text {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.meta-analysis {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: rgba(67, 97, 238, 0.05);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: 1rem;
+}
+
+.meta-analysis i {
+  color: var(--primary);
+}
+
+.meta-footer {
+  padding: 1rem 1.5rem;
+  background-color: rgba(67, 97, 238, 0.05);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+}
+
+.negative {
+  color: var(--danger);
+}
+
+.warning {
+  color: var(--warning);
+}
+
+.positive {
+  color: var(--success);
+}
+
+/* Página Integrada de Provisões e Relatórios */
+.relatorio-integrado-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.relatorio-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+
+/* Mobile responsive adjustments for report tabs */
+@media (max-width: 768px) {
+  .relatorio-tabs {
+    overflow-x: visible !important;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+}
+
+.relatorio-tab-btn {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  white-space: nowrap;
+}
+
+/* Mobile responsive adjustments for report tab buttons */
+@media (max-width: 768px) {
+  .relatorio-tab-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .relatorio-tab-btn i {
+    font-size: 0.875rem;
+    margin-right: 0.25rem;
+  }
+  
+  .relatorio-tab-btn span {
+    font-size: 0.75rem;
+  }
+}
+
+.relatorio-tab-btn:hover {
+  color: var(--primary);
+  background-color: rgba(67, 97, 238, 0.05);
+}
+
+.relatorio-tab-btn.active {
+  color: var(--primary);
+  border-bottom: 3px solid var(--primary);
+  background-color: rgba(67, 97, 238, 0.05);
+}
+
+.relatorio-tab-content {
+  background-color: var(--card-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  color: var(--text-color);
+}
+
+.relatorio-tab-pane {
+  padding: 1.5rem;
+  display: none;
+}
+
+.relatorio-tab-pane.active {
+  display: block;
+}
+
+.relatorio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.relatorio-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.relatorio-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.relatorio-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-card {
+  background-color: var(--card-color);
+  padding: 1.5rem;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-speed);
+  color: var(--text-color);
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.summary-title {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.summary-card.positive .summary-value {
+  color: var(--success);
+}
+
+.summary-card.negative .summary-value {
+  color: var(--danger);
+}
+
+.relatorio-chart {
+  height: 350px;
+  margin-bottom: 1.5rem;
+}
+
+.relatorio-table {
+  margin-top: 1.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .inteligencia-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .inteligencia-icon {
+    margin-bottom: 1rem;
+  }
+  
+  .meta-info {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .relatorio-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}

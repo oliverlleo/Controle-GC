@@ -1,0 +1,4071 @@
+/* Estilos unificados para o Sistema de Gerenciamento de Contas Pessoais */
+
+:root {
+  /* Esquema de cores principal */
+  --primary: #4361ee;
+  --secondary: #3a0ca3;
+  --danger: #f72585;
+  --success: #4cc9f0;
+  --warning: #f8961e;
+  --info: #90e0ef;
+  
+  /* Cores de fundo e texto - LIGHT MODE */
+  --bg-color: #f8f9fa;
+  --card-color: #ffffff;
+  --text-color: #212529;
+  --text-muted: #6c757d;
+  --border-color: #e9ecef;
+  
+  /* Sombras */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* Arredondamento */
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 1rem;
+  
+  /* Transições */
+  --transition-speed: 0.3s;
+}
+
+/* DARK MODE */
+[data-theme="dark"] {
+  /* Cores de fundo e texto - DARK MODE */
+  --bg-color: #121212;
+  --card-color: #1e1e1e;
+  --text-color: #ffffff;
+  --text-muted: #a0a0a0;
+  --border-color: #333333;
+  
+  /* Sombras para modo escuro */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+
+
+/* Seletor discreto inline */
+.tipo-seletor {
+  margin-left: 8px;
+  font-weight: normal;
+  background-color: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: inline-block;
+}
+
+.tipo-opcao {
+  color: #6c757d;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.tipo-opcao:hover {
+  color: #4361ee;
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.tipo-opcao.active {
+  color: #4361ee;
+  font-weight: 500;
+}
+
+.separador {
+  color: #dee2e6;
+  margin: 0 4px;
+  font-weight: normal;
+}
+
+/* ===== PAINEL DESPESAS E RECEITAS ===== */
+.despesas-receitas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Navegação mobile para abas - seletor discreto */
+.mobile-nav-tabs {
+  display: none;
+  margin-bottom: 16px;
+}
+
+.mobile-seletor-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.mobile-seletor {
+  background-color: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 5px 10px;
+  display: inline-block;
+}
+
+.mobile-opcao {
+  color: #6c757d;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  font-size: 1.125rem;
+}
+
+.mobile-opcao:hover {
+  color: #4361ee;
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.mobile-opcao.active {
+  color: #4361ee;
+  font-weight: 500;
+}
+
+/* Painéis financeiros */
+.painel-financeiro {
+  width: 100%;
+  height: 100%;
+}
+
+.painel-financeiro .desktop-title {
+  margin-bottom: 12px;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Lista de receitas (similar às despesas) */
+.receitas-lista {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.receita-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: var(--card-color);
+  border-radius: var(--border-radius-md);
+  border-left: 4px solid var(--success);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-speed);
+}
+
+.receita-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.receita-info {
+  flex: 1;
+}
+
+.receita-descricao {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.receita-detalhe {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.receita-valor {
+  font-weight: 700;
+  color: var(--success);
+  font-size: 0.95rem;
+}
+
+/* Responsive behavior */
+@media (min-width: 769px) {
+  /* Desktop: lado a lado */
+  .despesas-receitas-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    height: 400px;
+  }
+  
+  .mobile-nav-tabs {
+    display: none !important;
+  }
+  
+  .painel-financeiro {
+    display: block !important;
+  }
+  
+  .painel-financeiro.active {
+    grid-column: span 1;
+  }
+  
+  .painel-financeiro:not(.active) {
+    display: block !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile: navegação por abas */
+  .mobile-nav-tabs {
+    display: flex;
+  }
+  
+  .painel-financeiro {
+    display: none;
+  }
+  
+  .painel-financeiro.active {
+    display: block;
+  }
+  
+  .desktop-title {
+    display: none;
+  }
+}
+
+/* Correções de texto no modo escuro para mobile */
+@media (max-width: 768px) {
+  [data-theme="dark"] .despesas-detalhe,
+  [data-theme="dark"] .despesas-detalhe span,
+  [data-theme="dark"] .despesas-detalhe small,
+  [data-theme="dark"] .despesas-detalhe .text-muted {
+    color: #e0e0e0 !important;
+  }
+
+  /* Texto "Sem Categoria" mais claro no modo escuro */
+  [data-theme="dark"] span:contains("Sem Categoria"),
+  [data-theme="dark"] .categoria-sem span,
+  [data-theme="dark"] .sem-categoria {
+    color: #d0d0d0 !important;
+  }
+}
+
+/* Reset e estilos base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Layout principal */
+.app-container {
+  display: flex;
+  width: 100%;
+  position: relative;
+}
+
+/* Navegação Lateral */
+aside {
+  width: 280px;
+  background: var(--card-color);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  transition: transform var(--transition-speed);
+  z-index: 100;
+}
+
+aside h2 {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+/* Menu toggle removido */
+
+/* Mobile Optimizations - Início */
+
+/* Ocultar o calendário inserido pela biblioteca Youware */
+#despesasSection h2.mb-3::after,
+h2.mb-3::after {
+  display: none !important;
+  flex: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Header de despesas com calendário para mobile */
+.despesas-header-mobile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.despesas-header-mobile h2 {
+  margin-bottom: 0;
+}
+
+.mobile-calendar-btn {
+  display: none;
+}
+
+/* Mostrar botão de calendário apenas no mobile */
+@media (max-width: 768px) {
+  .mobile-calendar-btn {
+    display: inline-flex !important;
+    padding: 0.325rem 0.65rem; /* Reduzido em 35% (0.5rem * 0.65 = 0.325rem, 1rem * 0.65 = 0.65rem) */
+    font-size: 0.569rem; /* Reduzido em 35% (0.875rem * 0.65 = 0.569rem) */
+    transform: scale(0.65); /* Reduz o botão em 35% */
+    transform-origin: center right; /* Mantém o alinhamento à direita */
+  }
+  
+  .mobile-calendar-btn span {
+    display: none;
+  }
+  
+  .mobile-calendar-btn i {
+    font-size: 0.8125rem; /* Reduzido em 35% (1.25rem * 0.65 = 0.8125rem) */
+  }
+}
+
+/* Botões de renda na aba de configurações - apenas mobile */
+@media (max-width: 768px) {
+  .renda-buttons-container,
+  .categorias-buttons-container {
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem !important;
+  }
+  
+  .renda-btn-cadastrar,
+  .renda-btn-atualizar,
+  .categoria-btn-gerenciar,
+  .categoria-btn-limites {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .renda-btn-cadastrar span,
+  .renda-btn-atualizar span,
+  .categoria-btn-gerenciar span,
+  .categoria-btn-limites span {
+    font-size: 0.75rem;
+  }
+  
+  .renda-btn-cadastrar i,
+  .renda-btn-atualizar i,
+  .categoria-btn-gerenciar i,
+  .categoria-btn-limites i {
+    font-size: 0.875rem;
+    margin-right: 0.25rem;
+  }
+}
+
+/* Estilos adicionais para o calendário */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  margin-top: 1rem;
+}
+
+.calendar-day-header {
+  text-align: center;
+  font-weight: 600;
+  padding: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+  position: relative;
+  min-height: 40px;
+}
+
+.calendar-day:hover {
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.calendar-day.other-month {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.calendar-day.today {
+  background-color: var(--primary);
+  color: white;
+}
+
+.day-number {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Mobile Navigation - Bottom Sheet */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: auto;
+    bottom: 1rem;
+    right: 1rem;
+    left: auto;
+  }
+  
+  aside {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    transform: translateY(100%);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 150;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  
+  aside.active {
+    transform: translateY(0);
+  }
+  
+  aside h2 {
+    text-align: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 1rem;
+    position: sticky;
+    top: 0;
+    background: var(--card-color);
+    z-index: 1;
+  }
+  
+  .nav-link {
+    padding: 1rem 1.5rem;
+    border-radius: 0;
+    border-bottom: 1px solid #f8f9fa;
+    min-height: 3.5rem;
+    align-items: center;
+  }
+  
+  .nav-link:hover {
+    transform: none;
+    background: rgba(67, 97, 238, 0.08);
+  }
+  
+  .nav-link i {
+    font-size: 1.5rem;
+    width: 2rem;
+  }
+  
+  main {
+    width: 100%;
+    padding: 1rem;
+    padding-bottom: 5rem; /* Espaço para o FAB */
+  }
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text-color);
+  padding: 0.875rem 1rem;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all var(--transition-speed) ease;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link:hover {
+  background: rgba(67, 97, 238, 0.1);
+  color: var(--primary);
+  transform: translateX(5px);
+}
+
+.nav-link.active {
+  background: var(--primary);
+  color: white;
+}
+
+.nav-link i {
+  font-size: 1.25rem;
+  width: 1.5rem;
+  text-align: center;
+}
+
+/* Conteúdo Principal */
+main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background: var(--bg-color);
+  min-height: 100vh;
+}
+
+header {
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+/* Cards e Containers */
+.container {
+  background: var(--card-color);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-speed);
+}
+
+.container:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card {
+  background: var(--card-color);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Botões */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #3a56d4;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #e01e79;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-success:hover {
+  background: #3ab8df;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-block {
+  width: 100%;
+  display: flex;
+}
+
+.btn-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* Formulários */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: var(--card-color);
+  font-size: 1rem;
+  color: var(--text-color);
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+  outline: none;
+}
+
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23212529' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+/* Tabelas */
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+}
+
+th, td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+th {
+  background: rgba(67, 97, 238, 0.1);
+  color: var(--primary);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr {
+  transition: background-color var(--transition-speed);
+}
+
+tbody tr:hover {
+  background-color: rgba(67, 97, 238, 0.05);
+}
+
+/* Tabelas Responsivas - Layout Grid ultra-compacto para mobile */
+@media (max-width: 768px) {
+  #todasDespesasTable {
+    border: none;
+    width: 100%;
+    font-size: 0.7rem;
+  }
+  
+  #todasDespesasTable thead {
+    display: none; /* Oculta o cabeçalho da tabela */
+  }
+  
+  #todasDespesasTable, 
+  #todasDespesasTable tbody {
+    display: block;
+    width: 100%;
+  }
+  
+  #todasDespesasTable tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto auto;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--card-color);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 0.75rem;
+    border-left: 3px solid var(--primary);
+    transition: transform 0.2s, box-shadow 0.2s;
+    grid-template-areas: 
+      "description actions"
+      "details details"
+      "value value";
+  }
+  
+  #todasDespesasTable tr:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  /* Resetar estilos padrão das células */
+  #todasDespesasTable td {
+    display: block;
+    padding: 0;
+    margin: 0;
+    border: none;
+    line-height: 1.3;
+  }
+  
+  /* Descrição: área superior esquerda com status */
+  #todasDespesasTable td:nth-child(1) {
+    grid-area: description;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    line-height: 1.2;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-self: start;
+  }
+  
+  /* Badge dentro da descrição */
+  #todasDespesasTable td:nth-child(1) .badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    margin-left: 0.3rem;
+    white-space: nowrap;
+  }
+  
+  /* Valor: área inferior linha 3 - centralizado */
+  #todasDespesasTable td:nth-child(2) {
+    grid-area: value;
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.2rem;
+    text-align: center;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    background: rgba(67, 97, 238, 0.08);
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(67, 97, 238, 0.2);
+    margin-top: 0.2rem;
+  }
+  
+  /* Detalhes (Data + Categoria): linha 2 */
+  #todasDespesasTable td:nth-child(3) {
+    grid-area: details;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    overflow: hidden;
+    flex-wrap: wrap;
+    text-align: left;
+    padding: 0.2rem 0;
+  }
+  
+  /* Ocultar células individuais de categoria e status, vamos combiná-las */
+  #todasDespesasTable td:nth-child(4),
+  #todasDespesasTable td:nth-child(5) {
+    display: none;
+  }
+  
+  /* Ações: área superior direita */
+  #todasDespesasTable td:nth-child(6) {
+    grid-area: actions;
+    justify-self: end;
+    align-self: start;
+    margin-top: 0.1rem;
+  }
+  
+  /* Badges melhorados para mobile */
+  #todasDespesasTable .badge {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.65rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  
+  /* Botões de ação compactos */
+  #todasDespesasTable .action-buttons {
+    display: flex;
+    gap: 0.15rem;
+    justify-content: flex-end;
+  }
+  
+  #todasDespesasTable .btn-icon {
+    width: 1.3rem;
+    height: 1.3rem;
+    padding: 0;
+    font-size: 0.55rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-color);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+  }
+  
+  #todasDespesasTable .btn-icon:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  /* Ocultar data-labels pois não usamos mais */
+  #todasDespesasTable td::before {
+    display: none;
+  }
+}
+
+/* Modais */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeInModal var(--transition-speed);
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: var(--card-color);
+  padding: 2rem;
+  border-radius: var(--border-radius-lg);
+  width: 90%;
+  max-width: 600px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp var(--transition-speed);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color var(--transition-speed);
+}
+
+.close:hover {
+  color: var(--danger);
+}
+
+.modal-body {
+  margin-bottom: 1.5rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Botões de ação específicos */
+.btn-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  margin: 0 2px;
+}
+
+/* Botão integrado de pagamento recebido */
+.dashboard-card-label .btn-icon {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 0.875rem;
+  margin-left: auto;
+  padding: 0;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dashboard-card-label .btn-icon:hover {
+  background: var(--secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-card-label .btn-icon:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.3);
+}
+
+.dashboard-card-label .btn-icon i {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.btn-icon i.fa-edit:hover {
+  color: var(--success);
+}
+
+.btn-icon i.fa-trash:hover {
+  color: var(--danger);
+}
+
+/* Botão remover pagamento (mais discreto) */
+.remover-pagamento {
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  color: #ccc;
+  font-size: 0.9rem;
+  opacity: 0.5;
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.remover-pagamento:hover {
+  opacity: 1;
+  color: var(--danger);
+}
+
+.pagamento-item {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.pagamento-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card {
+  background: var(--card-color);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.dashboard-card-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.dashboard-card-icon {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(67, 97, 238, 0.1);
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+.dashboard-card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-card-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Gráficos e Painéis */
+.chart-container {
+  background: var(--card-color);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.grafico-painel-container {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.chart-panel {
+  flex: 1;
+  min-width: 300px;
+  background: var(--card-color);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Alertas e Notificações */
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.toast {
+  background: var(--card-color);
+  border-radius: var(--border-radius-md);
+  padding: 1rem 1.5rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 300px;
+  max-width: 450px;
+  animation: slideInRight var(--transition-speed);
+  border-left: 4px solid var(--primary);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.toast-icon {
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+
+.toast-content {
+  flex: 1;
+}
+
+.toast-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.toast-message {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color var(--transition-speed);
+}
+
+.toast-close:hover {
+  color: var(--danger);
+}
+
+.toast-success {
+  border-left-color: var(--success);
+}
+
+.toast-success .toast-icon {
+  color: var(--success);
+}
+
+.toast-danger {
+  border-left-color: var(--danger);
+}
+
+.toast-danger .toast-icon {
+  color: var(--danger);
+}
+
+.toast-warning {
+  border-left-color: var(--warning);
+}
+
+.toast-warning .toast-icon {
+  color: var(--warning);
+}
+
+/* Calendário */
+.calendar-container {
+  background: var(--card-color);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.calendar-nav-btn {
+  background: transparent;
+  border: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+  color: var(--text-color);
+}
+
+.calendar-nav-btn:hover {
+  background-color: rgba(67, 97, 238, 0.1);
+  color: var(--primary);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendar-day-header {
+  text-align: center;
+  font-weight: 600;
+  padding: 0.5rem;
+  color: var(--text-muted);
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+  position: relative;
+}
+
+.calendar-day:hover {
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.calendar-day.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+.calendar-day.has-events::after {
+  content: '';
+  position: absolute;
+  bottom: 0.25rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--danger);
+}
+
+/* Alertas */
+.alertas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.alertas-section {
+  background: var(--card-color);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.alertas-header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.alerta-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  background: var(--bg-color);
+  margin-bottom: 0.75rem;
+  transition: transform var(--transition-speed);
+}
+
+.alerta-item:hover {
+  transform: translateY(-3px);
+}
+
+.alerta-icon {
+  font-size: 1.5rem;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+}
+
+.alerta-content {
+  flex: 1;
+}
+
+.alerta-title {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.alerta-details {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.alerta-progress {
+  height: 0.5rem;
+  background: #e9ecef;
+  border-radius: 1rem;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 1rem;
+}
+
+.alerta-vencimento .alerta-icon {
+  color: var(--warning);
+}
+
+.alerta-vencida .alerta-icon {
+  color: var(--danger);
+}
+
+.alerta-limite .alerta-icon {
+  color: var(--info);
+}
+
+.alerta-critico .alerta-icon,
+.alerta-critico .progress-bar {
+  color: var(--danger);
+  background-color: var(--danger);
+}
+
+.alerta-alto .alerta-icon,
+.alerta-alto .progress-bar {
+  color: var(--warning);
+  background-color: var(--warning);
+}
+
+/* Previsões */
+.previsao-info {
+  background: rgba(67, 97, 238, 0.05);
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  margin-top: 1rem;
+}
+
+/* Despesas */
+.despesa-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.despesa-item:last-child {
+  border-bottom: none;
+}
+
+.despesa-info {
+  flex: 1;
+}
+
+.despesa-titulo {
+  font-weight: 500;
+}
+
+.despesa-detalhe {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.despesa-valor {
+  font-weight: 600;
+}
+
+/* Estilo para despesas pagas */
+.despesa-paga {
+  opacity: 0.7;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-left: 4px solid #28a745;
+  position: relative;
+}
+
+.despesa-paga .despesa-titulo {
+  text-decoration: line-through;
+  color: #6c757d;
+}
+
+.despesa-paga .despesa-valor {
+  color: #28a745;
+  font-weight: 700;
+}
+
+.status-pago {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #28a745;
+  color: white;
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pago i {
+  font-size: 0.75rem;
+}
+  color: var(--primary);
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.bg-success {
+  background-color: var(--success);
+  color: white;
+}
+
+.bg-warning {
+  background-color: var(--warning);
+  color: white;
+}
+
+.bg-danger {
+  background-color: var(--danger);
+  color: white;
+}
+
+.bg-info {
+  background-color: var(--info);
+  color: var(--text-color);
+}
+
+/* Autenticação */
+.user-info {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  transition: all var(--transition-speed);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 0.75rem;
+  background-color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-details {
+  flex: 1;
+  overflow: hidden;
+}
+
+.user-name {
+  font-weight: 500;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+  .user-info {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--card-color);
+    z-index: 101;
+    margin-bottom: 0;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Ajuste para o conteúdo principal quando userInfo está fixo no topo */
+  main {
+    padding-top: 4rem;
+    padding-bottom: 4.5rem;
+  }
+  
+  /* Botão de menu para dispositivos móveis removido */
+  
+  /* Estilo para o título do site em telas pequenas */
+  aside h2 {
+    display: none;
+  }
+}
+
+/* Reduzir largura específica da TD de valor para 65% no mobile */
+@media (max-width: 768px) {
+  #todasDespesasTable td[data-label="Valor"] {
+    width: 65% !important;
+    max-width: 65% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    text-overflow: visible !important;
+  }
+}
+
+/* Para telas muito pequenas - Mobile First Approach */
+@media (max-width: 480px) {
+  :root {
+    /* Ajustes para telas pequenas */
+    --border-radius-sm: 0.375rem;
+    --border-radius-md: 0.625rem;
+    --border-radius-lg: 1.25rem;
+  }
+  
+  main {
+    padding: 0.75rem;
+    padding-top: 4rem;
+    padding-bottom: 5rem;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .container {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .user-info {
+    padding: 0.5rem 1rem;
+  }
+  
+  .user-details {
+    max-width: 150px;
+  }
+  
+  /* Cards ainda menores */
+  .card {
+    padding: 1rem;
+  }
+  
+  .card-value {
+    font-size: 1.25rem;
+  }
+  
+  /* Formulários ultra compactos */
+  .form-control {
+    padding: 0.75rem;
+    font-size: 15px;
+  }
+  
+  .btn {
+    min-height: 2.75rem;
+    font-size: 0.95rem;
+  }
+  
+  /* Menu mobile mais compacto */
+  aside {
+    max-height: 50vh;
+  }
+  
+  aside .nav-link {
+    min-width: 50px;
+    padding: 0.875rem 1.25rem;
+    margin: 0;
+    min-height: 3rem;
+  }
+  
+  .nav-link i {
+    font-size: 1.25rem;
+    width: 1.75rem;
+  }
+  
+  /* Modal mais compacto */
+  .modal {
+    padding: 0.5rem;
+  }
+  
+  .modal-content {
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+  }
+  
+  /* Tabelas com scroll mais suave */
+  table {
+    min-width: 500px;
+    font-size: 0.85rem;
+  }
+  
+  th, td {
+    padding: 0.5rem;
+  }
+
+  /* Reduzir largura específica da TD de valor para 65% no mobile */
+  #todasDespesasTable td[data-label="Valor"] {
+    width: 65% !important;
+    max-width: 65% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    text-overflow: visible !important;
+  }
+  
+  aside .nav-link i {
+    font-size: 1rem;
+  }
+  
+  aside .nav-link span {
+    font-size: 0.65rem;
+  }
+}
+
+/* Estilos para a página de login */
+body.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(145deg, var(--bg-color), var(--card-color));
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  background: var(--card-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: fadeInLogin 0.5s ease;
+}
+
+@keyframes fadeInLogin {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-header h1 {
+  color: var(--primary);
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-header p {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e9ecef;
+}
+
+.login-divider::before {
+  margin-right: 1rem;
+}
+
+.login-divider::after {
+  margin-left: 1rem;
+}
+
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn-google {
+  background: #fff;
+  color: #757575;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.btn-google:hover {
+  background: #f1f1f1;
+  color: #4285F4;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-google i {
+  color: #4285F4;
+  font-size: 1.25rem;
+}
+
+.login-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.login-footer a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+.forgot-password {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.forgot-password a {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  background: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 0.5rem 1rem;
+  transition: all var(--transition-speed);
+  font-size: 1.1rem;
+}
+
+.theme-toggle:hover {
+  background: var(--primary);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* Visibilidade por dispositivo */
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+  
+  .mobile-only {
+    display: flex !important;
+  }
+}
+
+/* Theme toggle na página de login */
+.theme-toggle-login {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.theme-btn {
+  background: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  transition: all var(--transition-speed);
+  font-size: 1.1rem;
+  box-shadow: var(--shadow-md);
+}
+
+.theme-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* Botão de logout */
+#logoutButton {
+  margin-top: auto;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding-top: 1rem;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+  aside {
+    width: 240px;
+  }
+}
+
+/* Mobile Layout Improvements */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+  
+  .app-container {
+    flex-direction: column;
+  }
+  
+  /* Header mobile otimizado */
+  header h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+  
+  /* Cards responsivos */
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .card {
+    padding: 1.25rem;
+    border-radius: var(--border-radius-md);
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .card-title {
+    font-size: 0.95rem;
+  }
+  
+  .card-value {
+    font-size: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  /* Gráficos mobile */
+  .grafico-painel-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .grafico-container,
+  .painel-lateral {
+    width: 100%;
+  }
+  
+  /* Tabelas responsivas */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--border-radius-md);
+  }
+  
+  table {
+    min-width: 600px;
+    font-size: 0.9rem;
+  }
+  
+  /* Modais mobile */
+  .modal {
+    padding: 0.5rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(4px) !important;
+    z-index: 9999 !important;
+    box-sizing: border-box !important;
+  }
+  
+  .modal-content {
+    width: calc(100% - 2rem);
+    max-width: none;
+    margin: 1rem;
+    padding: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    position: relative;
+    /* Ocultar barra de rolagem mas manter funcionalidade */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  .modal-content::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  
+  .modal-header {
+    position: sticky;
+    top: 0;
+    background: var(--card-color);
+    z-index: 1;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  /* Formulários mobile */
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  .form-control {
+    font-size: 16px; /* Evita zoom no iOS */
+    padding: 0.875rem;
+    border-radius: var(--border-radius-md);
+    min-height: 3rem;
+  }
+  
+  .btn {
+    min-height: 3rem;
+    font-size: 1rem;
+    border-radius: var(--border-radius-md);
+    touch-action: manipulation;
+  }
+  
+  .btn-block {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  /* Toast mobile */
+  .toast {
+    min-width: auto;
+    max-width: calc(100% - 2rem);
+    margin: 0 1rem;
+    border-radius: var(--border-radius-md);
+  }
+  
+  /* Utility classes mobile */
+  .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .d-flex.gap-2.flex-wrap {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* Animações e Transições */
+.fade-in {
+  animation: fadeInGeneral var(--transition-speed);
+}
+
+@keyframes fadeInGeneral {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.slide-up {
+  animation: slideUp var(--transition-speed);
+}
+
+.slide-in-right {
+  animation: slideInRight var(--transition-speed);
+}
+
+/* Utilitários */
+.text-primary { color: var(--primary); }
+.text-danger { color: var(--danger); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-muted { color: var(--text-muted); }
+
+.bg-primary { background-color: var(--primary); }
+.bg-danger { background-color: var(--danger); }
+.bg-success { background-color: var(--success); }
+
+/* =================== MOBILE TOP BAR =================== */
+
+/* Mobile Top Bar - Visible only on mobile */
+.mobile-top-bar {
+  display: none;
+  background: var(--card-color);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.mobile-top-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+}
+
+.action-btn:hover {
+  background: rgba(67, 97, 238, 0.1);
+  color: var(--primary);
+}
+
+/* Mobile User Dropdown */
+.mobile-user-dropdown {
+  position: fixed;
+  top: 70px;
+  left: 1rem;
+  background: var(--card-color);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--border-radius-md);
+  padding: 1rem;
+  min-width: 280px;
+  max-width: 320px;
+  z-index: 300;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity var(--transition-speed);
+  display: none;
+}
+
+.mobile-user-dropdown.active {
+  opacity: 1;
+  visibility: visible;
+  /* A transição acontece apenas através da opacidade agora */
+}
+
+.mobile-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.mobile-user-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.mobile-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mobile-user-details {
+  flex: 1;
+  overflow: hidden;
+}
+
+.mobile-user-name {
+  font-weight: 600;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.25rem;
+}
+
+.mobile-user-email {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-dropdown-divider {
+  height: 1px;
+  background: #e9ecef;
+  margin-bottom: 1rem;
+}
+
+/* Mobile menu buttons - common styles */
+.mobile-menu-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mobile-menu-btn:hover {
+  background: var(--secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.mobile-logout-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--danger);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.mobile-logout-btn:hover {
+  background: #e01e79;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Show mobile top bar only on mobile */
+@media (max-width: 768px) {
+  .mobile-top-bar {
+    display: flex;
+  }
+  
+  /* Garantir que o dropdown mobile esteja oculto por padrão */
+  .mobile-user-dropdown {
+    display: none !important;
+  }
+  
+  .mobile-user-dropdown.active {
+    display: block !important;
+  }
+}
+
+/* =================== MOBILE TOUCH OPTIMIZATIONS =================== */
+
+/* Touch-friendly buttons and interactions */
+@media (max-width: 768px) {
+  /* Touch targets - minimum 44px */
+  .btn,
+  .nav-link,
+  .close,
+  .file-item,
+  button,
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+  }
+  
+  /* Larger tap targets for icons */
+  .btn i,
+  .nav-link i {
+    padding: 0.25rem;
+  }
+  
+  /* Better touch scrolling */
+  .table-container,
+  .code-container,
+  aside,
+  .modal-content {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .nav-link:hover {
+    transform: none;
+  }
+  
+  /* Better focus states for accessibility */
+  .btn:focus,
+  .form-control:focus,
+  .nav-link:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  
+  /* Improved form inputs */
+  select.form-control {
+    background-size: 16px;
+    padding-right: 2.5rem;
+  }
+  
+  /* Better checkbox and radio button sizing */
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.75rem;
+  }
+  
+  /* Sticky elements improvements */
+  .modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--card-color);
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  /* Better spacing for touch */
+  .form-group + .form-group {
+    margin-top: 1.5rem;
+  }
+  
+  /* Improved dropdown menus */
+  .dropdown-menu {
+    min-width: 200px;
+    font-size: 16px;
+    border-radius: var(--border-radius-md);
+  }
+  
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* =================== MOBILE NAVIGATION ENHANCEMENTS =================== */
+
+@media (max-width: 768px) {
+  /* Hide desktop sidebar on mobile */
+  aside {
+    display: none;
+  }
+  
+  /* Adjust main content for mobile */
+  main {
+    margin-left: 0;
+    padding-bottom: 80px; /* Space for bottom nav */
+    padding-top: 80px; /* Increased space for mobile top bar */
+  }
+
+  /* Dashboard Cards - versão mobile ultra compacta */
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-card {
+    padding: 0.75rem;
+    border-radius: var(--border-radius-sm);
+  }
+
+  .dashboard-card-header {
+    margin-bottom: 0.5rem;
+  }
+
+  .dashboard-card-title {
+    font-size: 0.8125rem;
+  }
+
+  .dashboard-card-icon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+
+  .dashboard-card-value {
+    font-size: 1.375rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+  }
+
+  .dashboard-card-label {
+    font-size: 0.75rem;
+  }
+
+  .dashboard-card-label .btn-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .dashboard-card-label .btn-icon i {
+    font-size: 0.8125rem;
+  }
+
+  /* Chart containers mobile - previne vazamento */
+  .chart-container {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .chart-header {
+    margin-bottom: 1rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .chart-title {
+    font-size: 1.125rem;
+  }
+
+  /* Gráfico e painel container mobile */
+  .grafico-painel-container {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .chart-panel {
+    min-width: unset;
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .chart-panel h4 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* ApexCharts mobile adjustments */
+  .apexcharts-canvas {
+    max-width: 100% !important;
+  }
+
+  .apexcharts-svg {
+    max-width: 100% !important;
+  }
+
+  /* Despesas lista mobile */
+  .despesas-lista {
+    font-size: 0.875rem;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .despesas-lista .despesa-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+  }
+
+  /* Controles de navegação mobile */
+  .dashboard-card .btn-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.875rem;
+  }
+
+  /* Reduzir descrições das despesas do mês mobile */
+  .despesas-lista .despesa-descricao {
+    font-size: 0.75rem !important;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 150px;
+  }
+
+  .despesas-lista .despesa-info {
+    font-size: 0.7rem !important;
+    color: var(--text-muted);
+  }
+
+  /* Botão cadastrar despesa mobile - posicionar após próximos vencimentos */
+  .mobile-add-expense-btn {
+    display: block !important;
+    width: 100%;
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+  }
+
+  .mobile-add-expense-btn:hover {
+    background: var(--secondary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .mobile-add-expense-btn i {
+    margin-right: 0.5rem;
+  }
+
+  /* Restaurar botão cadastrar despesa que foi adicionado após próximos vencimentos */
+  .mobile-add-expense-btn {
+    display: block !important;
+  }
+
+  /* =================== MOBILE DESPESAS LAYOUT =================== */
+  
+  /* Cabeçalho da seção despesas - botão calendário ao lado do título */
+  #despesasSection > h2.mb-3 {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Mover botão calendário para junto do título */
+  #despesasSection .d-flex.gap-2.flex-wrap.mb-3 .btn-outline {
+    position: absolute !important;
+    top: 0 !important;
+    right: 1rem !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.75rem !important;
+    min-width: auto !important;
+    margin: 0 !important;
+  }
+  
+  #despesasSection .btn-outline i {
+    font-size: 0.875rem !important;
+    margin-right: 0.25rem !important;
+  }
+  
+  /* Adicionar botão calendário mobile após o título */
+  #despesasSection > h2.mb-3::after {
+    content: '';
+    display: block;
+    width: auto;
+  }
+  
+  /* Container dos botões principais - apenas cadastrar e pagar */
+  #despesasSection .d-flex.gap-2.flex-wrap.mb-3 {
+    display: flex !important;
+    gap: 0.5rem !important;
+    margin-bottom: 1rem !important;
+    position: relative !important;
+  }
+  
+  /* Ocultar botão calendário do container original */
+  #despesasSection .d-flex.gap-2.flex-wrap.mb-3 .btn-outline {
+    display: none !important;
+  }
+  
+  /* Botões cadastrar e pagar - tamanho reduzido e lado a lado */
+  #despesasSection .btn-primary,
+  #despesasSection .btn-success {
+    flex: 1 !important;
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.8rem !important;
+    min-height: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.375rem !important;
+  }
+  
+  #despesasSection .btn-primary i,
+  #despesasSection .btn-success i {
+    font-size: 0.875rem !important;
+  }
+  
+  #despesasSection .btn-primary span,
+  #despesasSection .btn-success span {
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Criar botão calendário no cabeçalho */
+  #despesasSection > h2.mb-3::after {
+    content: '📅 Calendário';
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius-md);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  /* =================== MOBILE FILTRO LAYOUT =================== */
+  
+  /* Chart header mobile - reorganizar layout */
+  #despesasSection .chart-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Título "Todas as Despesas" - linha própria */
+  #despesasSection .chart-title {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    font-size: 1.125rem !important;
+  }
+  
+  /* Container do filtro - ocupar linha completa */
+  #despesasSection .chart-header .d-flex.gap-2 {
+    width: 100% !important;
+    gap: 0.5rem !important;
+    align-items: stretch !important;
+  }
+  
+  /* Campo filtro - 80% da largura */
+  #despesasSection .chart-header .form-group {
+    flex: 0 0 80% !important;
+    margin-bottom: 0 !important;
+  }
+  
+  #despesasSection .chart-header .form-control {
+    width: 100% !important;
+    font-size: 0.875rem !important;
+    padding: 0.625rem 0.75rem !important;
+  }
+  
+  /* Botão filtro - 15% da largura */
+  #despesasSection .chart-header .btn {
+    flex: 0 0 15% !important;
+    padding: 0.625rem 0.5rem !important;
+    font-size: 0.875rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: auto !important;
+  }
+  
+  #despesasSection .chart-header .btn i {
+    font-size: 0.875rem !important;
+    margin: 0 !important;
+  }
+
+  /* Ocultar o botão "Cadastrar Nova Despesa" do Dashboard na versão mobile */
+  #dashboardSection .btn.btn-primary.btn-block {
+    display: none !important;
+  }
+
+  /* Despesa detalhe mobile - reduzir tamanho e quebrar linha FORÇADA */
+  .despesa-detalhe {
+    font-size: 0.65rem !important;
+    line-height: 1.2;
+    color: var(--text-muted);
+    white-space: pre-line !important;
+  }
+
+  /* Forçar quebra de linha específica na despesa-detalhe */
+  .despesas-lista .despesa-item .despesa-detalhe {
+    font-size: 0.65rem !important;
+    display: block;
+    margin-top: 0.25rem;
+    white-space: pre-line !important;
+  }
+
+  /* Modificar texto Dashboard Resumido para Dashboard na versão mobile */
+  #dashboardSection .chart-header h2 {
+    font-size: 0;
+    position: relative;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+  
+  #dashboardSection .chart-header h2::before {
+    content: "Dashboard";
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  /* Ocultar seletores de data individuais na versão mobile */
+  #dashboardMonthSelector {
+    display: none !important;
+  }
+
+  /* Mostrar o novo botão de data compacto na versão mobile */
+  .mobile-date-button {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0;
+    margin-left: auto;
+    flex: 0 0 auto;
+  }
+
+  .mobile-date-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .mobile-date-btn:hover,
+  .mobile-date-btn:focus {
+    background: var(--secondary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .mobile-date-btn i {
+    font-size: 1.1rem;
+  }
+
+  /* Modal de seleção de data mobile */
+  .mobile-modal {
+    min-width: 300px;
+    max-width: 90vw;
+  }
+
+  .mobile-date-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .mobile-date-selector .form-group {
+    margin-bottom: 0;
+  }
+
+  .mobile-date-selector .form-control {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+  
+  /* Mobile top bar for secondary actions */
+  .mobile-top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--card-color);
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 99;
+    height: 70px; /* Increased height */
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .mobile-top-bar .logo {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary);
+  }
+  
+  .mobile-top-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+}
+
+/* Estilos para Swipe nas linhas da tabela */
+.swipeable-row {
+  position: relative;
+  transition: transform 0.3s ease;
+  cursor: grab;
+}
+
+.swipeable-row:active {
+  cursor: grabbing;
+}
+
+.swipeable-row.swiping {
+  z-index: 1000;
+}
+
+/* Indicadores de direção do swipe */
+.swipe-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.swipe-indicator.right {
+  right: -80px;
+  background: linear-gradient(to right, rgba(40, 167, 69, 0.8), rgba(40, 167, 69, 0.9));
+}
+
+.swipe-indicator.left {
+  left: -80px;
+  background: linear-gradient(to left, rgba(23, 162, 184, 0.8), rgba(23, 162, 184, 0.9));
+}
+
+.swipe-indicator.active {
+  opacity: 1;
+}
+
+/* Estilos para os modais de swipe */
+.swipe-action-container {
+  padding: 1rem 0;
+}
+
+.despesa-info-modal {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--bg-color);
+  border-radius: 8px;
+}
+
+.despesa-info-modal h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--primary);
+}
+
+.despesa-info-modal p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.action-buttons-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pay-options-container {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--bg-color);
+  border-radius: 8px;
+}
+
+.pay-option {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--card-color);
+}
+
+.pay-option:hover {
+  background: rgba(67, 97, 238, 0.1);
+  border-color: var(--primary);
+}
+
+.pay-option.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.pay-option-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.pay-option-details {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.pay-confirmation {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--card-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.pay-confirmation h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.pay-confirmation p {
+  margin: 0 0 1rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.pay-details {
+  padding: 1rem;
+  background: rgba(67, 97, 238, 0.1);
+  border-radius: 6px;
+  font-size: 1.1rem;
+}
+
+.pay-details strong {
+  color: var(--primary);
+  font-size: 1.25rem;
+}
+
+.pay-details small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Ajustes responsivos para swipe */
+@media (max-width: 768px) {
+  .swipe-indicator {
+    width: 60px;
+    font-size: 1rem;
+  }
+  
+  .swipe-indicator.right {
+    right: -60px;
+  }
+  
+  .swipe-indicator.left {
+    left: -60px;
+  }
+  
+  .despesa-info-modal {
+    padding: 0.75rem;
+  }
+  
+  .action-buttons-modal {
+    gap: 0.75rem;
+  }
+  
+  .mobile-top-actions .action-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    border-radius: var(--border-radius-md);
+    transition: all 0.2s;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .mobile-top-actions .action-btn:hover {
+    background: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+  }
+}
+
+/* Controle de visibilidade entre desktop e mobile */
+.despesas-header-mobile {
+  display: none;
+}
+
+.despesas-header-desktop {
+  display: block;
+}
+
+.mobile-calendar-btn {
+  display: none;
+}
+
+/* Mostrar elementos mobile apenas em dispositivos móveis */
+@media (max-width: 768px) {
+  .despesas-header-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .mobile-calendar-btn {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .despesas-header-desktop {
+    display: none;
+  }
+  
+  /* Ocultar header na versão mobile */
+  header {
+    display: none;
+  }
+  
+  /* Bottom navigation bar */
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card-color);
+    border-top: 1px solid #e9ecef;
+    padding: 0.5rem 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .mobile-bottom-nav .nav-item {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    border-radius: var(--border-radius-md);
+    transition: all 0.2s;
+    cursor: pointer;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+  
+  .mobile-bottom-nav .nav-item:hover,
+  .mobile-bottom-nav .nav-item.active {
+    background: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+    transform: translateY(-2px);
+  }
+  
+  .mobile-bottom-nav .nav-item i {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+    display: block;
+  }
+  
+  .mobile-bottom-nav .nav-item span {
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: block;
+  }
+}
+
+/* Hide mobile elements on desktop */
+@media (min-width: 769px) {
+  .mobile-top-bar {
+    display: none;
+  }
+  
+  .mobile-bottom-nav {
+    display: none;
+  }
+}
+
+/* =================== MOBILE DATA TABLES =================== */
+
+@media (max-width: 768px) {
+  /* Card-style table for mobile */
+  .mobile-table-cards {
+    display: none; /* Can be toggled */
+  }
+  
+  .mobile-table-card {
+    background: var(--card-color);
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--primary);
+  }
+  
+  .mobile-table-card .card-header {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+  }
+  
+  .mobile-table-card .card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f8f9fa;
+  }
+  
+  .mobile-table-card .card-row:last-child {
+    border-bottom: none;
+  }
+  
+  .mobile-table-card .card-label {
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  
+  .mobile-table-card .card-value {
+    font-weight: 600;
+    text-align: right;
+  }
+  
+  .mobile-table-card .card-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f8f9fa;
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .mobile-table-card .btn-sm {
+    flex: 1;
+    min-height: 36px;
+    font-size: 0.875rem;
+  }
+}
+
+/* =================== MOBILE ANIMATIONS =================== */
+
+@media (max-width: 768px) {
+  /* Smooth slide animations for mobile */
+  .slide-up-mobile {
+    animation: slideUpMobile 0.3s ease-out;
+  }
+  
+  @keyframes slideUpMobile {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Fade in for mobile */
+  .fade-in-mobile {
+    animation: fadeInMobile 0.2s ease-out;
+  }
+  
+  @keyframes fadeInMobile {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Scale animation for mobile interactions */
+  .scale-mobile {
+    animation: scaleMobile 0.15s ease-out;
+  }
+  
+  @keyframes scaleMobile {
+    0% { transform: scale(0.95); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+  
+  /* Slide down animation for modal close */
+  @keyframes slideDownMobile {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+}
+
+/* =================== MOBILE METAS FINANCEIRAS =================== */
+
+@media (max-width: 768px) {
+  /* Header para metas financeiras com botão na mesma linha */
+  #metasFinanceirasSection h2.mb-3 {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Mover o botão "Nova Meta" para ficar ao lado do título */
+  #metasFinanceirasSection .d-flex.gap-2.flex-wrap.mb-3 {
+    display: none !important;
+  }
+  
+  /* Estilizando o título h2 para ter o botão Meta */
+  #metasFinanceirasSection h2.mb-3 {
+    position: relative;
+  }
+  
+  /* Botão Meta para versão mobile */
+  #botaoMetaMobile {
+    display: none;
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    border: none;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+  }
+  
+  /* Exibir o botão Meta somente na versão mobile */
+  @media (max-width: 768px) {
+    #botaoMetaMobile {
+      display: inline-flex;
+    }
+  }
+}
+
+/* =================== MOBILE UTILITY CLASSES =================== */
+
+@media (max-width: 768px) {
+  /* Mobile-specific utility classes */
+  .mobile-device .hide-mobile { display: none !important; }
+}
+  .mobile-device .show-mobile { display: block !important; }
+  .mobile-device .show-mobile-flex { display: flex !important; }
+  .mobile-device .show-mobile-inline { display: inline !important; }
+  .mobile-device .show-mobile-inline-block { display: inline-block !important; }
+  
+  /* Mobile spacing utilities */
+  .mobile-device .p-mobile { padding: 1rem !important; }
+  .mobile-device .px-mobile { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .mobile-device .py-mobile { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+  .mobile-device .m-mobile { margin: 1rem !important; }
+  .mobile-device .mx-mobile { margin-left: 1rem !important; margin-right: 1rem !important; }
+  .mobile-device .my-mobile { margin-top: 1rem !important; margin-bottom: 1rem !important; }
+  
+  /* Mobile text utilities */
+  .mobile-device .text-mobile-center { text-align: center !important; }
+  .mobile-device .text-mobile-left { text-align: left !important; }
+  .mobile-device .text-mobile-right { text-align: right !important; }
+  
+  /* Mobile flex utilities */
+  .mobile-device .flex-mobile-column { flex-direction: column !important; }
+  .mobile-device .flex-mobile-row { flex-direction: row !important; }
+  .mobile-device .justify-mobile-center { justify-content: center !important; }
+  .mobile-device .align-mobile-center { align-items: center !important; }
+  
+  /* Mobile width utilities */
+  .mobile-device .w-mobile-100 { width: 100% !important; }
+  .mobile-device .w-mobile-auto { width: auto !important; }
+  
+  /* Mobile font size utilities */
+  .mobile-device .fs-mobile-small { font-size: 0.875rem !important; }
+  .mobile-device .fs-mobile-normal { font-size: 1rem !important; }
+  .mobile-device .fs-mobile-large { font-size: 1.125rem !important; }
+}
+.bg-warning { background-color: var(--warning); }
+
+.d-flex { display: flex; }
+.align-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.flex-column { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-1 { gap: 0.5rem; }
+.gap-2 { gap: 1rem; }
+.gap-3 { gap: 1.5rem; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.hidden { display: none; }
+
+/* Estilos para a interface de configurações */
+.config-tabs {
+  display: flex;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+
+.config-tab-btn {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  white-space: nowrap;
+}
+
+.config-tab-btn:hover {
+  color: var(--primary);
+}
+
+.config-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.config-tab-pane {
+  display: none;
+  animation: fadeInTab 0.3s ease;
+}
+
+@keyframes fadeInTab {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Estilos para itens de renda, categorias e cartões */
+.renda-item,
+.categoria-item,
+.cartao-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  background: var(--bg-color);
+  margin-bottom: 0.75rem;
+  transition: transform var(--transition-speed);
+  overflow-x: hidden; /* Impedir scroll horizontal */
+  width: 100%; /* Garantir que ocupe toda largura disponível */
+  max-width: 100%; /* Limitar largura máxima */
+  box-sizing: border-box; /* Incluir padding e border na largura */
+}
+
+.renda-item:hover,
+.categoria-item:hover,
+.cartao-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
+}
+
+.renda-info,
+.categoria-info,
+.cartao-info {
+  flex: 1;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.renda-titulo,
+.categoria-titulo,
+.cartao-titulo {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.renda-detalhe,
+.categoria-detalhe,
+.cartao-detalhe {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.renda-pagamentos {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding: 0.5rem;
+  background: rgba(67, 97, 238, 0.05);
+  border-radius: var(--border-radius-sm);
+}
+
+/* =================== MODAL IMPROVEMENTS FOR MOBILE =================== */
+
+@media (max-width: 768px) {
+  /* Melhorar o tamanho e comportamento dos modais em mobile */
+  .modal-content {
+    width: 95% !important;
+    max-width: 95% !important;
+    margin: 0 auto !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+  
+  /* Garantir que o conteúdo do modal não cause scroll horizontal */
+  .modal-body {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0.75rem !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Modais com slide-up (específicos para mobile) */
+  .modal-content.slide-up-mobile {
+    max-width: 100% !important;
+    width: 100% !important;
+    border-radius: 1rem 1rem 0 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+/* =================== MOBILE OPTIMIZATION FOR RENDA & CATEGORIA SECTIONS =================== */
+  /* Melhorias específicas para a seção de rendas no mobile */
+  .renda-item {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    position: relative !important;
+  }
+  
+  /* Melhorias específicas para a seção de categorias no mobile */
+  .categoria-item {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 0.75rem 0.75rem 0.5rem 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    position: relative !important;
+  }
+  
+  .categoria-info {
+    width: 100% !important;
+    margin-bottom: 0.75rem !important;
+    padding-right: 48px !important; /* Espaço para os botões posicionados absolutamente */
+  }
+  
+  .categoria-titulo {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: var(--primary-color) !important;
+  }
+  
+  .categoria-acoes {
+    position: absolute !important;
+    top: 0.75rem !important;
+    right: 0.75rem !important;
+    display: flex !important;
+    flex-direction: row !important; /* Alterado de column para row */
+    gap: 0.35rem !important;
+  }
+  
+  /* Modificar botões nos modais para serem mais compactos em mobile */
+  .categoria-item .btn-icon {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .categoria-item .btn-icon.btn-primary {
+    background: rgba(67, 97, 238, 0.1) !important;
+    color: #4361ee !important;
+    border: 1px solid rgba(67, 97, 238, 0.2) !important;
+  }
+  
+  .categoria-item .btn-icon.btn-danger {
+    background: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+    border: 1px solid rgba(220, 53, 69, 0.2) !important;
+  }
+  
+  .categoria-item .btn-icon.btn-primary:hover {
+    background: #4361ee !important;
+    color: white !important;
+  }
+  
+  .categoria-item .btn-icon.btn-danger:hover {
+    background: #dc3545 !important;
+    color: white !important;
+  }
+  
+  /* Melhorar o formulário de adicionar/editar categoria no mobile */
+  .modal-body .form-group {
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  
+  .modal-body .d-flex {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+  
+  .modal-body .form-control {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  
+  .renda-info {
+    width: 100% !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .renda-titulo {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    color: var(--primary-color) !important;
+  }
+  
+  .renda-detalhe {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.5rem !important;
+    padding: 0.25rem 0.5rem !important;
+    background: rgba(40, 167, 69, 0.1) !important;
+    border-radius: 4px !important;
+    border-left: 3px solid #28a745 !important;
+  }
+  
+  .renda-pagamentos {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    padding: 0.5rem !important;
+    background: rgba(67, 97, 238, 0.08) !important;
+    border-radius: 6px !important;
+    border-left: 3px solid var(--primary-color) !important;
+    margin-top: 0.5rem !important;
+    word-wrap: break-word !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+  }
+  
+  /* Botão de delete posicionado no canto superior direito */
+  .renda-item .btn-icon {
+    position: absolute !important;
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    font-size: 0.75rem !important;
+    background: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+    border: 1px solid rgba(220, 53, 69, 0.2) !important;
+  }
+  
+  .renda-item .btn-icon:hover {
+    background: #dc3545 !important;
+    color: white !important;
+  }
+  
+  /* Formatação melhor para os valores monetários */
+  .renda-detalhe strong,
+  .renda-pagamentos strong {
+    color: var(--text-color) !important;
+    font-weight: 600 !important;
+  }
+  
+  /* Separação visual entre diferentes pagamentos */
+  .renda-pagamentos {
+    position: relative !important;
+  }
+  
+  .renda-pagamentos::before {
+    content: "📋" !important;
+    position: absolute !important;
+    top: 0.5rem !important;
+    left: 0.5rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .renda-pagamentos {
+    padding-left: 2rem !important;
+  }
+}
+
+/* =================== MOBILE TABLE REAL DEVICE FIX =================== */
+
+@media (max-width: 768px) {
+  /* FORÇAR controle total do viewport em mobile REAL */
+  html {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Container principal - ajuste para mobile real */
+  .app-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    padding: 0 0.5rem !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Container da tabela - REAL mobile friendly */
+  .table-container,
+  .table-responsive {
+    overflow: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* CARTÕES MOBILE - Layout de cartão para informações completas */
+  #cartoesListaPrincipal .table-container {
+    display: none !important; /* Esconder tabela original */
+  }
+
+  /* Container específivo para versão mobile dos cartões */
+  .cartoes-mobile-container {
+    display: block !important;
+    width: 100% !important;
+    margin: 1rem 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Estilo para cada cartão individual */
+  .cartao-mobile {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 0 1rem 0 !important;
+    padding: 1rem !important;
+    background: var(--card-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 4px solid var(--primary) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Header do cartão com nome e bandeira */
+  .cartao-mobile-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 0.75rem !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  .cartao-mobile-nome {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    margin: 0 !important;
+  }
+
+  .cartao-mobile-bandeira {
+    font-size: 0.8rem !important;
+    padding: 0.25rem 0.5rem !important;
+    background: var(--primary-light) !important;
+    color: var(--primary) !important;
+    border-radius: 20px !important;
+    font-weight: 500 !important;
+  }
+
+  /* Informações do cartão */
+  .cartao-mobile-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  .cartao-mobile-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0.25rem 0 !important;
+  }
+
+  .cartao-mobile-label {
+    font-size: 0.85rem !important;
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+  }
+
+  .cartao-mobile-valor {
+    font-size: 0.9rem !important;
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    text-align: right !important;
+  }
+
+  /* Destaque para limite */
+  .cartao-mobile-row.limite .cartao-mobile-valor {
+    color: var(--success) !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+  }
+
+  /* Destaque para datas importantes */
+  .cartao-mobile-row.data-importante .cartao-mobile-valor {
+    color: var(--warning) !important;
+    font-weight: 600 !important;
+  }
+
+  /* Responsividade - desktop deve manter tabela original */
+  @media (min-width: 769px) {
+    /* Na versão desktop, esconder cartões mobile e mostrar tabela */
+    .cartoes-mobile-container {
+      display: none !important;
+    }
+    
+    #cartoesListaPrincipal .table-container {
+      display: block !important;
+    }
+  }
+  
+  /* Tabela mobile - COMPLETAMENTE reformulada para mobile real */
+  #todasDespesasTable {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    overflow: hidden !important;
+    border-collapse: separate !important;
+    table-layout: auto !important;
+  }
+  
+  #todasDespesasTable thead {
+    display: none !important;
+  }
+  
+  #todasDespesasTable tbody {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* CARD mobile - ultra compacto para celular real */
+  #todasDespesasTable tr {
+    display: block !important;
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    margin: 0 0 0.5rem 0 !important;
+    padding: 0.5rem !important;
+    border-left: 3px solid var(--primary) !important;
+    background: var(--card-color) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+  }
+  
+  /* RESET completo dos TDs */
+  #todasDespesasTable td {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  /* LINHA 1: Descrição - mais compacta */
+  #todasDespesasTable td:nth-child(1) {
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0.3rem !important;
+    padding-right: 60px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  /* LINHA 2: Data + Categoria - mais compacta */
+  #todasDespesasTable td:nth-child(3) {
+    font-size: 0.75rem !important;
+    color: #666 !important;
+    margin-bottom: 0.3rem !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  /* LINHA 3: Valor - GARANTIR que apareça completo */
+  #todasDespesasTable td:nth-child(2) {
+    text-align: center !important;
+    background: rgba(67, 97, 238, 0.08) !important;
+    border-radius: 6px !important;
+    padding: 0.4rem 0.2rem !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    margin-top: 0.2rem !important;
+    width: calc(100% - 0.4rem) !important;
+    max-width: calc(100% - 0.4rem) !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+  }
+  
+  /* Ações - menores para mobile real */
+  #todasDespesasTable td:nth-child(6) {
+    position: absolute !important;
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    width: auto !important;
+    max-width: 50px !important;
+  }
+  
+  #todasDespesasTable .action-buttons {
+    display: flex !important;
+    gap: 0.2rem !important;
+    flex-wrap: nowrap !important;
+  }
+  
+  #todasDespesasTable .btn-icon {
+    padding: 0.25rem !important;
+    font-size: 0.75rem !important;
+    min-width: 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 3px !important;
+  }
+  
+  /* ESCONDER campos desnecessários na versão mobile */
+  #todasDespesasTable td:nth-child(4),
+  #todasDespesasTable td:nth-child(5) {
+    display: none !important;
+  }
+  
+  /* Badge - menor para mobile */
+  #todasDespesasTable .badge {
+    font-size: 0.6rem !important;
+    padding: 0.15rem 0.3rem !important;
+    margin-left: 0.3rem !important;
+    display: inline-block !important;
+    white-space: nowrap !important;
+    max-width: 80px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  /* FORÇA ABSOLUTA - sem overflow em qualquer elemento */
+  * {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Especial para elementos da tabela */
+  #todasDespesasTable,
+  #todasDespesasTable *,
+  .table-container,
+  .table-container *,
+  .chart-container,
+  .chart-container * {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+    word-break: break-word !important;
+  }
+}
+
+/* CSS apenas para desktop - exibir as colunas separadas corretamente */
+@media (min-width: 769px) {
+  /* Restaurar colunas separadas na versão desktop */
+  #todasDespesasTable td[data-label="Categoria"],
+  #todasDespesasTable td[data-label="Status"],
+  #todasDespesasTable td[data-label="Ações"] {
+    display: table-cell !important;
+  }
+  
+  /* Exibir cabeçalho da tabela na versão desktop */
+  #todasDespesasTable thead {
+    display: table-header-group !important;
+  }
+  
+  /* Altera o conteúdo da coluna "Detalhes" na versão desktop */
+  #todasDespesasTable td[data-label="Detalhes"] .categoria-info,
+  #todasDespesasTable td[data-label="Detalhes"] .status-info {
+    display: none;
+  }
+  
+  /* Remover comportamento de swipe na versão desktop */
+  #todasDespesasTable .swipeable-row {
+    cursor: default;
+  }
+  
+  /* Estilos dos botões de ação desktop */
+  .desktop-actions {
+    white-space: nowrap;
+  }
+  
+  .btn-action {
+    background: none;
+    border: none;
+    padding: 6px 8px;
+    margin: 0 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-action:hover {
+    transform: scale(1.1);
+  }
+  
+  .btn-pay {
+    color: #28a745;
+  }
+  
+  .btn-pay:hover {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .btn-edit {
+    color: #007bff;
+  }
+  
+  .btn-edit:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .btn-delete {
+    color: #dc3545;
+  }
+  
+  .btn-delete:hover {
+    background-color: #dc3545;
+    color: white;
+  }
+}
+
+/* Ocultar coluna de ações na versão mobile */
+@media (max-width: 768px) {
+  #todasDespesasTable td[data-label="Ações"] {
+    display: none !important;
+  }
+}

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Sistema de Gerenciamento de Contas Pessoais</title>
+  
+  <!-- Meta tags para evitar cache -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  
+  <!-- Sistema unificado - sem redirecionamento mobile -->
+  
+  <!-- Google Fonts: Roboto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Toastify para notificações -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://lib.youware.com/youware-lib-editor.1752562065.js" id="yourware-lib"></script><script src="https://lib.youware.com/youware-lib-editor.1751946057.js" id="yourware-lib"></script><script src="https://lib.youware.com/youware-lib-editor.1751946057.js" id="yourware-lib"></script><script src="https://lib.youware.com/youware-lib-editor.1751946057.js" id="yourware-lib"></script><script src="https://lib.youware.com/youware-lib-editor.1751946057.js" id="yourware-lib"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  
+  <!-- Ícones (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1.0.0">
+  
+  <!-- CSS unificado -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- CSS responsivo incluído no styles.css -->
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <div class="login-header">
+      <h1><i class="fa-solid fa-wallet"></i> Sistema de Contas</h1>
+      <p>Faça login para acessar seu gerenciamento financeiro</p>
+    </div>
+    
+    <form id="loginForm" class="login-form">
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" for="email">Email:</label>
+        <input type="email" id="email" class="form-control" placeholder="Seu email" required>
+      </div>
+      
+      <div class="form-group" style="margin-top: 0;">
+        <label class="form-label" for="password">Senha:</label>
+        <input type="password" id="password" class="form-control" placeholder="Sua senha" required>
+      </div>
+      
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Entrar</span>
+      </button>
+      
+      <div class="forgot-password">
+        <a href="#" id="forgotPasswordLink">Esqueci minha senha</a>
+      </div>
+    </form>
+    
+    <div class="login-divider">ou</div>
+    
+    <div class="social-login">
+      <button id="googleLogin" class="btn btn-google">
+        <i class="fab fa-google"></i>
+        <span>Entrar com Google</span>
+      </button>
+    </div>
+    
+    <div class="login-footer">
+      <p>Não tem uma conta? <a href="#" id="registerLink">Registre-se</a></p>
+    </div>
+    
+    <!-- Botão de alternância de tema -->
+    <div class="theme-toggle-login">
+      <button onclick="toggleTheme()" title="Alternar tema" class="theme-btn">
+        <i class="fas fa-sun" id="themeToggleIcon"></i>
+      </button>
+    </div>
+    
+    <!-- Link discreto para ver código -->
+    <div style="position: fixed; bottom: 10px; right: 10px; opacity: 0.3; font-size: 11px;">
+      <a href="ver-codigo.html" target="_blank" style="color: #666; text-decoration: none;">
+        <i class="fas fa-code"></i>
+      </a>
+    </div>
+  </div>
+  
+  <!-- Modal de Recuperação de Senha -->
+  <div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Recuperar Senha</h2>
+        <button class="close" onclick="fecharModal('forgotPasswordModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 1.5rem; color: #666; text-align: center;">
+          Digite seu email para receber as instruções de recuperação de senha
+        </p>
+        <form id="forgotPasswordForm" class="login-form">
+          <div class="form-group">
+            <label class="form-label" for="resetEmail">Email:</label>
+            <input type="email" id="resetEmail" class="form-control" placeholder="Seu email" required>
+          </div>
+          
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i>
+            <span>Enviar Email de Recuperação</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Registro -->
+  <div id="registerModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Criar Conta</h2>
+        <button class="close" onclick="fecharModal('registerModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="registerForm" class="login-form">
+          <div class="form-group">
+            <label class="form-label" for="registerName">Nome:</label>
+            <input type="text" id="registerName" class="form-control" placeholder="Seu nome completo" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="registerEmail">Email:</label>
+            <input type="email" id="registerEmail" class="form-control" placeholder="Seu email" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="registerPassword">Senha:</label>
+            <input type="password" id="registerPassword" class="form-control" placeholder="Crie uma senha" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="confirmPassword">Confirme a senha:</label>
+            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirme sua senha" required>
+          </div>
+          
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i>
+            <span>Criar Conta</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scripts do Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-auth-compat.js"></script>
+  
+  <script>
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAG6LktPXGe6F-vSTHV2Y3n95vSwhpXch8",
+      authDomain: "controlegasto-df3f1.firebaseapp.com",
+      databaseURL: "https://controlegasto-df3f1-default-rtdb.firebaseio.com",
+      projectId: "controlegasto-df3f1",
+      storageBucket: "controlegasto-df3f1.firebasestorage.app",
+      messagingSenderId: "1034936676414",
+      appId: "1:1034936676414:web:61c67ce39c3ab71a07a16f",
+      measurementId: "G-PTN43GZHGR"
+    };
+    
+    // Inicialização do Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    
+    // Verificar se o usuário já está logado
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // Usuário já está logado, redirecionar para a página principal
+        window.location.href = 'index.html';
+      }
+    });
+    
+    // Função para exibir toast
+    function exibirToast(mensagem, tipo = 'primary') {
+      Toastify({
+        text: mensagem,
+        duration: 3000,
+        close: true,
+        gravity: "bottom",
+        position: "right",
+        backgroundColor: tipo === 'success' ? 'var(--success)' : 
+                         tipo === 'danger' ? 'var(--danger)' : 
+                         tipo === 'warning' ? 'var(--warning)' : 
+                         'var(--primary)',
+        stopOnFocus: true,
+        className: `toast-${tipo}`
+      }).showToast();
+    }
+    
+    // Função para abrir modal
+    function abrirModal(id) {
+      document.getElementById(id).style.display = "flex";
+    }
+    
+    // Função para fechar modal
+    function fecharModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
+    
+    // Login com email e senha
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          // Login bem-sucedido
+          exibirToast('Login realizado com sucesso!', 'success');
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
+        })
+        .catch((error) => {
+          // Tratar erros de login
+          let mensagemErro = 'Erro ao fazer login. Tente novamente.';
+          
+          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            mensagemErro = 'Email ou senha incorretos.';
+          } else if (error.code === 'auth/invalid-email') {
+            mensagemErro = 'Email inválido.';
+          } else if (error.code === 'auth/too-many-requests') {
+            mensagemErro = 'Muitas tentativas de login. Tente novamente mais tarde.';
+          }
+          
+          exibirToast(mensagemErro, 'danger');
+        });
+    });
+    
+    // Login com Google
+    document.getElementById('googleLogin').addEventListener('click', function() {
+      try {
+        // Mostrar mensagem de carregamento
+        exibirToast('Iniciando login com Google...', 'primary');
+        
+        // Configurar o provedor Google com o ID do cliente específico
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+          'client_id': '1034936676414-l60sl3c7bhra06sfagidm7s1t9c694q4.apps.googleusercontent.com',
+          'prompt': 'select_account'
+        });
+        
+        // Adicionar escopos para acesso ao perfil do usuário
+        provider.addScope('profile');
+        provider.addScope('email');
+        
+        // Função para processar o resultado do login
+        const processAuthResult = function(user) {
+          // Verificar se é a primeira vez que o usuário faz login
+          db.ref(`users/${user.uid}/profile`).once('value')
+            .then((snapshot) => {
+              if (!snapshot.exists()) {
+                // Criar perfil do usuário
+                db.ref(`users/${user.uid}/profile`).set({
+                  name: user.displayName,
+                  email: user.email,
+                  createdAt: new Date().toISOString()
+                });
+              }
+              
+              exibirToast('Login com Google realizado com sucesso!', 'success');
+              setTimeout(() => {
+                window.location.href = 'index.html';
+              }, 1000);
+            })
+            .catch((error) => {
+              console.error("Erro ao verificar perfil:", error);
+              // Mesmo com erro, continuar com o login
+              exibirToast('Login com Google realizado com sucesso!', 'success');
+              setTimeout(() => {
+                window.location.href = 'index.html';
+              }, 1000);
+            });
+        };
+        
+        // Verificar se estamos em um ambiente que suporta popups
+        if (window.location.protocol === 'file:') {
+          // Em protocolo file:, usar signInWithEmailAndPassword como fallback
+          exibirToast('Login com Google não é suportado neste ambiente. Por favor, use email e senha.', 'warning');
+        } else {
+          // Tentar primeiro com signInWithPopup
+          auth.signInWithPopup(provider)
+            .then((result) => {
+              processAuthResult(result.user);
+            })
+            .catch((error) => {
+              console.log("Erro no popup:", error);
+              
+              if (error.code === 'auth/operation-not-supported-in-this-environment' || 
+                  error.code === 'auth/popup-blocked' || 
+                  error.code === 'auth/popup-closed-by-user') {
+                
+                // Informar o usuário sobre a tentativa de redirecionamento
+                exibirToast('Redirecionando para login com Google...', 'primary');
+                
+                // Usar signInWithRedirect como fallback
+                auth.signInWithRedirect(provider)
+                  .catch((redirectError) => {
+                    console.error("Erro no redirect:", redirectError);
+                    exibirToast('Erro ao fazer login com Google. Tente usar email e senha.', 'danger');
+                  });
+              } else {
+                exibirToast('Erro ao fazer login com Google. Tente usar email e senha.', 'danger');
+                console.error(error);
+              }
+            });
+        }
+      } catch (error) {
+        console.error("Erro ao iniciar login com Google:", error);
+        exibirToast('Erro ao iniciar login com Google. Tente fazer login com email e senha.', 'danger');
+      }
+    });
+    
+    // Abrir modal de registro
+    document.getElementById('registerLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      abrirModal('registerModal');
+    });
+    
+    // Abrir modal de recuperação de senha
+    document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      abrirModal('forgotPasswordModal');
+    });
+    
+    // Recuperação de senha
+    document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('resetEmail').value;
+      
+      if (!email) {
+        exibirToast('Por favor, digite seu email.', 'warning');
+        return;
+      }
+      
+      // Mostrar loading
+      const submitBtn = document.querySelector('#forgotPasswordForm button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+      submitBtn.disabled = true;
+      
+      // Enviar email de recuperação
+      auth.sendPasswordResetEmail(email)
+        .then(() => {
+          exibirToast('Email de recuperação enviado com sucesso! Verifique sua caixa de entrada.', 'success');
+          fecharModal('forgotPasswordModal');
+          document.getElementById('resetEmail').value = '';
+        })
+        .catch((error) => {
+          let mensagemErro = 'Erro ao enviar email de recuperação. Tente novamente.';
+          
+          if (error.code === 'auth/user-not-found') {
+            mensagemErro = 'Nenhuma conta encontrada com este email.';
+          } else if (error.code === 'auth/invalid-email') {
+            mensagemErro = 'Email inválido.';
+          } else if (error.code === 'auth/too-many-requests') {
+            mensagemErro = 'Muitas tentativas. Tente novamente mais tarde.';
+          }
+          
+          exibirToast(mensagemErro, 'danger');
+        })
+        .finally(() => {
+          // Restaurar botão
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        });
+    });
+    
+    // Registro de novo usuário
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('registerName').value;
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      // Validar senhas
+      if (password !== confirmPassword) {
+        exibirToast('As senhas não coincidem.', 'danger');
+        return;
+      }
+      
+      // Criar usuário
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          
+          // Atualizar perfil do usuário
+          user.updateProfile({
+            displayName: name
+          }).then(() => {
+            // Criar perfil do usuário no banco de dados
+            db.ref(`users/${user.uid}/profile`).set({
+              name: name,
+              email: email,
+              createdAt: new Date().toISOString()
+            });
+            
+            exibirToast('Conta criada com sucesso!', 'success');
+            fecharModal('registerModal');
+            
+            setTimeout(() => {
+              window.location.href = 'index.html';
+            }, 1000);
+          });
+        })
+        .catch((error) => {
+          let mensagemErro = 'Erro ao criar conta. Tente novamente.';
+          
+          if (error.code === 'auth/email-already-in-use') {
+            mensagemErro = 'Este email já está em uso.';
+          } else if (error.code === 'auth/invalid-email') {
+            mensagemErro = 'Email inválido.';
+          } else if (error.code === 'auth/weak-password') {
+            mensagemErro = 'Senha muito fraca. Use pelo menos 6 caracteres.';
+          }
+          
+          exibirToast(mensagemErro, 'danger');
+        });
+    });
+    
+    // ===================== SISTEMA DE TEMA ESCURO =====================
+
+    // Função para alternar tema
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      // Aplicar o tema
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Salvar preferência
+      localStorage.setItem('theme', newTheme);
+      
+      // Atualizar ícones
+      updateThemeIcons(newTheme);
+      
+      // Mostrar feedback
+      exibirToast(
+        newTheme === 'dark' ? 'Modo escuro ativado' : 'Modo claro ativado',
+        'info'
+      );
+    }
+
+    // Função para atualizar ícones do tema
+    function updateThemeIcons(theme) {
+      const themeIcon = document.getElementById('themeToggleIcon');
+      
+      if (theme === 'dark') {
+        // Modo escuro ativo - mostrar ícone da lua
+        if (themeIcon) {
+          themeIcon.className = 'fas fa-moon';
+        }
+      } else {
+        // Modo claro ativo - mostrar ícone do sol
+        if (themeIcon) {
+          themeIcon.className = 'fas fa-sun';
+        }
+      }
+    }
+
+    // Função para carregar tema salvo
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeIcons(savedTheme);
+    }
+
+    // Carregar tema ao inicializar a página
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSavedTheme();
+    });
+  </script>
+  
+  <!-- Scripts responsivos incluídos no script.js -->
+</body>
+</html>

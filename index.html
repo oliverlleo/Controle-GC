@@ -1,1041 +1,1250 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Login e Controle GC</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Gestão Financeira">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#4361ee">
+  <title>Sistema de Gerenciamento de Contas Pessoais</title>
+  
+  <!-- Meta tags para evitar cache -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  
+
+  
+  <!-- Google Fonts: Roboto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS do Daterangepicker -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css?v=1.0.0" />
+  
+  <!-- ApexCharts para gráficos interativos -->
+  <script src="https://lib.youware.com/youware-lib-editor.1752562065.js" id="yourware-lib"></script><script src="https://lib.youware.com/youware-lib-editor.1751946057.js" id="yourware-lib"></script><script src="https://lib.youware.com/youware-lib-editor.1751946057.js" id="yourware-lib"></script><script src="https://lib.youware.com/youware-lib-editor.1751946057.js" id="yourware-lib"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  
+  <!-- Toastify para notificações -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  
+  <!-- Ícones (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=1.0.0">
+  
+  <!-- CSS unificado -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/inteligencia_financeira.css">
+  
   <style>
-    /* Reset e Estilos Base */
-    :root {
-      --primary: #4361ee;
-      --primary-dark: #3a56d4;
-      --text: #2b2d42;
-      --text-light: #8d99ae;
-      --bg: #f8f9fa;
-      --surface: #ffffff;
-      --border: #e9ecef;
-      --error: #ef233c;
-      --success: #4cc9f0;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    /* Layout */
-    .container {
-      max-width: 1000px;
-      margin: 20px auto;
-      padding: 24px;
-      background: var(--surface);
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      position: relative;
-    }
-
+    /* Reduzir largura específica da TD de valor para 65% no mobile - sem cortar texto */
     @media (max-width: 768px) {
-      .container {
-        margin: 0;
-        border-radius: 0;
-        padding: 16px;
+      #todasDespesasTable td[data-label="Valor"] {
+        width: 65% !important;
+        max-width: 65% !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        white-space: nowrap !important;
+        text-overflow: visible !important;
       }
-    }
-
-    /* Tipografia */
-    h2 {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 20px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* Formulários */
-    input, select {
-      width: 100%;
-      padding: 10px 12px;
-      font-size: 14px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      margin-bottom: 16px;
-      background: var(--surface);
-      transition: border 0.2s ease;
-      font-family: 'Inter', sans-serif;
-    }
-
-    input:focus, select:focus {
-      border-color: var(--primary);
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1);
-    }
-
-    /* Botões */
-    button {
-      padding: 10px 16px;
-      font-size: 14px;
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      margin-right: 8px;
-      font-family: 'Inter', sans-serif;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    button:hover {
-      background: #f0f0f0;
-      border-color: #ccc;
-    }
-
-    button.primary {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    button.primary:hover {
-      background: var(--primary-dark);
-    }
-
-    button.danger {
-      color: var(--error);
-      border-color: var(--error);
-    }
-
-    button.danger:hover {
-      background: rgba(239, 35, 60, 0.1);
-    }
-
-    .icon-button {
-      padding: 8px;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Tabela */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      font-size: 14px;
-    }
-
-    th {
-      text-align: left;
-      padding: 12px 16px;
-      font-weight: 500;
-      color: var(--text-light);
-      border-bottom: 1px solid var(--border);
-    }
-
-    td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    tr:hover td {
-      background: #f9f9f9;
-    }
-
-    /* Sidebar */
-    #sidebar {
-      position: fixed;
-      top: 0;
-      right: 0;
-      transform: translateX(100%);
-      width: 280px;
-      height: 100%;
-      background-color: var(--surface);
-      color: var(--text);
-      padding: 24px;
-      transition: transform 0.3s ease;
-      z-index: 1000;
-      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
-      border-left: 1px solid var(--border);
-    }
-
-    #sidebar.open {
-      transform: translateX(0);
-    }
-
-    #sidebar h3 {
-      margin-top: 0;
-      margin-bottom: 20px;
-      font-size: 18px;
-    }
-
-    /* Utilidades */
-    .hidden {
-      display: none;
-    }
-
-    .flex {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .full-width {
-      grid-column: 1 / -1;
-    }
-
-    /* Grid de Itens */
-    #controleItensGrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    @media (max-width: 600px) {
-      #controleItensGrid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Painéis */
-    .panel {
-      padding: 16px;
-      border-radius: 8px;
-      background: #f8f9fa;
-      margin-top: 20px;
-    }
-
-    /* Tema Dark */
-    body.dark-mode {
-      --bg: #121212;
-      --surface: #1e1e1e;
-      --text: #f0f0f0;
-      --text-light: #8d99ae;
-      --border: #333;
-    }
-
-    body.dark-mode .panel {
-      background: #2d2d2d;
-    }
-
-    /* Transições */
-    [data-animate] {
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
   </style>
+  
+
 </head>
 <body>
-  <!-- Sidebar Menu Lateral -->
-  <div id="sidebar" data-animate>
-    <h3 id="menuTitle">Menu</h3>
-    <label id="labelLanguage" for="languageSelect">Linguagem</label>
-    <select id="languageSelect">
-      <option value="pt">Português</option>
-      <option value="en">English</option>
-      <option value="kr">한국어</option>
-    </select>
-    <label id="labelTheme" for="themeSelect">Tema</label>
-    <select id="themeSelect">
-      <option value="light">Claro</option>
-      <option value="dark">Escuro</option>
-    </select>
-    <button id="btnExit" class="danger" style="margin-top: 20px;">
-      <span class="material-icons">logout</span>
-      <span id="exitText">Sair</span>
-    </button>
-  </div>
-
-  <!-- Tela de Login/Cadastro -->
-  <div class="container" id="telaLogin" data-animate>
-    <h2 id="loginTitle">Login / Cadastro</h2>
-    <div class="login-container">
-      <label id="labelEmail" for="email">E-mail:</label>
-      <input type="email" id="email" placeholder="Digite seu e-mail">
-      <label id="labelSenha" for="senha">Senha:</label>
-      <input type="password" id="senha" placeholder="Digite sua senha">
-      <div style="margin-top: 16px;">
-        <button id="botaoLogin" class="primary">
-          <span class="material-icons">login</span>
-          <span id="loginText">Login</span>
+  <!-- Mobile Top Bar -->
+  <div class="mobile-top-bar">
+    <div class="logo" onclick="toggleMobileUserDropdown(event)">
+      <i class="fa-solid fa-wallet"></i> Contas
+      <div class="mobile-user-dropdown" id="mobileUserDropdown">
+        <div class="mobile-user-info">
+          <div class="mobile-user-avatar" id="mobileUserAvatar">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="mobile-user-details">
+            <div class="mobile-user-name" id="mobileUserName">Carregando...</div>
+            <div class="mobile-user-email" id="mobileUserEmail">Carregando...</div>
+          </div>
+        </div>
+        <div class="mobile-dropdown-divider"></div>
+        
+        <!-- Exportar dados -->
+        <button class="mobile-menu-btn" onclick="exportData()">
+          <i class="fa-solid fa-file-export"></i>
+          Exportar
         </button>
-        <button id="botaoCadastro">
-          <span class="material-icons">person_add</span>
-          <span id="registerText">Cadastrar</span>
+        
+        <!-- Alternar tema -->
+        <button class="mobile-menu-btn" onclick="toggleTheme()">
+          <i class="fas fa-sun" id="themeMobileDropdownIcon"></i>
+          Alternar tema
         </button>
-        <button id="botaoRecuperar">
-          <span class="material-icons">help</span>
-          <span id="recoverText">Recuperar Senha</span>
+        
+        <div class="mobile-dropdown-divider"></div>
+        
+        <!-- Sair da conta -->
+        <button class="mobile-logout-btn" onclick="logout()">
+          <i class="fa-solid fa-sign-out-alt"></i>
+          Sair da conta
         </button>
       </div>
     </div>
-  </div>
-
-  <!-- Tela Principal -->
-  <div class="container hidden" id="telaPrincipal" data-animate>
-    <button id="menuToggle" class="icon-button">
-      <span class="material-icons">menu</span>
-    </button>
-
-    <div class="section pergaminhos-section">
-      <h2 id="titlePergaminhos">Gerenciamento de Pergaminhos</h2>
-      <div class="flex">
-        <div style="flex: 1;">
-          <label id="labelPergaminhoUnico" for="pergaminho_unico">Pergaminho Único:</label>
-          <input type="number" id="pergaminho_unico" value="0" oninput="salvarPergaminhos()">
-        </div>
-        <div style="flex: 1;">
-          <label id="labelPergaminhoAleatorio" for="pergaminho_aleatorio">Pergaminho Aleatório:</label>
-          <input type="number" id="pergaminho_aleatorio" oninput="salvarPergaminhos()">
-        </div>
-      </div>
-      <button id="botaoSalvarPergaminho" class="primary" onclick="salvarPergaminhos()">
-        <span class="material-icons">save</span>
-        <span id="saveScrollText">Salvar Pergaminho</span>
+    <div class="mobile-top-actions">
+      <button class="action-btn" onclick="showSection('alertasSection')" title="Alertas">
+        <i class="fa-solid fa-bell"></i>
+      </button>
+      <button class="action-btn" onclick="showSection('configuracoesSection')" title="Gerenciar Carteira">
+        <i class="fa-solid fa-wallet"></i>
       </button>
     </div>
-
-    <!-- Seção de Controle de Itens -->
-    <div class="section" id="controleItens">
-      <h2 id="titleControleItens">Controle de Itens</h2>
-      <div id="controleItensGrid">
-        <div class="full-width">
-          <label id="labelPersonagem" for="personagem">Personagem:</label>
-          <select id="personagem">
-            <option>Elesis</option>
-            <option>Lire</option>
-            <option>Arme</option>
-            <option>Lass</option>
-            <option>Ryan</option>
-            <option>Ronan</option>
-            <option>Amy</option>
-            <option>Jin</option>
-            <option>Sieghart</option>
-            <option>Mari</option>
-            <option>Dio</option>
-            <option>Zero</option>
-            <option>Rey</option>
-            <option>Lupus</option>
-            <option>Lin</option>
-            <option>Azin</option>
-            <option>Holy</option>
-            <option>Edel Frost</option>
-            <option>Veigas</option>
-            <option>Uno</option>
-            <option>Decane</option>
-            <option>Ai</option>
-            <option>Kallia Eldepel</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelPiercing" for="piercing">Piercing:</label>
-          <select id="piercing">
-            <option>Nenhum</option>
-            <option>Harkyon</option>
-            <option>Normal</option>
-            <option>Épico</option>
-            <option>Lendário</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelBrinco" for="brinco">Brinco:</label>
-          <select id="brinco">
-            <option>Nenhum</option>
-            <option>Harkyon</option>
-            <option>Normal</option>
-            <option>Épico</option>
-            <option>Lendário</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelAnel" for="anel">Anel:</label>
-          <select id="anel">
-            <option>Nenhum</option>
-            <option>Harkyon</option>
-            <option>Nível 1.1</option>
-            <option>Nível 1.2</option>
-            <option>Nível 1.3</option>
-            <option>Nível 2.1</option>
-            <option>Nível 2.2</option>
-            <option>Nível 2.3</option>
-            <option>Nível 3.1</option>
-            <option>Nível 3.2</option>
-            <option>Nível 3.3</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelBerkas" for="berkas">Berkas:</label>
-          <select id="berkas">
-            <option>Nenhum</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
-            <option>11</option>
-            <option>Full</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelVazio" for="vazio">Vazio:</label>
-          <select id="vazio">
-            <option>Nenhum</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-          </select>
-        </div>
-        <div>
-          <label id="labelAtaqueTotal" for="ataqueTotal">Ataque Total:</label>
-          <select id="ataqueTotal">
-            <option>Nenhum</option>
-            <option>100k</option>
-            <option>200k</option>
-            <option>300k</option>
-            <option>400k</option>
-            <option>500k</option>
-            <option>600k</option>
-            <option>700k</option>
-            <option>800k</option>
-            <option>900k</option>
-            <option>1000k</option>
-            <option>1100k</option>
-            <option>1200k</option>
-            <option>1300k</option>
-            <option>1400k</option>
-            <option>1500k</option>
-            <option>1600k</option>
-            <option>1700k</option>
-            <option>1800k</option>
-            <option>1900k</option>
-            <option>2000k</option>
-          </select>
-        </div>
-      </div>
-      <button id="botaoSalvarGC" class="primary">
-        <span class="material-icons">save</span>
-        <span id="saveGCText">Salvar GC</span>
-      </button>
-    </div>
-
-    <!-- Seção de Controle de Personagens -->
-    <div class="section">
-      <h2 id="titleControlePersonagens">Controle de Personagens</h2>
-      <div class="flex" style="margin-bottom: 16px;">
-        <input type="text" id="searchInput" placeholder="Pesquisar personagem..." style="flex: 1;">
-        <button id="botaoPesquisar" onclick="filtrarTabela()">
-          <span class="material-icons">search</span>
-          <span id="searchText">Pesquisar</span>
+  </div>
+  
+  <div class="app-container">
+    <!-- Menu Lateral -->
+    <aside id="sidebar">
+      <h2><i class="fa-solid fa-wallet"></i> Contas</h2>
+      <!-- Informações do usuário serão inseridas aqui pelo auth.js -->
+      <div id="sidebar-nav">
+        <a href="#" class="nav-link active" onclick="showSection('dashboardSection')">
+          <i class="fa-solid fa-house"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-link" onclick="showSection('despesasSection')">
+          <i class="fa-solid fa-money-bill-wave"></i>
+          <span>Despesas</span>
+        </a>
+        <a href="#" class="nav-link" onclick="showSection('relatorioIntegradoSection')">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Relatórios & Previsões</span>
+        </a>
+        <a href="#" class="nav-link" onclick="showSection('inteligenciaFinanceiraSection')">
+          <i class="fa-solid fa-brain"></i>
+          <span>Inteligência Financeira</span>
+        </a>
+        <a href="#" class="nav-link" onclick="showSection('metasFinanceirasSection')">
+          <i class="fa-solid fa-bullseye"></i>
+          <span>Metas</span>
+        </a>
+        <a href="#" class="nav-link" onclick="showSection('configuracoesSection')">
+          <i class="fa-solid fa-wallet"></i>
+          <span>Gerenciar Carteira</span>
+        </a>
+        <a href="#" class="nav-link" onclick="exportData()">
+          <i class="fa-solid fa-file-export"></i>
+          <span>Exportar</span>
+        </a>
+        <a href="#" class="nav-link" onclick="showSection('alertasSection')">
+          <i class="fa-solid fa-bell"></i>
+          <span>Alertas</span>
+        </a>
+        
+        <!-- Botão Dark Mode - Desktop -->
+        <button class="theme-toggle desktop-only" onclick="toggleTheme()" title="Alternar tema">
+          <i class="fas fa-sun" id="themeIcon"></i>
         </button>
-        <button id="botaoLimparFiltro" onclick="limparFiltro()">
-          <span class="material-icons">clear</span>
-          <span id="clearFilterText">Limpar</span>
-        </button>
+        <!-- Botão de logout será inserido aqui pelo auth.js -->
       </div>
-      <div style="overflow-x: auto;">
-        <table id="tabela_controle">
-          <!-- A tabela será gerada dinamicamente -->
-        </table>
-      </div>
-      <div class="panel">
-        <div id="missingBerkasPanel">Total de berkas faltantes:</div>
-        <div style="margin-top: 12px;">
-          <label id="labelAtaqueTotalSelecao">Selecione o valor de ataque total desejado:</label>
-          <div class="flex">
-            <select id="selecionarAtaqueTotal" style="flex: 1;">
-              <option value="Todos">Todos</option>
-              <option>100k</option>
-              <option>200k</option>
-              <option>300k</option>
-              <option>400k</option>
-              <option>500k</option>
-              <option>600k</option>
-              <option>700k</option>
-              <option>800k</option>
-              <option>900k</option>
-              <option>1000k</option>
-              <option>1100k</option>
-              <option>1200k</option>
-              <option>1300k</option>
-              <option>1400k</option>
-              <option>1500k</option>
-              <option>1600k</option>
-              <option>1700k</option>
-              <option>1800k</option>
-              <option>1900k</option>
-              <option>2000k</option>
-            </select>
-            <button id="botaoLimparAtaqueFiltro" onclick="limparFiltroAtaqueTotal()">
-              <span class="material-icons">filter_alt_off</span>
-              <span id="clearAttackFilterText">Limpar</span>
+    </aside>
+    
+    <!-- Conteúdo Principal -->
+    <main>
+      <header>
+        <h1>Sistema de Gerenciamento de Contas</h1>
+      </header>
+      
+      <!-- Dashboard Resumido -->
+      <section id="dashboardSection" class="container">
+        <div class="chart-header">
+          <h2>Dashboard Resumido</h2>
+          <div id="dashboardMonthSelector" class="d-flex align-center gap-2 flex-wrap">
+            <div class="form-group mb-0">
+              <select id="dashboardMonth" class="form-control">
+                <option value="0">Janeiro</option>
+                <option value="1">Fevereiro</option>
+                <option value="2">Março</option>
+                <option value="3">Abril</option>
+                <option value="4">Maio</option>
+                <option value="5">Junho</option>
+                <option value="6">Julho</option>
+                <option value="7">Agosto</option>
+                <option value="8">Setembro</option>
+                <option value="9">Outubro</option>
+                <option value="10">Novembro</option>
+                <option value="11">Dezembro</option>
+              </select>
+            </div>
+            <div class="form-group mb-0">
+              <select id="dashboardYear" class="form-control">
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="atualizarDashboard()">
+              <i class="fas fa-sync-alt"></i>
+              <span>Atualizar</span>
             </button>
           </div>
-          <div id="resultadoAtaqueTotal" style="margin-top: 8px;"></div>
+          <!-- Botão de data para mobile -->
+          <div class="mobile-date-button" style="display: none;">
+            <button class="mobile-date-btn" onclick="abrirModal('mobileDataModal')">
+              <i class="fas fa-calendar-alt"></i>
+              <span id="mobileDateText">Março 2025</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="dashboard-cards">
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">Saldo Atual</div>
+              <div class="dashboard-card-icon">
+                <i class="fas fa-wallet"></i>
+              </div>
+            </div>
+            <div class="dashboard-card-value" id="saldoAtual">R$ 0.00</div>
+            <div class="dashboard-card-label">
+              <span>Disponível para uso</span>
+              <button class="btn-icon" onclick="abrirModal('receberPagamentoModal')" title="Adicionar Saldo">
+                <i class="fas fa-plus-circle"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">Despesas do Mês</div>
+              <div class="d-flex gap-1">
+                <button class="btn-icon" onclick="prevDashboardMonth()">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="btn-icon" onclick="nextDashboardMonth()">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+            <div class="dashboard-card-value" id="despesasMes">R$ 0.00</div>
+            <div class="dashboard-card-label" id="despesasMesTitle">Março de 2025</div>
+          </div>
+          
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div class="dashboard-card-title">Próximos Vencimentos</div>
+              <div class="dashboard-card-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+            </div>
+            <div class="dashboard-card-value" id="proximosVencimentos">0</div>
+            <div class="dashboard-card-label">Dias até o próximo vencimento</div>
+          </div>
+          
+          <!-- Botão Cadastrar Despesa Mobile -->
+          <button class="mobile-add-expense-btn" onclick="abrirModal('cadastroDespesaModal')" style="display: none;">
+            <i class="fas fa-plus"></i>
+            Cadastrar Despesa
+          </button>
+        </div>
+        
+        <div class="chart-container">
+          <div class="chart-header">
+            <h3 class="chart-title">Análise de Despesas</h3>
+          </div>
+          <div class="grafico-painel-container">
+            <div class="chart-panel" style="flex: 3;">
+              <div id="graficoDespesas"></div>
+            </div>
+            <!-- Container responsivo para Despesas e Receitas -->
+            <div class="chart-panel" style="flex: 2;">
+              <!-- Container deslizável para mobile -->
+              <div class="despesas-receitas-container">
+                <!-- Navegação mobile - seletor discreto -->
+                <div class="mobile-nav-tabs">
+                  <div class="mobile-seletor-container">
+                    <span class="mobile-seletor">
+                      <span class="mobile-opcao active" data-value="despesas" onclick="selecionarAbaFinanceira(this)">Despesas</span>
+                      <span class="separador">|</span>
+                      <span class="mobile-opcao" data-value="receitas" onclick="selecionarAbaFinanceira(this)">Receitas</span>
+                    </span>
+                  </div>
+                </div>
+                
+                <!-- Painel de Despesas -->
+                <div id="painelDespesas" class="painel-financeiro active">
+                  <h4 class="mb-2 desktop-title">Despesas do Mês</h4>
+                  <div id="listaDespesasMes" class="despesas-lista"></div>
+                </div>
+                
+                <!-- Painel de Receitas -->
+                <div id="painelReceitas" class="painel-financeiro">
+                  <h4 class="mb-2 desktop-title">Receitas do Mês</h4>
+                  <div id="listaReceitasMes" class="receitas-lista"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn btn-primary btn-block" onclick="abrirModal('cadastroDespesaModal')">
+          <i class="fas fa-plus"></i>
+          <span>Cadastrar Nova Despesa</span>
+        </button>
+      </section>
+      
+      <!-- Seção de Despesas -->
+      <section id="despesasSection" class="container" style="display: none;">
+        <div class="despesas-header-mobile">
+          <h2 class="mb-3">Despesas</h2>
+          <button class="btn btn-outline mobile-calendar-btn" onclick="abrirModal('calendarModal'); renderCalendar()">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Calendário</span>
+          </button>
+        </div>
+        
+        <!-- Cabeçalho para desktop -->
+        <div class="despesas-header-desktop">
+          <h2 class="mb-3">Despesas</h2>
+        </div>
+        <div class="d-flex gap-2 flex-wrap mb-3">
+          <button class="btn btn-primary" onclick="abrirModal('cadastroDespesaModal')">
+            <i class="fas fa-plus"></i>
+            <span>Cadastrar Despesa</span>
+          </button>
+          <button class="btn btn-success" onclick="abrirModal('pagarDespesaModal')">
+            <i class="fas fa-check"></i>
+            <span>Pagar Despesa</span>
+          </button>
+          <button class="btn btn-outline" onclick="abrirModal('calendarModal'); renderCalendar()">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Calendário</span>
+          </button>
+        </div>
+        
+        <div class="chart-container">
+          <div class="chart-header">
+            <h3 class="chart-title">Todas as Despesas</h3>
+            <div class="d-flex gap-2">
+              <div class="form-group mb-0">
+                <input type="text" id="filtroDescricao" class="form-control" placeholder="Filtrar por descrição">
+              </div>
+              <button class="btn btn-primary" onclick="filtrarTodasDespesas()">
+                <i class="fas fa-filter"></i>
+              </button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table id="todasDespesasTable">
+              <thead>
+                <tr>
+                  <th>Descrição</th>
+                  <th>Valor</th>
+                  <th>Data</th>
+                  <th>Categoria</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="todasDespesasBody">
+                <!-- Preenchido dinamicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Seção Integrada de Relatórios e Previsões -->
+      <section id="relatorioIntegradoSection" class="container" style="display: none;">
+        <h2 class="mb-3">Relatórios & Previsões</h2>
+        
+        <!-- Abas de navegação -->
+        <div class="relatorio-tabs">
+          <button class="relatorio-tab-btn active" onclick="showRelatorioTab('relatorioTab')">
+            <i class="fas fa-chart-line"></i>
+            <span>Relatórios</span>
+          </button>
+          <button class="relatorio-tab-btn" onclick="showRelatorioTab('previsaoTab')">
+            <i class="fas fa-chart-pie"></i>
+            <span>Previsões</span>
+          </button>
+          <button class="relatorio-tab-btn" onclick="showRelatorioTab('categoriasTab')">
+            <i class="fas fa-tags"></i>
+            <span>Análise por Categoria</span>
+          </button>
+        </div>
+        
+        <!-- Conteúdo das abas -->
+        <div class="relatorio-tab-content">
+          <!-- Aba de Relatórios -->
+          <div id="relatorioTab" class="relatorio-tab-pane active">
+            <div class="relatorio-header">
+              <h3 class="relatorio-title">Resumo Financeiro</h3>
+              <div class="relatorio-filters">
+                <div class="form-group mb-0">
+                  <input type="text" id="dataRange" class="form-control" placeholder="Todo Período" value="Todo Período">
+                </div>
+              </div>
+            </div>
+            
+            <div id="relatorioMensalContainer"></div>
+          </div>
+          
+          <!-- Aba de Previsões -->
+          <div id="previsaoTab" class="relatorio-tab-pane">
+            <div class="relatorio-header">
+              <h3 class="relatorio-title">Tendência de Gastos</h3>
+              <button class="btn btn-primary" onclick="novo_calcularPrevisoes()">
+                <i class="fas fa-calculator"></i>
+                <span>Gerar Previsões</span>
+              </button>
+            </div>
+            
+            <div id="novo_graficoPrevisao"></div>
+            
+            <div class="relatorio-header mt-4">
+              <h3 class="relatorio-title">Próximos 3 Meses</h3>
+            </div>
+            
+            <div id="novo_tabelaPrevisao"></div>
+          </div>
+          
+          <!-- Aba de Categorias -->
+          <div id="categoriasTab" class="relatorio-tab-pane">
+            <div class="relatorio-header">
+              <h3 class="relatorio-title">Despesas por Categoria</h3>
+            </div>
+            
+            <div id="graficoCategorias"></div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Seção de Inteligência Financeira -->
+      <section id="inteligenciaFinanceiraSection" class="container" style="display: none;">
+        <h2 class="mb-3">Inteligência Financeira</h2>
+        <p class="mb-3">Análise completa da sua situação financeira, com recomendações personalizadas para melhorar sua saúde financeira.</p>
+        
+        <div id="inteligenciaFinanceiraContainer">
+          <!-- Conteúdo será preenchido dinamicamente -->
+        </div>
+      </section>
+      
+      <!-- Seção de Metas Financeiras -->
+      <section id="metasFinanceirasSection" class="container" style="display: none;">
+        <h2 class="mb-3">
+          Metas Financeiras
+          <button id="botaoMetaMobile" onclick="abrirModal('novametaModal')">
+            <i class="fas fa-plus"></i>
+            Meta
+          </button>
+        </h2>
+        <p class="mb-3">Defina e acompanhe suas metas financeiras para alcançar seus objetivos.</p>
+        
+        <div id="metasFinanceirasContainer">
+          <!-- Conteúdo será preenchido dinamicamente -->
+        </div>
+      </section>
+      
+      <!-- Nova Seção de Gerenciar Carteira (Unificada) -->
+      <section id="configuracoesSection" class="container" style="display: none;">
+        <h2 class="mb-3">Gerenciar Carteira</h2>
+        
+        <!-- Abas de navegação -->
+        <div class="config-tabs">
+          <button class="config-tab-btn active" onclick="showConfigTab('rendaTab')">
+            <i class="fas fa-user"></i>
+            <span>Rendas</span>
+          </button>
+          <button class="config-tab-btn" onclick="showConfigTab('configCategoriasTab')">
+            <i class="fas fa-tags"></i>
+            <span>Categorias</span>
+          </button>
+          <button class="config-tab-btn" onclick="showConfigTab('cartoesTab')">
+            <i class="fas fa-credit-card"></i>
+            <span>Cartões</span>
+          </button>
+        </div>
+        
+        <!-- Conteúdo das abas -->
+        <div class="config-tab-content">
+          <!-- Aba de Rendas -->
+          <div id="rendaTab" class="config-tab-pane">
+            <div class="renda-buttons-container d-flex gap-2 flex-wrap mb-3">
+              <button class="btn btn-primary renda-btn-cadastrar" onclick="abrirModal('cadastroModal')">
+                <i class="fas fa-plus"></i>
+                <span>Cadastra Renda</span>
+              </button>
+              <button class="btn btn-outline renda-btn-atualizar" onclick="loadRendas()">
+                <i class="fas fa-list"></i>
+                <span>Atualizar Lista</span>
+              </button>
+            </div>
+            
+            <div class="chart-container">
+              <div id="usuariosListaPrincipal"></div>
+            </div>
+          </div>
+          
+          <!-- Aba de Categorias -->
+          <div id="configCategoriasTab" class="config-tab-pane" style="display: none;">
+            <div class="categorias-buttons-container d-flex gap-2 flex-wrap mb-3">
+              <button class="btn btn-primary categoria-btn-gerenciar" onclick="abrirModal('categoriasModal')">
+                <i class="fas fa-tags"></i>
+                <span>Gerenciar Categorias</span>
+              </button>
+              <!-- Botão "Configurar Limites" movido da tela de alertas para a tela de configurações -->
+              <button class="btn btn-primary categoria-btn-limites" onclick="abrirModal('novo_limitesModal')">
+                <i class="fas fa-sliders"></i>
+                <span>Configurar Limites</span>
+              </button>
+            </div>
+            
+            <div class="chart-container">
+              <div id="categoriasListaPrincipal"></div>
+            </div>
+          </div>
+          
+          <!-- Aba de Cartões -->
+          <div id="cartoesTab" class="config-tab-pane" style="display: none;">
+            <button class="btn btn-primary mb-3" onclick="abrirModal('cartaoModal')">
+              <i class="fas fa-credit-card"></i>
+              <span>Gerenciar Cartões</span>
+            </button>
+            
+            <div class="chart-container">
+              <div id="cartoesListaPrincipal"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Seção de Alertas -->
+      <section id="alertasSection" class="container" style="display:none;">
+        <h2 class="mb-3">Alertas</h2>
+        <!-- Botão "Configurar Limites" foi movido para a tela de configurações -->
+        
+        <div class="chart-container">
+          <div id="novo_listaAlertas"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <!-- ===================== MODAIS ===================== -->
+  <!-- Modal: Cadastro de Despesa -->
+  <div id="cadastroDespesaModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Cadastrar Despesa</h2>
+        <button class="close" onclick="fecharModal('cadastroDespesaModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Campo oculto para ID da despesa em edição -->
+        <input type="hidden" id="despesaIdEditar">
+        <div class="form-group">
+          <label class="form-label">Descrição:</label>
+          <input type="text" id="despesaDescricao" class="form-control" placeholder="Descrição da despesa" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Valor (R$):</label>
+          <input type="number" id="despesaValor" class="form-control" placeholder="Valor" step="0.01" required pattern="[0-9]*" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data da Compra:</label>
+          <input type="date" id="dataCompra" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoria:</label>
+          <select id="categoriaDespesa" class="form-control">
+            <option value="">Selecione a Categoria</option>
+            <!-- Preenchido dinamicamente -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Forma de Pagamento:</label>
+          <select id="formaPagamento" class="form-control" onchange="toggleParcelamento()">
+            <option value="avista">À Vista</option>
+            <option value="cartao">Cartão de Crédito</option>
+            <option value="recorrente">Recorrente (Mensal)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de Pagamento:</label>
+          <select id="tipoPagamento" class="form-control">
+            <option value="manual">Manual (Marcar como pago manualmente)</option>
+            <option value="automatico">Automático (Desconta automaticamente no dia do vencimento)</option>
+          </select>
+          <small class="form-text">Escolha se a despesa será paga manualmente ou descontada automaticamente</small>
+        </div>
+        <div id="parcelamentoDiv" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Cartão:</label>
+            <select id="cartaoDespesa" class="form-control">
+              <option value="">Selecione o Cartão</option>
+              <!-- Preenchido dinamicamente -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Número de Parcelas:</label>
+            <input type="number" id="numeroParcelas" class="form-control" placeholder="Número de parcelas" min="1" max="24" value="1">
+          </div>
+        </div>
+        <div id="recorrenteDiv" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Dia do Mês para Desconto:</label>
+            <input type="number" id="diaRecorrencia" class="form-control" placeholder="Dia do mês" min="1" max="31" required>
+            <small class="form-text">Se o dia já passou no mês atual, a primeira cobrança será no próximo mês</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Quantidade de Meses:</label>
+            <input type="number" id="mesesRecorrencia" class="form-control" placeholder="Deixe em branco para indefinido" min="1" max="120">
+            <small class="form-text">Deixe em branco para repetir indefinidamente</small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCadastrarDespesa" class="btn btn-primary" onclick="cadastrarDespesa()">Cadastrar</button>
+        <button id="btnEditarDespesa" class="btn btn-primary" onclick="atualizarDespesa()" style="display: none;">Atualizar</button>
+        <button class="btn btn-outline" onclick="fecharModal('cadastroDespesaModal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal: Pagar Despesa -->
+  <div id="pagarDespesaModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Pagar Despesa</h2>
+        <button class="close" onclick="fecharModal('pagarDespesaModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Despesa:</label>
+          <select id="despesaSelect" class="form-control" onchange="verificarParcelas()">
+            <option value="">Selecione a Despesa</option>
+            <!-- Preenchido dinamicamente -->
+          </select>
+        </div>
+        <div id="parcelasDiv" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Parcela:</label>
+            <select id="parcelaSelect" class="form-control">
+              <option value="">Selecione a Parcela</option>
+              <!-- Preenchido dinamicamente -->
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data de Pagamento:</label>
+          <input type="date" id="dataPagamento" class="form-control" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="pagarDespesa()">Pagar</button>
+        <button class="btn btn-outline" onclick="fecharModal('pagarDespesaModal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal: Calendário -->
+  <div id="calendarModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="calendarTitulo">Calendário de Despesas</h2>
+        <button class="close" onclick="fecharModal('calendarModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="calendar-header">
+          <h3 id="calendarMonthYear" class="calendar-title">Março 2025</h3>
+          <div class="calendar-nav">
+            <button class="calendar-nav-btn" onclick="prevMonth()">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="calendar-nav-btn" onclick="nextMonth()">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        <div id="calendarContainer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal: Cadastro de Renda -->
+  <div id="cadastroModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Cadastrar Renda</h2>
+        <button class="close" onclick="fecharModal('cadastroModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nome:</label>
+          <input type="text" id="nome" class="form-control" placeholder="Nome da fonte de renda" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Saldo Inicial (R$):</label>
+          <input type="number" id="saldoInicial" class="form-control" placeholder="Saldo inicial" step="0.01" required pattern="[0-9]*" inputmode="decimal">
+        </div>
+        <div id="pagamentosContainer">
+          <h3 class="mb-2">Pagamentos Recorrentes</h3>
+          <div class="pagamento-item">
+            <div class="form-group">
+              <label class="form-label">Dia do Mês:</label>
+              <input type="number" class="form-control pagamento-dia" placeholder="Dia" min="1" max="31" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Valor (R$):</label>
+              <input type="number" class="form-control pagamento-valor" placeholder="Valor" step="0.01" required pattern="[0-9]*" inputmode="decimal">
+            </div>
+            <button type="button" class="remover-pagamento">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-block" id="adicionarPagamento">
+          <i class="fas fa-plus"></i>
+          <span>Adicionar Pagamento</span>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="salvarRenda()">Salvar</button>
+        <button class="btn btn-outline" onclick="fecharModal('cadastroModal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal: Gerenciar Categorias -->
+  <div id="categoriasModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Gerenciar Categorias</h2>
+        <button class="close" onclick="fecharModal('categoriasModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="formAdicionarCategoria" class="form-group">
+          <label class="form-label">Nova Categoria:</label>
+          <div class="d-flex gap-2">
+            <input type="text" id="novaCategoria" class="form-control" placeholder="Nome da categoria">
+            <button class="btn btn-primary" onclick="adicionarCategoria()">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <div id="formEditarCategoria" class="form-group" style="display: none;">
+          <label class="form-label">Editar Categoria:</label>
+          <div class="d-flex gap-2">
+            <input type="text" id="editarCategoriaNome" class="form-control" placeholder="Nome da categoria">
+            <input type="hidden" id="editarCategoriaId">
+            <button class="btn btn-success" onclick="salvarEdicaoCategoria()">
+              <i class="fas fa-save"></i>
+            </button>
+            <button class="btn btn-outline" onclick="cancelarEdicaoCategoria()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div id="categoriasLista"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal: Gerenciar Cartões -->
+  <div id="cartaoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Gerenciar Cartões</h2>
+        <button class="close" onclick="fecharModal('cartaoModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nome do Cartão:</label>
+          <input type="text" id="nomeCartao" class="form-control" placeholder="Nome do cartão">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Limite (R$):</label>
+          <input type="number" id="limiteCartao" class="form-control" placeholder="Limite" step="0.01" pattern="[0-9]*" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dia de Fechamento:</label>
+          <input type="number" id="fechamentoCartao" class="form-control" placeholder="Dia" min="1" max="31">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dia de Vencimento:</label>
+          <input type="number" id="vencimentoCartao" class="form-control" placeholder="Dia" min="1" max="31">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="salvarCartao()">
+          <i class="fas fa-save"></i>
+          <span>Salvar Cartão</span>
+        </button>
+        <div id="cartoesLista" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal: Configurar Limites -->
+  <div id="novo_limitesModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Configurar Limites de Categorias</h2>
+        <button class="close" onclick="fecharModal('novo_limitesModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3">Defina limites mensais para cada categoria de despesa:</p>
+        <div id="novo_limitesContainer"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="novo_salvarLimites()">Salvar</button>
+        <button class="btn btn-outline" onclick="fecharModal('novo_limitesModal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal: Nova Meta -->
+  <div id="novametaModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Nova Meta Financeira</h2>
+        <button class="close" onclick="fecharModal('novametaModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="metaId">
+        <div class="form-group">
+          <label class="form-label">Título:</label>
+          <input type="text" id="metaTitulo" class="form-control" placeholder="Título da meta" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descrição:</label>
+          <textarea id="metaDescricao" class="form-control" placeholder="Descrição da meta"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Valor da Meta (R$):</label>
+          <input type="number" id="metaValor" class="form-control" placeholder="Valor a ser atingido" step="0.01" required pattern="[0-9]*" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Valor Atual (R$):</label>
+          <input type="number" id="metaValorAtual" class="form-control" placeholder="Valor já acumulado" step="0.01" pattern="[0-9]*" inputmode="decimal" value="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data Alvo:</label>
+          <input type="date" id="metaDataAlvo" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoria:</label>
+          <select id="metaCategoria" class="form-control">
+            <option value="viagem">Viagem</option>
+            <option value="educacao">Educação</option>
+            <option value="imovel">Imóvel</option>
+            <option value="veiculo">Veículo</option>
+            <option value="aposentadoria">Aposentadoria</option>
+            <option value="emergencia">Reserva de Emergência</option>
+            <option value="outros">Outros</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="salvarMetaFormulario()">Salvar</button>
+        <button class="btn btn-outline" onclick="fecharModal('novametaModal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal: Atualizar Progresso da Meta -->
+  <div id="atualizarMetaModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Atualizar Progresso</h2>
+        <button class="close" onclick="fecharModal('atualizarMetaModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="atualizarMetaId">
+        <h3 id="atualizarMetaTitulo" class="mb-3"></h3>
+        <div class="form-group">
+          <label class="form-label">Valor Total da Meta:</label>
+          <div id="atualizarMetaValorTotal" class="form-control-static"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Valor Atual (R$):</label>
+          <input type="number" id="atualizarMetaValorAtual" class="form-control" placeholder="Valor acumulado" step="0.01" required pattern="[0-9]*" inputmode="decimal">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="atualizarMetaFormulario()">Atualizar</button>
+        <button class="btn btn-outline" onclick="fecharModal('atualizarMetaModal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal: Receber Pagamento -->
+  <div id="receberPagamentoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Adicionar Saldo</h2>
+        <button class="close" onclick="fecharModal('receberPagamentoModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Seletor discreto inline -->
+        <div class="form-group">
+          <label class="form-label">
+            <span class="tipo-seletor">
+              <span class="tipo-opcao active" data-value="pagamento_existente" onclick="selecionarTipo(this)">Pagamento</span>
+              <span class="separador">|</span>
+              <span class="tipo-opcao" data-value="nova_entrada" onclick="selecionarTipo(this)">Nova Entrada</span>
+            </span>
+          </label>
+          <input type="hidden" id="tipoOperacao" value="pagamento_existente">
+        </div>
+
+        <!-- Seção para Pagamento de Renda Existente -->
+        <div id="secaoPagamentoExistente">
+          <div class="form-group">
+            <label class="form-label">Renda:</label>
+            <select id="rendaSelect" class="form-control" onchange="carregarPagamentosRenda()">
+              <option value="">Selecione a Renda</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pagamento:</label>
+            <select id="pagamentoSelect" class="form-control">
+              <option value="">Selecione o Pagamento</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Valor Recebido (R$):</label>
+            <input type="number" id="valorRecebido" class="form-control" placeholder="Valor" step="0.01" required pattern="[0-9]*" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Data de Recebimento:</label>
+            <input type="date" id="dataRecebimento" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Seção para Nova Entrada de Renda -->
+        <div id="secaoNovaEntrada" style="display: none;">
+          <div class="form-group">
+            <label class="form-label">Descrição:</label>
+            <input type="text" id="novaEntradaDescricao" class="form-control" placeholder="Ex: Freelance, Venda, etc." maxlength="100">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Valor Recebido (R$):</label>
+            <input type="number" id="novaEntradaValor" class="form-control" placeholder="Valor" step="0.01" required pattern="[0-9]*" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Data do Recebimento:</label>
+            <input type="date" id="novaEntradaData" class="form-control" required>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="processarOperacaoRenda()">
+          <i class="fas fa-check"></i>
+          <span id="botaoConfirmarTexto">Confirmar Recebimento</span>
+        </button>
+        <button class="btn btn-outline" onclick="fecharModal('receberPagamentoModal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Seleção de Data Mobile -->
+  <div id="mobileDataModal" class="modal">
+    <div class="modal-content mobile-modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Selecionar Período</h2>
+        <button class="close" onclick="fecharModal('mobileDataModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="mobile-date-selector">
+          <div class="form-group">
+            <label class="form-label">Mês:</label>
+            <select id="mobileMonth" class="form-control">
+              <option value="0">Janeiro</option>
+              <option value="1">Fevereiro</option>
+              <option value="2">Março</option>
+              <option value="3">Abril</option>
+              <option value="4">Maio</option>
+              <option value="5">Junho</option>
+              <option value="6">Julho</option>
+              <option value="7">Agosto</option>
+              <option value="8">Setembro</option>
+              <option value="9">Outubro</option>
+              <option value="10">Novembro</option>
+              <option value="11">Dezembro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ano:</label>
+            <select id="mobileYear" class="form-control">
+              <option value="2020">2020</option>
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="atualizarDashboardMobile()">
+          <i class="fas fa-sync-alt"></i>
+          <span>Atualizar</span>
+        </button>
+        <button class="btn btn-outline" onclick="fecharModal('mobileDataModal')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Ações de Deslize para Direita (Editar/Excluir) -->
+  <div id="swipeRightModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Ações da Despesa</h2>
+        <button class="close" onclick="fecharModal('swipeRightModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="swipe-action-container">
+          <div class="despesa-info-modal">
+            <h4 id="swipeDespesaNome"></h4>
+            <p id="swipeDespesaDetalhes"></p>
+          </div>
+          <div class="action-buttons-modal">
+            <button class="btn btn-primary btn-block" onclick="editarDespesaSwipe()">
+              <i class="fas fa-edit"></i>
+              <span>Editar Despesa</span>
+            </button>
+            <button class="btn btn-danger btn-block" onclick="excluirDespesaSwipe()">
+              <i class="fas fa-trash"></i>
+              <span>Excluir Despesa</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    // Configuração do Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyCL2gnsUQYc7SisbqshN9Q0Y7qwwzoPF1s",
-      authDomain: "gc-controle.firebaseapp.com",
-      databaseURL: "https://gc-controle-default-rtdb.firebaseio.com",
-      projectId: "gc-controle",
-      storageBucket: "gc-controle.firebasestorage.app",
-      messagingSenderId: "3109203796",
-      appId: "1:3109203796:web:f8619117f915f67ceba2c1",
-      measurementId: "G-3NNXXD5V2T"
-    };
-
-    // Inicialização do Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    const auth = getAuth(app);
-    
-    // Estado da aplicação
-    let usuarioAtual = null;
-    let gcData = {};
-    let currentLanguage = "pt";
-    let currentTheme = "light";
-
-    // Objeto de Tradução
-    const translations = {
-      "pt": {
-        "loginTitle": "Login / Cadastro",
-        "labelEmail": "E-mail:",
-        "labelSenha": "Senha:",
-        "loginText": "Login",
-        "registerText": "Cadastrar",
-        "recoverText": "Recuperar Senha",
-        "titlePergaminhos": "Gerenciamento de Pergaminhos",
-        "labelPergaminhoUnico": "Pergaminho Único:",
-        "labelPergaminhoAleatorio": "Pergaminho Aleatório:",
-        "saveScrollText": "Salvar Pergaminho",
-        "titleControleItens": "Controle de Itens",
-        "labelPersonagem": "Personagem:",
-        "labelPiercing": "Piercing:",
-        "labelBrinco": "Brinco:",
-        "labelAnel": "Anel:",
-        "labelBerkas": "Berkas:",
-        "labelVazio": "Vazio:",
-        "labelAtaqueTotal": "Ataque Total:",
-        "saveGCText": "Salvar GC",
-        "titleControlePersonagens": "Controle de Personagens",
-        "searchPlaceholder": "Pesquisar personagem...",
-        "searchText": "Pesquisar",
-        "clearFilterText": "Limpar",
-        "missingBerkasText": "Total de berkas faltantes:",
-        "labelAtaqueTotalSelecao": "Selecione o valor de ataque total desejado:",
-        "clearAttackFilterText": "Limpar",
-        "menuTitle": "Menu",
-        "languageOption": "Linguagem",
-        "themeOption": "Tema",
-        "exitText": "Sair"
-      },
-      "en": {
-        "loginTitle": "Login / Register",
-        "labelEmail": "Email:",
-        "labelSenha": "Password:",
-        "loginText": "Login",
-        "registerText": "Register",
-        "recoverText": "Recover Password",
-        "titlePergaminhos": "Scroll Management",
-        "labelPergaminhoUnico": "Unique Scroll:",
-        "labelPergaminhoAleatorio": "Random Scroll:",
-        "saveScrollText": "Save Scroll",
-        "titleControleItens": "Item Control",
-        "labelPersonagem": "Character:",
-        "labelPiercing": "Piercing:",
-        "labelBrinco": "Earring:",
-        "labelAnel": "Ring:",
-        "labelBerkas": "Berkas:",
-        "labelVazio": "Empty:",
-        "labelAtaqueTotal": "Total Attack:",
-        "saveGCText": "Save GC",
-        "titleControlePersonagens": "Character Control",
-        "searchPlaceholder": "Search character...",
-        "searchText": "Search",
-        "clearFilterText": "Clear",
-        "missingBerkasText": "Total missing berkas:",
-        "labelAtaqueTotalSelecao": "Select desired total attack value:",
-        "clearAttackFilterText": "Clear",
-        "menuTitle": "Menu",
-        "languageOption": "Language",
-        "themeOption": "Theme",
-        "exitText": "Exit"
-      },
-      "kr": {
-        "loginTitle": "로그인 / 등록",
-        "labelEmail": "이메일:",
-        "labelSenha": "비밀번호:",
-        "loginText": "로그인",
-        "registerText": "등록",
-        "recoverText": "비밀번호 복구",
-        "titlePergaminhos": "두루마리 관리",
-        "labelPergaminhoUnico": "유일 두루마리:",
-        "labelPergaminhoAleatorio": "랜덤 두루마리:",
-        "saveScrollText": "두루마리 저장",
-        "titleControleItens": "아이템 제어",
-        "labelPersonagem": "캐릭터:",
-        "labelPiercing": "피어싱:",
-        "labelBrinco": "귀걸이:",
-        "labelAnel": "반지:",
-        "labelBerkas": "버카스:",
-        "labelVazio": "빈칸:",
-        "labelAtaqueTotal": "총 공격력:",
-        "saveGCText": "GC 저장",
-        "titleControlePersonagens": "캐릭터 제어",
-        "searchPlaceholder": "캐릭터 검색...",
-        "searchText": "검색",
-        "clearFilterText": "지우기",
-        "missingBerkasText": "부족한 버카스 총합:",
-        "labelAtaqueTotalSelecao": "원하는 총 공격력 선택:",
-        "clearAttackFilterText": "지우기",
-        "menuTitle": "메뉴",
-        "languageOption": "언어",
-        "themeOption": "테마",
-        "exitText": "종료"
-      }
-    };
-
-    // Funções de Tradução e Tema
-    function updateLanguage(lang) {
-      currentLanguage = lang;
-      const t = translations[lang];
+  <!-- Modal: Ações de Deslize para Esquerda (Pagar) -->
+  <div id="swipeLeftModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Pagar Despesa</h2>
+        <button class="close" onclick="fecharModal('swipeLeftModal'); resetSwipe();">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="swipe-action-container">
+          <div class="despesa-info-modal">
+            <h4 id="swipePayDespesaNome"></h4>
+            <p id="swipePayDespesaDetalhes"></p>
+          </div>
+          <div id="swipePayOptions" class="pay-options-container">
+            <!-- Conteúdo será preenchido dinamicamente -->
+          </div>
+          <div class="action-buttons-modal">
+            <button class="btn btn-success btn-block" onclick="confirmarPagamentoDespesa()">
+              <i class="fas fa-check"></i>
+              <span>Confirmar Pagamento</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/inteligencia_financeira.js"></script>
+  
+  <script>
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+      // Configurar data atual para campos de data
+      const hoje = new Date();
+      const dataFormatada = hoje.toISOString().split('T')[0];
       
-      // Atualiza todos os textos na interface
-      Object.keys(t).forEach(key => {
-        const elements = document.querySelectorAll(`[id="${key}"]`);
-        elements.forEach(el => {
-          if (el.tagName === 'INPUT' && el.placeholder) {
-            el.placeholder = t[key];
-          } else {
-            el.textContent = t[key];
-          }
-        });
+      const dataCompraInput = document.getElementById('dataCompra');
+      if (dataCompraInput) dataCompraInput.value = dataFormatada;
+      
+      const dataPagamentoInput = document.getElementById('dataPagamento');
+      if (dataPagamentoInput) dataPagamentoInput.value = dataFormatada;
+      
+      // Configurar mês atual no dashboard
+      const dashboardMonth = document.getElementById('dashboardMonth');
+      if (dashboardMonth) dashboardMonth.value = hoje.getMonth();
+      
+      const dashboardYear = document.getElementById('dashboardYear');
+      if (dashboardYear) dashboardYear.value = hoje.getFullYear();
+      
+      // Inicializar DateRangePicker
+      initDateRangePicker();
+      
+      // Verificar autenticação
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          currentUser = user;
+          carregarDadosUsuario();
+          // Carregar mapa de categorias após autenticação
+          carregarCategoriasMap();
+        } else {
+          // Para fins de teste, não redirecionamos para a página de login
+          console.log("Usuário não autenticado, mostrando valores zerados");
+          // Não redirecionar: window.location.href = 'login.html';
+          
+          // Simular login para teste
+          currentUser = {uid: 'demo-user', email: 'demo@example.com', displayName: 'Demo User'};
+          // Carregar mapa de categorias após simular login
+          carregarCategoriasMap();
+          
+          // Simular autenticação para demonstração visual
+          setTimeout(() => {
+            document.querySelector('.login-container').style.display = 'none';
+            document.querySelector('.app-container').style.display = 'flex';
+            showSection('configuracoesSection');
+            showConfigTab('rendaTab');
+            loadRendas(); // Carregar dados de exemplo
+          }, 500);
+        }
       });
       
-      // Atualiza a tabela quando o idioma muda
-      if (usuarioAtual) {
-        carregarGCs();
-      }
-    }
-
-    function updateTheme(theme) {
-      currentTheme = theme;
-      document.body.classList.toggle("dark-mode", theme === "dark");
-    }
-
-    // Funções de UI
-    function toggleSidebar() {
-      document.getElementById("sidebar").classList.toggle("open");
-    }
-
-    function mostrarTelaPrincipal() {
-      document.getElementById("telaLogin").classList.add("hidden");
-      document.getElementById("telaPrincipal").classList.remove("hidden");
-      carregarGCs();
-      carregarPergaminhos();
-    }
-
-    function mostrarTelaLogin() {
-      document.getElementById("telaLogin").classList.remove("hidden");
-      document.getElementById("telaPrincipal").classList.add("hidden");
-    }
-
-    // Funções de Autenticação
-    async function fazerLogin(email, senha) {
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-        usuarioAtual = userCredential.user;
-        mostrarTelaPrincipal();
-      } catch (error) {
-        alert(`Erro no login: ${error.message}`);
-      }
-    }
-
-    async function criarConta(email, senha) {
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-        usuarioAtual = userCredential.user;
-        mostrarTelaPrincipal();
-      } catch (error) {
-        alert(`Erro no cadastro: ${error.message}`);
-      }
-    }
-
-    async function recuperarSenha(email) {
-      try {
-        await sendPasswordResetEmail(auth, email);
-        alert("E-mail de recuperação enviado. Verifique sua caixa de entrada.");
-      } catch (error) {
-        alert(`Erro ao enviar e-mail: ${error.message}`);
-      }
-    }
-
-    async function sair() {
-      try {
-        await signOut(auth);
-        usuarioAtual = null;
-        mostrarTelaLogin();
-      } catch (error) {
-        console.error("Erro ao sair:", error);
-      }
-    }
-
-    // Funções de Dados
-    async function salvarPergaminhos() {
-      if (!usuarioAtual) return;
-      
-      const pergaminhoUnico = document.getElementById("pergaminho_unico").value;
-      const pergaminhoAleatorio = document.getElementById("pergaminho_aleatorio").value;
-      
-      try {
-        await set(ref(database, `users/${usuarioAtual.uid}/pergaminhos`), {
-          unico: pergaminhoUnico,
-          aleatorio: pergaminhoAleatorio
-        });
-        console.log("Pergaminhos salvos com sucesso!");
-      } catch (error) {
-        console.error("Erro ao salvar pergaminhos:", error);
-      }
-    }
-
-    async function carregarPergaminhos() {
-      if (!usuarioAtual) return;
-      
-      try {
-        const snapshot = await get(ref(database, `users/${usuarioAtual.uid}/pergaminhos`));
-        if (snapshot.exists()) {
-          document.getElementById("pergaminho_unico").value = snapshot.val().unico || "0";
-          document.getElementById("pergaminho_aleatorio").value = snapshot.val().aleatorio || "";
+      // Adicionar função para mostrar abas de relatório
+      window.showRelatorioTab = function(tabId) {
+        // Esconder todas as abas
+        const tabPanes = document.querySelectorAll('.relatorio-tab-pane');
+        tabPanes.forEach(pane => pane.classList.remove('active'));
+        
+        // Mostrar a aba selecionada
+        document.getElementById(tabId).classList.add('active');
+        
+        // Atualizar botões de navegação
+        const tabButtons = document.querySelectorAll('.relatorio-tab-btn');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Encontrar e ativar o botão correspondente
+        const buttons = document.querySelectorAll('.relatorio-tab-btn');
+        for (let i = 0; i < buttons.length; i++) {
+          if (buttons[i].getAttribute('onclick') && buttons[i].getAttribute('onclick').includes(tabId)) {
+            buttons[i].classList.add('active');
+            break;
+          }
         }
-      } catch (error) {
-        console.error("Erro ao carregar pergaminhos:", error);
-      }
-    }
-
-    async function salvarGC() {
-      if (!usuarioAtual) {
-        alert("Você precisa estar logado!");
-        return;
-      }
-      
-      const personagem = document.getElementById("personagem").value;
-      const dados = {
-        personagem: personagem,
-        pergaminho_unico: document.getElementById("pergaminho_unico").value || "0",
-        pergaminho_aleatorio: document.getElementById("pergaminho_aleatorio").value || "",
-        brinco: document.getElementById("brinco").value,
-        piercing: document.getElementById("piercing").value,
-        anel: document.getElementById("anel").value,
-        berkas: document.getElementById("berkas").value,
-        ataqueTotal: document.getElementById("ataqueTotal").value,
-        vazio: document.getElementById("vazio").value === "Nenhum" ? "0" : document.getElementById("vazio").value
+        
+        // Inicializar componentes específicos da aba
+        if (tabId === 'relatorioTab') {
+          // Garantir que "Todo Período" está selecionado
+          setTimeout(() => {
+            const dataRangeInput = document.getElementById('dataRange');
+            if (dataRangeInput) {
+              // Sempre resetar para "Todo Período" quando abrir a aba de relatórios
+              dataRangeInput.value = 'Todo Período';
+              dataRangeInput.placeholder = 'Todo Período';
+              
+              // Definir período como todo período (sem filtro de data)
+              rangeStart = null;
+              rangeEnd = null;
+              
+              // Atualizar relatórios
+              atualizarRelatorios();
+            }
+          }, 50);
+        } else if (tabId === 'previsaoTab') {
+          // Executar previsões com o período atual
+          novo_calcularPrevisoes();
+        } else if (tabId === 'categoriasTab') {
+          // Para categoria, usar o mesmo período já definido
+          let inicio, fim;
+          if (!rangeStart || !rangeEnd) {
+            inicio = new Date('2020-01-01');
+            fim = new Date('2030-12-31');
+          } else {
+            inicio = new Date(rangeStart);
+            fim = new Date(rangeEnd);
+          }
+          atualizarGraficoCategorias(inicio, fim);
+        }
       };
       
-      // Validação básica
-      if (!dados.personagem || !dados.brinco || !dados.piercing || !dados.anel || !dados.berkas || !dados.ataqueTotal) {
-        alert("Preencha todos os campos obrigatórios!");
-        return;
-      }
-      
-      try {
-        // Verifica se o personagem já existe
-        const snapshot = await get(ref(database, `users/${usuarioAtual.uid}/gc/${personagem}`));
-        if (snapshot.exists() && !confirm("Este personagem já existe. Deseja atualizar?")) {
-          return;
-        }
+      // Modificar a função showSection para inicializar as novas seções
+      const originalShowSection = window.showSection;
+      window.showSection = function(sectionId) {
+        originalShowSection(sectionId);
         
-        await set(ref(database, `users/${usuarioAtual.uid}/gc/${personagem}`), dados);
-        alert("GC salvo com sucesso!");
-        await salvarPergaminhos();
-        await carregarGCs();
-      } catch (error) {
-        console.error("Erro ao salvar GC:", error);
-        alert("Erro ao salvar GC. Consulte o console para detalhes.");
-      }
-    }
-
-    async function carregarGCs() {
-      if (!usuarioAtual) return;
-      
-      gcData = {};
-      try {
-        const snapshot = await get(ref(database, `users/${usuarioAtual.uid}/gc`));
-        const tabela = document.getElementById("tabela_controle");
-        
-        // Cria cabeçalho da tabela
-        let headerHTML = "<tr>";
-        headerHTML += `<th>${translations[currentLanguage].labelPersonagem}</th>`;
-        headerHTML += `<th>${translations[currentLanguage].labelBrinco}</th>`;
-        headerHTML += `<th>${translations[currentLanguage].labelPiercing}</th>`;
-        headerHTML += `<th>${translations[currentLanguage].labelAnel}</th>`;
-        headerHTML += `<th>${translations[currentLanguage].labelBerkas}</th>`;
-        headerHTML += `<th>${translations[currentLanguage].labelVazio}</th>`;
-        headerHTML += `<th>${translations[currentLanguage].labelAtaqueTotal}</th>`;
-        headerHTML += "<th>Ação</th>";
-        headerHTML += "</tr>";
-        
-        tabela.innerHTML = headerHTML;
-        let totalMissingBerkas = 0;
-        let totalMissingVazio = 0;
-        
-        if (snapshot.exists()) {
-          snapshot.forEach((childSnapshot) => {
-            const dados = childSnapshot.val();
-            const personagem = childSnapshot.key;
-            gcData[personagem] = dados;
-            
-            // Cálculo de itens faltantes
-            const berkasValor = dados.berkas;
-            const berkasNum = berkasValor === "Full" ? 12 : (berkasValor === "Nenhum" ? 0 : parseInt(berkasValor) || 0);
-            const vazioValor = dados.vazio === "Nenhum" || !dados.vazio ? 0 : parseInt(dados.vazio);
-            const missingBerkas = vazioValor > 0 ? Math.max(0, 6 - berkasNum) : Math.max(0, 12 - berkasNum);
-            const missingVazio = vazioValor > 0 ? Math.max(0, 6 - vazioValor) : 0;
-            
-            totalMissingBerkas += missingBerkas;
-            totalMissingVazio += missingVazio;
-            
-            // Adiciona linha na tabela
-            const linha = tabela.insertRow();
-            
-            // Célula do personagem (clicável para edição)
-            const cellPersonagem = linha.insertCell();
-            cellPersonagem.textContent = personagem;
-            cellPersonagem.style.cursor = "pointer";
-            cellPersonagem.addEventListener("click", () => preencherFormularioEdicao(dados));
-            
-            // Outras células
-            [dados.brinco, dados.piercing, dados.anel, dados.berkas, dados.vazio || "Nenhum", dados.ataqueTotal].forEach(valor => {
-              const cell = linha.insertCell();
-              cell.textContent = valor;
-            });
-            
-            // Célula de ação (botão de exclusão)
-            const cellAcao = linha.insertCell();
-            const deleteBtn = document.createElement("button");
-            deleteBtn.className = "danger";
-            deleteBtn.innerHTML = '<span class="material-icons">delete</span>';
-            deleteBtn.onclick = () => excluirGC(personagem);
-            cellAcao.appendChild(deleteBtn);
-          });
+        // Inicializar componentes específicos das novas seções
+        if (sectionId === 'inteligenciaFinanceiraSection') {
+          renderizarPainelInteligencia();
+        } else if (sectionId === 'metasFinanceirasSection') {
+          renderizarPainelMetas();
+        } else if (sectionId === 'relatorioIntegradoSection') {
+          // Inicializar a primeira aba com "Todo Período" padrão
+          showRelatorioTab('relatorioTab');
+          
+          // Definir "Todo Período" como padrão
+          setTimeout(() => {
+            const dataRangeInput = document.getElementById('dataRange');
+            if (dataRangeInput) {
+              dataRangeInput.value = 'Todo Período';
+              dataRangeInput.placeholder = 'Todo Período';
+              
+              // Definir período como todo período (sem filtro de data)
+              rangeStart = null;
+              rangeEnd = null;
+              
+              // Atualizar relatórios imediatamente
+              atualizarRelatorios();
+            }
+          }, 100);
         }
-        
-        // Atualiza painel de berkas faltantes
-        document.getElementById("missingBerkasPanel").textContent = 
-          `${translations[currentLanguage].missingBerkasText} ${totalMissingBerkas} | Vazio faltantes: ${totalMissingVazio}`;
-        
-      } catch (error) {
-        console.error("Erro ao carregar GCs:", error);
-      }
-    }
-
-    function preencherFormularioEdicao(dados) {
-      document.getElementById("personagem").value = dados.personagem;
-      document.getElementById("pergaminho_unico").value = dados.pergaminho_unico || "0";
-      document.getElementById("pergaminho_aleatorio").value = dados.pergaminho_aleatorio || "";
-      document.getElementById("brinco").value = dados.brinco;
-      document.getElementById("piercing").value = dados.piercing;
-      document.getElementById("anel").value = dados.anel;
-      document.getElementById("berkas").value = dados.berkas;
-      document.getElementById("ataqueTotal").value = dados.ataqueTotal;
-      document.getElementById("vazio").value = dados.vazio === "0" ? "Nenhum" : dados.vazio;
-      
-      // Rola até o formulário
-      document.getElementById("controleItens").scrollIntoView({ behavior: "smooth" });
-    }
-
-    async function excluirGC(personagem) {
-      if (!usuarioAtual || !confirm("Tem certeza que deseja excluir este personagem?")) {
-        return;
-      }
-      
-      try {
-        await remove(ref(database, `users/${usuarioAtual.uid}/gc/${personagem}`));
-        await carregarGCs();
-      } catch (error) {
-        console.error("Erro ao excluir personagem:", error);
-      }
-    }
-
-    // Funções de Filtro
-    function filtrarTabela() {
-      const input = document.getElementById("searchInput").value.toUpperCase();
-      const table = document.getElementById("tabela_controle");
-      const rows = table.getElementsByTagName("tr");
-      
-      for (let i = 1; i < rows.length; i++) {
-        const cell = rows[i].cells[0]; // Primeira coluna (personagem)
-        if (cell) {
-          const txtValue = cell.textContent || cell.innerText;
-          rows[i].style.display = txtValue.toUpperCase().includes(input) ? "" : "none";
-        }
-      }
-    }
-
-    function limparFiltro() {
-      document.getElementById("searchInput").value = "";
-      filtrarTabela();
-    }
-
-    async function calcularAtaqueTotal() {
-      const ataqueDesejado = document.getElementById("selecionarAtaqueTotal").value;
-      
-      if (ataqueDesejado === "Todos") {
-        limparFiltroAtaqueTotal();
-        document.getElementById("resultadoAtaqueTotal").textContent = "";
-        return;
-      }
-      
-      const ataqueDesejadoNum = parseInt(ataqueDesejado.replace("k", "")) * 1000;
-      let countExact = 0;
-      let countAbove = 0;
-      let countBelow = 0;
-      
-      try {
-        const snapshot = await get(ref(database, `users/${usuarioAtual.uid}/gc`));
-        if (snapshot.exists()) {
-          snapshot.forEach((childSnapshot) => {
-            const atk = childSnapshot.val().ataqueTotal || "0k";
-            const atkNum = parseInt(atk.replace("k", "")) * 1000;
-            
-            if (atkNum === ataqueDesejadoNum) countExact++;
-            else if (atkNum > ataqueDesejadoNum) countAbove++;
-            else countBelow++;
-          });
-        }
-        
-        document.getElementById("resultadoAtaqueTotal").textContent = 
-          `Exatos: ${countExact} | Acima: ${countAbove} | Abaixo: ${countBelow}`;
-        filtrarAtaqueTabela(ataqueDesejado);
-      } catch (error) {
-        console.error("Erro ao calcular ataque total:", error);
-      }
-    }
-
-    function filtrarAtaqueTabela(ataqueDesejado) {
-      const table = document.getElementById("tabela_controle");
-      const rows = table.getElementsByTagName("tr");
-      
-      for (let i = 1; i < rows.length; i++) {
-        const atkCell = rows[i].cells[6]; // Coluna de ataque total
-        rows[i].style.display = atkCell.textContent.trim() === ataqueDesejado ? "" : "none";
-      }
-    }
-
-    function limparFiltroAtaqueTotal() {
-      const table = document.getElementById("tabela_controle");
-      const rows = table.getElementsByTagName("tr");
-      
-      for (let i = 1; i < rows.length; i++) {
-        rows[i].style.display = "";
-      }
-    }
-
-    // Event Listeners
-    document.addEventListener("DOMContentLoaded", () => {
-      // Sidebar
-      document.getElementById("menuToggle").addEventListener("click", toggleSidebar);
-      
-      // Configurações
-      document.getElementById("languageSelect").addEventListener("change", (e) => updateLanguage(e.target.value));
-      document.getElementById("themeSelect").addEventListener("change", (e) => updateTheme(e.target.value));
-      document.getElementById("btnExit").addEventListener("click", sair);
-      
-      // Login
-      document.getElementById("botaoLogin").addEventListener("click", () => {
-        const email = document.getElementById("email").value;
-        const senha = document.getElementById("senha").value;
-        fazerLogin(email, senha);
-      });
-      
-      document.getElementById("botaoCadastro").addEventListener("click", () => {
-        const email = document.getElementById("email").value;
-        const senha = document.getElementById("senha").value;
-        criarConta(email, senha);
-      });
-      
-      document.getElementById("botaoRecuperar").addEventListener("click", () => {
-        const email = document.getElementById("email").value;
-        if (email) {
-          recuperarSenha(email);
-        } else {
-          alert("Por favor, informe seu e-mail para recuperar a senha.");
-        }
-      });
-      
-      // GC
-      document.getElementById("botaoSalvarGC").addEventListener("click", salvarGC);
-      document.getElementById("personagem").addEventListener("change", (e) => {
-        if (gcData[e.target.value]) {
-          preencherFormularioEdicao(gcData[e.target.value]);
-        }
-      });
-      
-      // Filtros
-      document.getElementById("selecionarAtaqueTotal").addEventListener("change", calcularAtaqueTotal);
-      document.getElementById("searchInput").addEventListener("keyup", (e) => {
-        if (e.key === "Enter") filtrarTabela();
-      });
-      
-      // Verifica estado de autenticação
-      onAuthStateChanged(auth, (user) => {
-        usuarioAtual = user;
-        if (user) {
-          mostrarTelaPrincipal();
-        } else {
-          mostrarTelaLogin();
-        }
-      });
-      
-      // Inicializa a aplicação
-      updateLanguage(currentLanguage);
-      updateTheme(currentTheme);
+      };
     });
-
-    // Funções globais
-    window.filtrarTabela = filtrarTabela;
-    window.limparFiltro = limparFiltro;
-    window.calcularAtaqueTotal = calcularAtaqueTotal;
-    window.limparFiltroAtaqueTotal = limparFiltroAtaqueTotal;
-    window.salvarPergaminhos = salvarPergaminhos;
-    window.excluirGC = excluirGC;
   </script>
+  
+  <!-- Utilitários compartilhados -->
+  <script src="js/utils.js"></script>
+  
+
+  
+  <!-- Mobile Bottom Navigation -->
+  <div class="mobile-bottom-nav">
+    <div class="nav-item active" onclick="showSection('dashboardSection'); setActiveBottomNav(this);">
+      <i class="fa-solid fa-house"></i>
+      <span>Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="showSection('despesasSection'); setActiveBottomNav(this);">
+      <i class="fa-solid fa-money-bill-wave"></i>
+      <span>Despesas</span>
+    </div>
+    <div class="nav-item" onclick="showSection('relatorioIntegradoSection'); setActiveBottomNav(this);">
+      <i class="fa-solid fa-chart-line"></i>
+      <span>Relatórios</span>
+    </div>
+    <div class="nav-item" onclick="showSection('inteligenciaFinanceiraSection'); setActiveBottomNav(this);">
+      <i class="fa-solid fa-brain"></i>
+      <span>Inteligência</span>
+    </div>
+    <div class="nav-item" onclick="showSection('metasFinanceirasSection'); setActiveBottomNav(this);">
+      <i class="fa-solid fa-bullseye"></i>
+      <span>Metas</span>
+    </div>
+  </div>
+
 </body>
 </html>
